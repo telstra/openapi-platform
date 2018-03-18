@@ -1,0 +1,33 @@
+{
+  "name": "swagger-platform",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/developersteve/swagger-platform.git",
+  "license": "Apache-2.0",
+  "private": false,
+  "contributors": [
+    {
+      "name": "Steven Cooper",
+      "url": "https://github.com/developersteve"
+    }, 
+    {
+      "name": "Harry Ferrier"
+    }, 
+    {
+      "name": "Timothy Gebert"
+    }, 
+    {
+      "name": "Caleb Joseph",
+      "url": "https://github.com/calebj0seph"
+    },
+    {
+      "name": "David Lei",
+      "url": "https://github.com/darvid7"
+    }, 
+    {
+      "name": "Patrick Shaw",
+      "email": "mail@patrickshaw.me",
+      "url": "https://github.com/PatrickShaw"
+    }
+  ]
+}
