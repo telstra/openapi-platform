@@ -9,13 +9,13 @@
     {
       "name": "Steven Cooper",
       "url": "https://github.com/developersteve"
-    }, 
+    },
     {
       "name": "Harry Ferrier"
-    }, 
+    },
     {
       "name": "Timothy Gebert"
-    }, 
+    },
     {
       "name": "Caleb Joseph",
       "url": "https://github.com/calebj0seph"
@@ -23,11 +23,24 @@
     {
       "name": "David Lei",
       "url": "https://github.com/darvid7"
-    }, 
+    },
     {
       "name": "Patrick Shaw",
       "email": "mail@patrickshaw.me",
       "url": "https://github.com/PatrickShaw"
     }
-  ]
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.0.0-alpha.0",
+    "babel-plugin-module-resolver": "^3.1.0",
+    "jest": "^22.4.2",
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "commander": "^2.15.0"
+  }
 }
