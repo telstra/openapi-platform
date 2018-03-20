@@ -7,7 +7,7 @@
   "private": false,
   "scripts": {
     "start": "run-s build deploy",
-    "build": "run-s build:typescript build:frontend",
+    "build": "run-s build:*",
     "build:typescript": "babel src --out-dir build --extensions .tsx",
     "build:frontend": "webpack",
     "deploy": "node ./build/backend/index.js",
@@ -30,7 +30,7 @@
     "html-webpack-plugin": "3.0.6",
     "jest": "22.4.2",
     "npm-run-all": "4.1.2",
-    "prettier": "^1.11.1",
+    "prettier": "1.11.1",
     "typescript": "2.7.2",
     "webpack": "4.1.1",
     "webpack-cli": "2.0.12"
