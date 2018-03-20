@@ -8,12 +8,13 @@
   "scripts": {
     "start": "run-s build deploy",
     "build": "run-s build:*",
+    "build:clean": "rm -rf build dist",
     "build:typescript": "babel src --out-dir build --extensions .tsx",
     "build:frontend": "webpack",
     "deploy": "node ./build/backend/index.js",
     "test": "run-s test:*",
     "test:jest": "jest",
-    "test:lint": "echo \"Currently no linter available\"",
+    "test:lint": "echo \"No linter available currently\"",
     "format": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
     "precommit": "run-s test:lint format"
   },
@@ -28,6 +29,7 @@
     "babel-jest": "23.0.0-alpha.0",
     "babel-plugin-module-resolver": "3.1.0",
     "html-webpack-plugin": "3.0.6",
+    "husky": "0.14.3",
     "jest": "22.4.2",
     "npm-run-all": "4.1.2",
     "prettier": "1.11.1",
@@ -41,7 +43,6 @@
     "@types/react-dom": "16.0.4",
     "commander": "2.15.0",
     "express": "4.16.3",
-    "husky": "^0.14.3",
     "react": "16.2.0",
     "react-dom": "16.2.0"
   },
