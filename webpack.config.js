@@ -2,13 +2,21 @@ const paths = require('./paths');
 const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-const common = {
+const createBabelPresets = envSettings => [
+  '@babel/preset-typescript',
+  ['@babel/preset-env', envSettings],
+  '@babel/preset-react'
+];
+const createWebpackSettings = envSettings => ({
   mode: 'development',
   module: {
     rules: [
       {
         test: /\.tsx$/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
+        options: {
+          presets: createBabelPresets(envSettings)
+        }
       }
     ]
   },
@@ -42,7 +50,7 @@ const common = {
     moduleTrace: false,
     children: false
   }
-};
+});
 const backend = {
   name: 'Backend',
   target: 'node',
@@ -52,7 +60,11 @@ const backend = {
     filename: '[name].js'
   },
   externals: [nodeExternals()],
-  ...common
+  ...createWebpackSettings({
+    targets: {
+      node: 'current'
+    }
+  })
 };
 const frontend = {
   name: 'Frontend',
@@ -73,6 +85,10 @@ const frontend = {
     net: 'empty',
     tls: 'empty'
   },
-  ...common
+  ...createWebpackSettings({
+    targets: {
+      browsers: ['last 2 versions']
+    }
+  })
 };
 module.exports = [backend, frontend];
