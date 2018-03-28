@@ -3,14 +3,19 @@ const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const createBabelPresets = envSettings => [
-  '@babel/preset-typescript',
   ['@babel/preset-env', envSettings],
-  '@babel/preset-react'
+  '@babel/preset-react',
+  '@babel/preset-typescript'
 ];
 const createWebpackSettings = envSettings => ({
   mode: 'development',
   module: {
     rules: [
+      {
+        enforce: 'pre',
+        test: /\.tsx$/,
+        loader: 'tslint-loader'
+      },
       {
         test: /\.tsx$/,
         loader: 'babel-loader',
@@ -80,11 +85,6 @@ const frontend = {
       template: join(paths.public, 'index.html')
     })
   ],
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  },
   ...createWebpackSettings({
     targets: {
       browsers: ['last 2 versions']

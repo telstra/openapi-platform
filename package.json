@@ -10,20 +10,24 @@
     "build": "run-s build:clean build:dev",
     "build:clean": "rm -rf build",
     "build:prod": "yarn build:dev --mode production",
-    "build:prod:frontend": "",
-    "build:prod:backend": "",
+    "build:prod:frontend": "yarn build:prod --config-name Frontend",
+    "build:prod:backend": "yarn build:prod --config-name Backend",
     "build:dev": "webpack --progress",
-    "build:dev:frontend": "webpack --config-name Frontend",
-    "build:dev:backend": "webpack --config-name Backend",
+    "build:dev:frontend": "yarn build:dev --config-name Frontend",
+    "build:dev:backend": "yarn build:dev --config-name Backend",
     "deploy": "node ./build/backend/index.js",
+    "deploy:frontend:debug": "webpack-dev-server --config-name Frontend --port 3000",
+    "deploy:backend:debug": "webpack-dev-server --config-name Backend --port 8080",
+    "check": "run-s check:*",
+    "check:types": "tsc --noEmit",
+    "check:lint": "eslint \"{**/,}*.{ts,tsx}\"",
     "test": "run-s test:*",
     "test:jest": "jest",
-    "test:lint": "echo \"No linter available currently\"",
     "format": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\""
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && yarn test"
+      "pre-commit": "yarn check:types && lint-staged && yarn test"
     }
   },
   "lint-staged": {
@@ -32,7 +36,7 @@
       "git add"
     ],
     "*.{ts,tsx}": [
-      "yarn test:lint"
+      "yarn check:lint"
     ]
   },
   "devDependencies": {
@@ -42,10 +46,14 @@
     "@babel/preset-env": "7.0.0-beta.42",
     "@babel/preset-react": "7.0.0-beta.42",
     "@babel/preset-typescript": "7.0.0-beta.42",
+    "@types/jest": "^22.2.2",
     "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^8.2.2",
     "babel-jest": "23.0.0-alpha.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-module-resolver": "3.1.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-typescript": "^0.10.0",
     "html-webpack-plugin": "3.0.6",
     "husky": "^0.15.0-rc.13",
     "jest": "22.4.2",
@@ -55,16 +63,19 @@
     "tslint": "^5.9.1",
     "tslint-loader": "^3.6.0",
     "typescript": "2.7.2",
+    "typescript-eslint-parser": "^14.0.0",
     "webpack": "4.1.1",
     "webpack-cli": "2.0.12",
+    "webpack-dev-server": "^3.1.1",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "@types/express": "4.11.1",
+    "@types/express": "^4.11.1",
     "@types/react": "16.0.40",
     "@types/react-dom": "16.0.4",
     "commander": "2.15.0",
-    "express": "4.16.3",
+    "eslint": "^4.19.1",
+    "express": "^4.16.3",
     "react": "16.2.0",
     "react-dom": "16.2.0"
   },

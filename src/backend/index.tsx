@@ -1,11 +1,14 @@
 import express from 'express';
-import { join } from 'path';
 async function run(port: number) {
   const app: express.Express = express();
-  app.use('/static', express.static(join(__dirname, '../../dist')));
   app.get('/', (req, res) => {
-    res.redirect('/static/index.html');
+    res.json({
+      status: 'Success',
+      message: 'It works!'
+    });
   });
   app.listen(port);
 }
-run(1337);
+const envPort: string | undefined = process.env.PORT;
+const port: number = envPort ? Number.parseInt(envPort) : 8080;
+run(port);
