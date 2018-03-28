@@ -1,6 +1,7 @@
 const paths = require('./paths');
 const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 const nodeExternals = require('webpack-node-externals');
 const createBabelPresets = envSettings => [
   ['@babel/preset-env', envSettings],
@@ -11,11 +12,6 @@ const createWebpackSettings = envSettings => ({
   mode: 'development',
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.tsx$/,
-        loader: 'tslint-loader'
-      },
       {
         test: /\.tsx$/,
         loader: 'babel-loader',
@@ -64,6 +60,13 @@ const backend = {
     path: join(__dirname, 'build', 'backend'),
     filename: '[name].js'
   },
+  plugins: [
+    new WebpackShellPlugin({
+      onBuildEnd: [
+        `nodemon ${join(__dirname, 'build', 'backend', 'main.js')} --quiet --watch ./build/backend`
+      ]
+    })
+  ],
   externals: [nodeExternals()],
   ...createWebpackSettings({
     targets: {
