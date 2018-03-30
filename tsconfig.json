@@ -10,9 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+        "src/*":  ["src/*"],
+        "test/*": ["test/*"],
+        "view/*": ["src/view/*"]
+    },
+
   },
-  "exclude": [
-      "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

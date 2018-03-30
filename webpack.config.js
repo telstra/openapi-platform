@@ -49,7 +49,8 @@ const createWebpackSettings = envSettings => ({
     alias: {
       src: paths.src,
       test: paths.test,
-      config: paths.config
+      config: paths.config,
+      view: paths.view
     }
   },
   stats

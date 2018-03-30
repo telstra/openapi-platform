@@ -13,7 +13,8 @@
     "build:dev": "yarn build:webpack --mode development",
     "watch:frontend": "webpack-dev-server --config-name Frontend",
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
-    "watch:checker": "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
+    "watch:checker":
+      "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "deploy:backend": "node ./build/backend/index.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
@@ -26,13 +27,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "yarn format",
-      "git add"
-    ],
-    "*.{ts,tsx}": [
-      "yarn checker:lint"
-    ]
+    "*.{js,jsx,ts,tsx}": ["yarn format", "git add"],
+    "*.{ts,tsx}": ["yarn checker:lint"]
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.42",
@@ -54,6 +50,8 @@
     "husky": "0.15.0-rc.13",
     "jest": "22.4.2",
     "lint-staged": "7.0.0",
+    "mobx": "^4.1.1",
+    "mobx-react": "^5.0.0",
     "nodemon": "1.17.2",
     "npm-run-all": "4.1.2",
     "prettier": "1.11.1",
@@ -71,6 +69,7 @@
     "@types/react-dom": "16.0.4",
     "commander": "2.15.0",
     "express": "4.16.3",
+    "jss": "^9.8.1",
     "react": "16.2.0",
     "react-dom": "16.2.0"
   },
