@@ -13,66 +13,65 @@
     "build:dev": "yarn build:webpack --mode development",
     "watch:frontend": "webpack-dev-server --config-name Frontend --port 3000",
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
-    "watch:check": "nodemon --quiet -e tsx --watch ./src --exec \"yarn check\"",
+    "watch:checker": "nodemon --quiet -e tsx --watch ./src --exec \"yarn run check\"",
     "deploy:backend": "node ./build/backend/index.js",
-    "check": "run-s check:*",
-    "check:types": "tsc --noEmit",
-    "check:lint": "eslint \"{**/,}*.{ts,tsx}\"",
+    "checker": "run-s checker:*",
+    "checker:types": "tsc --noEmit",
+    "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
     "test": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn check:types && lint-staged && yarn test"
+      "pre-commit": "yarn checker:types && lint-staged && yarn test"
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [  
+    "*.{js,jsx,ts,tsx}": [
       "yarn format",
       "git add"
     ],
     "*.{ts,tsx}": [
-      "yarn check:lint"
+      "yarn checker:lint"
     ]
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.42",
-    "@babel/core": "^7.0.0-beta.42",
-    "@babel/polyfill": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.42",
-    "@babel/preset-react": "^7.0.0-beta.42",
-    "@babel/preset-typescript": "^7.0.0-beta.42",
-    "@types/jest": "^22.2.2",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^8.2.2",
-    "babel-jest": "^23.0.0-alpha.0",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-module-resolver": "^3.1.0",
-    "eslint-plugin-react": "^7.7.0",
-    "eslint-plugin-typescript": "^0.10.0",
-    "html-webpack-plugin": "^3.0.6",
-    "husky": "^0.15.0-rc.13",
-    "jest": "^22.4.2",
-    "lint-staged": "^7.0.0",
-    "nodemon": "^1.17.2",
-    "npm-run-all": "^4.1.2",
-    "prettier": "^1.11.1",
+    "@babel/cli": "7.0.0-beta.42",
+    "@babel/core": "7.0.0-beta.42",
+    "@babel/polyfill": "7.0.0-beta.42",
+    "@babel/preset-env": "7.0.0-beta.42",
+    "@babel/preset-react": "7.0.0-beta.42",
+    "@babel/preset-typescript": "7.0.0-beta.42",
+    "@types/jest": "22.2.2",
+    "babel-eslint": "8.2.2",
+    "babel-jest": "23.0.0-alpha.0",
+    "babel-loader": "7.1.4",
+    "babel-plugin-module-resolver": "3.1.0",
+    "eslint": "4.19.1",
+    "eslint-plugin-react": "7.7.0",
+    "eslint-plugin-typescript": "0.10.0",
+    "html-webpack-plugin": "3.0.6",
+    "husky": "0.15.0-rc.13",
+    "jest": "22.4.2",
+    "lint-staged": "7.0.0",
+    "nodemon": "1.17.2",
+    "npm-run-all": "4.1.2",
+    "prettier": "1.11.1",
     "typescript": "2.7.1",
-    "typescript-eslint-parser": "^14.0.0",
-    "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12",
-    "webpack-dev-server": "^3.1.1",
-    "webpack-node-externals": "^1.6.0",
-    "webpack-shell-plugin": "^0.5.0"
+    "typescript-eslint-parser": "14.0.0",
+    "webpack": "4.1.1",
+    "webpack-cli": "2.0.12",
+    "webpack-dev-server": "3.1.1",
+    "webpack-node-externals": "1.6.0",
+    "webpack-shell-plugin": "0.5.0"
   },
   "dependencies": {
-    "@types/express": "^4.11.1",
-    "@types/react": "^16.0.40",
-    "@types/react-dom": "^16.0.4",
-    "commander": "^2.15.0",
-    "eslint": "^4.19.1",
-    "express": "^4.16.3",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "@types/express": "4.11.1",
+    "@types/react": "16.0.40",
+    "@types/react-dom": "16.0.4",
+    "commander": "2.15.0",
+    "express": "4.16.3",
+    "react": "16.2.0",
+    "react-dom": "16.2.0"
   },
   "contributors": [
     {
