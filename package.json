@@ -13,7 +13,7 @@
     "build:dev": "yarn build:webpack --mode development",
     "watch:frontend": "webpack-dev-server --config-name Frontend --port 3000",
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
-    "watch:checker": "nodemon --quiet -e tsx --watch ./src --exec \"yarn run check\"",
+    "watch:checker": "nodemon --quiet -e tsx --watch ./src --exec \"yarn checker\"",
     "deploy:backend": "node ./build/backend/index.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
