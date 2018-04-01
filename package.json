@@ -13,8 +13,7 @@
     "build:dev": "yarn build:webpack --mode development",
     "watch:frontend": "webpack-dev-server --config-name Frontend",
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
-    "watch:checker":
-      "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
+    "watch:checker": "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "deploy:backend": "node ./build/backend/index.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
@@ -23,12 +22,18 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && lint-staged && yarn test"
+      "pre-commit": "lint-staged && yarn test"
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["yarn format", "git add"],
-    "*.{ts,tsx}": ["yarn checker:lint"]
+    "*.{js,jsx,ts,tsx}": [
+      "yarn format",
+      "git add"
+    ],
+    "*.{ts,tsx}": [
+      "yarn checker:lint",
+      "yarn checker:types"
+    ]
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.42",
