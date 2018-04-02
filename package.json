@@ -1,0 +1,103 @@
+{
+  "name": "swagger-platform",
+  "version": "1.0.0",
+  "repository": "https://github.com/developersteve/swagger-platform.git",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "format": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
+    "build": "run-s build:clean build:dev",
+    "build:clean": "rm -rf build",
+    "build:webpack": "webpack --progress",
+    "build:prod": "yarn build:webpack --mode production",
+    "build:dev": "yarn build:webpack --mode development",
+    "watch:frontend": "webpack-dev-server --config-name Frontend",
+    "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
+    "watch:checker": "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
+    "deploy:backend": "node ./build/backend/index.js",
+    "checker": "run-s checker:*", 
+    "checker:types": "tsc --noEmit",
+    "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn checker:types && lint-staged && yarn test"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint",
+      "yarn format",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "7.0.0-beta.42",
+    "@babel/core": "7.0.0-beta.42",
+    "@babel/polyfill": "7.0.0-beta.42",
+    "@babel/preset-env": "7.0.0-beta.42",
+    "@babel/preset-react": "7.0.0-beta.42",
+    "@babel/preset-typescript": "7.0.0-beta.42",
+    "@types/jest": "22.2.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "8.2.2",
+    "babel-jest": "23.0.0-alpha.0",
+    "babel-loader": "7.1.4",
+    "babel-plugin-module-resolver": "3.1.0",
+    "eslint": "4.19.1",
+    "eslint-plugin-react": "7.7.0",
+    "eslint-plugin-typescript": "0.10.0",
+    "html-webpack-plugin": "3.0.6",
+    "husky": "0.15.0-rc.13",
+    "jest": "22.4.2",
+    "lint-staged": "7.0.0",
+    "mobx": "^4.1.1",
+    "mobx-react": "^5.0.0",
+    "nodemon": "1.17.2",
+    "npm-run-all": "4.1.2",
+    "prettier": "1.11.1",
+    "typescript": "2.7.1",
+    "typescript-eslint-parser": "14.0.0",
+    "webpack": "4.1.1",
+    "webpack-cli": "2.0.12",
+    "webpack-dev-server": "3.1.1",
+    "webpack-node-externals": "1.6.0",
+    "webpack-shell-plugin": "0.5.0"
+  },
+  "dependencies": {
+    "@types/express": "4.11.1",
+    "@types/react": "16.0.40",
+    "@types/react-dom": "16.0.4",
+    "commander": "2.15.0",
+    "express": "4.16.3",
+    "jss": "^9.8.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0"
+  },
+  "contributors": [
+    {
+      "name": "Steven Cooper",
+      "url": "https://github.com/developersteve"
+    },
+    {
+      "name": "Harry Ferrier"
+    },
+    {
+      "name": "Timothy Gebert"
+    },
+    {
+      "name": "Caleb Joseph",
+      "url": "https://github.com/calebj0seph"
+    },
+    {
+      "name": "David Lei",
+      "url": "https://github.com/darvid7"
+    },
+    {
+      "name": "Patrick Shaw",
+      "email": "mail@patrickshaw.me",
+      "url": "https://github.com/PatrickShaw"
+    }
+  ]
+}

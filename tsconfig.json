@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "pretty": true,
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+        "src/*":  ["src/*"],
+        "test/*": ["test/*"],
+        "view/*": ["src/view/*"]
+    },
+
+  },
+  "exclude": ["node_modules"]
+}
