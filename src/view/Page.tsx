@@ -1,6 +1,14 @@
-import React from 'react';
-export const Page = () => (
+import React, { SFC } from 'react';
+import { NavigationMenu } from 'basic/NavigationMenu';
+import { Overview } from 'view/Overview';
+import { Route } from 'react-router-dom';
+export const Page: SFC = () => (
   <div>
-    <h1>Rawr</h1>
+    <nav>
+      <NavigationMenu />
+    </nav>
+    <main>
+      <Route path="/" component={Overview} />
+    </main>
   </div>
 );

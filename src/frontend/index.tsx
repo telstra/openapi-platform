@@ -1,4 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Page } from 'view/Page';
-ReactDOM.render(<Page />, document.getElementById('root'));
+import { BrowserRouter } from 'react-router-dom';
+ReactDOM.render(
+  <BrowserRouter>
+    <Page />
+  </BrowserRouter>,
+  document.getElementById('root')
+);

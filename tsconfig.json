@@ -11,13 +11,15 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "jsx": "preserve",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
         "src/*":  ["src/*"],
+        "view/*": ["src/view/*"],
+        "model/*": ["src/model/*"],
         "test/*": ["test/*"],
-        "view/*": ["src/view/*"]
+        "config/*": ["config/*"],
+        "basic/*": ["src/view/basic/*"]
     },
-
   },
   "exclude": ["node_modules"]
 }
