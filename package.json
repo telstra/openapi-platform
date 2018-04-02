@@ -15,24 +15,21 @@
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
     "watch:checker": "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "deploy:backend": "node ./build/backend/index.js",
-    "checker": "run-s checker:*",
+    "checker": "run-s checker:*", 
     "checker:types": "tsc --noEmit",
     "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
     "test": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && yarn test"
+      "pre-commit": "yarn checker:types && lint-staged && yarn test"
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "*.{ts,tsx,js,jsx}": [
+      "eslint",
       "yarn format",
       "git add"
-    ],
-    "*.{ts,tsx}": [
-      "yarn checker:lint",
-      "yarn checker:types"
     ]
   },
   "devDependencies": {
