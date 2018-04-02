@@ -15,7 +15,7 @@
     "watch:backend": "yarn build:dev --hot --watch --config-name Backend",
     "watch:checker": "nodemon --quiet -e tsx --watch ./src --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "deploy:backend": "node ./build/backend/index.js",
-    "checker": "run-s checker:*", 
+    "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
     "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
     "test": "jest"
@@ -40,7 +40,7 @@
     "@babel/preset-react": "7.0.0-beta.42",
     "@babel/preset-typescript": "7.0.0-beta.42",
     "@types/jest": "22.2.2",
-    "babel-core": "^7.0.0-bridge.0",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "8.2.2",
     "babel-jest": "23.0.0-alpha.0",
     "babel-loader": "7.1.4",
@@ -52,8 +52,6 @@
     "husky": "0.15.0-rc.13",
     "jest": "22.4.2",
     "lint-staged": "7.0.0",
-    "mobx": "^4.1.1",
-    "mobx-react": "^5.0.0",
     "nodemon": "1.17.2",
     "npm-run-all": "4.1.2",
     "prettier": "1.11.1",
@@ -71,9 +69,14 @@
     "@types/react-dom": "16.0.4",
     "commander": "2.15.0",
     "express": "4.16.3",
-    "jss": "^9.8.1",
+    "jss": "9.8.1",
+    "material-ui": "1.0.0-beta.40",    
+    "mobx": "4.1.1",
+    "mobx-react": "5.0.0",
+    "node-fetch": "2.1.2",
     "react": "16.2.0",
-    "react-dom": "16.2.0"
+    "react-dom": "16.2.0",
+    "react-jss": "8.4.0"
   },
   "contributors": [
     {
