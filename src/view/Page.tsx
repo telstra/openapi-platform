@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom';
 import { ProfileViewer } from 'view/ProfileViewer';
 import { withStyles } from 'material-ui/styles';
 import { NavigationMenu } from 'view/NavigationMenu';
+import { SettingsViewer } from 'view/SettingsViewer';
 const styles = theme => ({
   page: {
     display: 'flex',
@@ -36,6 +37,7 @@ export const Page: ComponentType<{}> = withStyles(styles, { withTheme: true })(
           <Route exact path="/" component={Overview} />
           <Route path="/specifications/:id" component={SpecificationViewer} />
           <Route path="/profiles/:id" component={ProfileViewer} />
+          <Route path="/settings" component={SettingsViewer} />
         </Switch>
       </main>
     </div>
