@@ -127,6 +127,7 @@ frontend = {
     overlay: true,
     port: 3000,
     progress: true,
+    historyApiFallback: true,
     stats
   },
   ...frontend
