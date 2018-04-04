@@ -18,7 +18,8 @@
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
     "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
-    "test": "jest"
+    "test": "jest",
+    "ci-test": "yarn checker:types && yarn test"
   },
   "husky": {
     "hooks": {

@@ -6,7 +6,7 @@ import { ProfileViewer } from 'view/ProfileViewer';
 import { withStyles } from 'material-ui/styles';
 import { NavigationMenu } from 'view/NavigationMenu';
 import { SettingsViewer } from 'view/SettingsViewer';
-const styles = theme => ({
+const styles = () => ({
   page: {
     display: 'flex',
     minHeight: '100vh'
