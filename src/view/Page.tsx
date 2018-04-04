@@ -6,6 +6,7 @@ import { ProfileViewer } from 'view/ProfileViewer';
 import { withStyles } from 'material-ui/styles';
 import { NavigationMenu } from 'view/NavigationMenu';
 import { SettingsViewer } from 'view/SettingsViewer';
+import { NotFound } from 'basic/NotFound';
 const styles = () => ({
   page: {
     display: 'flex',
@@ -38,6 +39,7 @@ export const Page: ComponentType<{}> = withStyles(styles, { withTheme: true })(
           <Route path="/specifications/:id" component={SpecificationViewer} />
           <Route path="/profiles/:id" component={ProfileViewer} />
           <Route path="/settings" component={SettingsViewer} />
+          <Route component={NotFound} />
         </Switch>
       </main>
     </div>
