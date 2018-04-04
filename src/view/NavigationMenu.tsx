@@ -4,6 +4,7 @@ import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import AccountCircleIcon from 'material-ui-icons/AccountCircle';
 import ChevronRightIcon from 'material-ui-icons/ChevronRight';
 import SettingsIcon from 'material-ui-icons/Settings';
+import DashboardIcon from 'material-ui-icons/Dashboard';
 import { withStyles, StyleRules } from 'material-ui/styles';
 import { state as profileState } from 'state/ProfileState';
 import { Route } from 'react-router-dom';
@@ -81,6 +82,11 @@ export const NavigationMenu: ComponentType<NavigationMenuProps> = withStyles(sty
                 primary={navState.actionName}
               />
               <Divider />
+              <NavigationButton
+                onClick={() => history.push('/')}
+                icon={<DashboardIcon />}
+                primary="Overview"
+              />
               <NavigationButton
                 onClick={() => history.push(`/profiles/${profileState.me.id}`)}
                 icon={<AccountCircleIcon />}
