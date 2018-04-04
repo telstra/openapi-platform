@@ -1,10 +1,12 @@
 {
   "parser": "babel-eslint",
   "plugins": [
-      "typescript"
+      "babel",
+      "typescript",
+      "prettier"
   ],
   "parserOptions": {
-      "ecmaVersion": 6,
+      "ecmaVersion": 8,
       "sourceType": "module",
       "ecmaFeatures": {
           "jsx": true
@@ -18,10 +20,16 @@
   },   
   "extends": [
       "eslint:recommended", 
-      "plugin:react/recommended"
+      "plugin:react/recommended",
+      "prettier",
+      "prettier/react"
   ],
   "rules": {
       "no-console": "warn",
+      "new-cap": "off",
+      "no-invalid-this": "off",
+      "babel/new-cap": "error",
+      "babel/no-invalid-this": "error",
       "react/jsx-key": "warn",
       "react/prop-types": "off",
       "typescript/class-name-casing": "error",

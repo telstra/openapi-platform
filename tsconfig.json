@@ -8,6 +8,7 @@
     "module": "commonjs",
     "strict": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
     "jsx": "preserve",
@@ -18,7 +19,8 @@
         "model/*": ["src/model/*"],
         "test/*": ["test/*"],
         "config/*": ["config/*"],
-        "basic/*": ["src/view/basic/*"]
+        "basic/*": ["src/view/basic/*"],
+        "state/*": ["src/state/*"]
     },
   },
   "exclude": ["node_modules"]
