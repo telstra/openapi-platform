@@ -49,6 +49,12 @@ class NavigationState {
   }
 }
 const navState = new NavigationState();
+const NavigationButton = ({ icon, primary, ...other }) => (
+  <ListItem button {...other}>
+    <ListItemIcon>{icon}</ListItemIcon>
+    <ListItemText primary={primary} />
+  </ListItem>
+);
 export const NavigationMenu: ComponentType<NavigationMenuProps> = withStyles(styles, {
   withTheme: true
 })(({ classes }) => (
@@ -69,28 +75,22 @@ export const NavigationMenu: ComponentType<NavigationMenuProps> = withStyles(sty
             open={navState.open}
           >
             <List component="nav">
-              <ListItem button onClick={() => navState.toggleOpen()}>
-                <ListItemIcon>
-                  <ChevronRightIcon />
-                </ListItemIcon>
-                <ListItemText>{navState.actionName}</ListItemText>
-              </ListItem>
+              <NavigationButton
+                onClick={() => navState.toggleOpen()}
+                icon={<ChevronRightIcon />}
+                primary={navState.actionName}
+              />
               <Divider />
-              <ListItem
-                button
+              <NavigationButton
                 onClick={() => history.push(`/profiles/${profileState.me.id}`)}
-              >
-                <ListItemIcon>
-                  <AccountCircleIcon />
-                </ListItemIcon>
-                <ListItemText>Profile</ListItemText>
-              </ListItem>
-              <ListItem button onClick={() => history.push('/settings')}>
-                <ListItemIcon>
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
-              </ListItem>
+                icon={<AccountCircleIcon />}
+                primary="Account"
+              />
+              <NavigationButton
+                onClick={() => history.push('/settings')}
+                icon={<SettingsIcon />}
+                primary="Settings"
+              />
             </List>
           </Drawer>
         )}
