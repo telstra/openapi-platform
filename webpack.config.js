@@ -38,7 +38,8 @@ const createWebpackSettings = envSettings => ({
         test: /\.tsx$/,
         loader: 'babel-loader',
         options: {
-          presets: createBabelPresets(envSettings)
+          presets: createBabelPresets(envSettings),
+          plugins: ['transform-decorators-legacy', 'transform-class-properties']
         }
       }
     ]
@@ -50,7 +51,10 @@ const createWebpackSettings = envSettings => ({
       src: paths.src,
       test: paths.test,
       config: paths.config,
-      view: paths.view
+      view: paths.view,
+      model: paths.model,
+      basic: paths.basic,
+      state: paths.state
     }
   },
   stats
@@ -86,7 +90,22 @@ const backend = {
     }
   })
 };
-const frontend = {
+let frontend = createWebpackSettings({
+  targets: {
+    browsers: ['last 2 versions']
+  }
+});
+frontend.module.rules.push(
+  {
+    test: /\.css$/,
+    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
+  },
+  {
+    test: /\.(svg|tff|woff2?)$/,
+    loader: 'file-loader'
+  }
+);
+frontend = {
   name: 'Frontend',
   target: 'web',
   entry: ['@babel/polyfill', join(paths.src, 'frontend', 'index.tsx')],
@@ -108,12 +127,9 @@ const frontend = {
     overlay: true,
     port: 3000,
     progress: true,
+    historyApiFallback: true,
     stats
   },
-  ...createWebpackSettings({
-    targets: {
-      browsers: ['last 2 versions']
-    }
-  })
+  ...frontend
 };
 module.exports = [backend, frontend];
