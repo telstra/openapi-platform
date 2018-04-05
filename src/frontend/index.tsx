@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import { Page } from 'view/Page';
 import { BrowserRouter } from 'react-router-dom';
 import jss from 'jss';
-import * as jssGlobal from 'jss-global';
 import 'typeface-roboto';
+import { ThemeProvider } from 'view/ThemeProvider';
+import * as jssGlobal from 'jss-global';
 jss
   .use(jssGlobal.default())
   .createStyleSheet({
@@ -16,8 +17,10 @@ jss
   })
   .attach();
 ReactDOM.render(
-  <BrowserRouter>
-    <Page />
-  </BrowserRouter>,
+  <ThemeProvider>
+    <BrowserRouter>
+      <Page />
+    </BrowserRouter>
+  </ThemeProvider>,
   document.getElementById('root')
 );
