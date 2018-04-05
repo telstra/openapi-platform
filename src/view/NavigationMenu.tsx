@@ -1,11 +1,7 @@
 import React, { ComponentType } from 'react';
 import Drawer from 'material-ui/Drawer';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import AccountCircleIcon from 'material-ui-icons/AccountCircle';
-import ChevronRightIcon from 'material-ui-icons/ChevronRight';
-import SettingsIcon from 'material-ui-icons/Settings';
-import DashboardIcon from 'material-ui-icons/Dashboard';
-import { withStyles, StyleRules } from 'material-ui/styles';
+import * as Icons from 'material-ui-icons';
+import { withStyles, List, ListItem, ListItemIcon, ListItemText } from 'material-ui';
 import { state as profileState } from 'state/ProfileState';
 import { Route } from 'react-router-dom';
 import { observable, action, autorun, computed } from 'mobx';
@@ -78,23 +74,23 @@ export const NavigationMenu: ComponentType<NavigationMenuProps> = withStyles(sty
             <List component="nav">
               <NavigationButton
                 onClick={() => navState.toggleOpen()}
-                icon={<ChevronRightIcon />}
+                icon={<Icons.ChevronRight />}
                 primary={navState.actionName}
               />
               <Divider />
               <NavigationButton
                 onClick={() => history.push('/')}
-                icon={<DashboardIcon />}
+                icon={<Icons.Dashboard />}
                 primary="Overview"
               />
               <NavigationButton
                 onClick={() => history.push(`/profiles/${profileState.me.id}`)}
-                icon={<AccountCircleIcon />}
+                icon={<Icons.AccountCircle />}
                 primary="Account"
               />
               <NavigationButton
                 onClick={() => history.push('/settings')}
-                icon={<SettingsIcon />}
+                icon={<Icons.Settings />}
                 primary="Settings"
               />
             </List>
