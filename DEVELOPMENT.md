@@ -24,6 +24,23 @@ development:
    TypeScript type checker are automatically rerun.
 
 ## Building and Deploying
-
+ * `yarn run build:clean` \
+   Cleans the `build` directory, removing it and its contents.
+ * `yarn run build:webpack` \
+   Helper command to run `webpack` while displaying progress messages. Not
+   intended for direct use.
+ * `yarn run build:prod` \
+   Builds both the backend and frontend in production mode, enabling
+   minification and disabling source maps. Generated build artefacts are placed
+   in the `build` directory.
+ * `yarn run build:dev` \
+   Builds both the backend and frontend in production mode, enabling source
+   maps and disabling minification. Generated build artefacts are placed in the
+   `build` directory.
+ * `yarn run build` \
+   Runs the `clean` and `build:dev` commands in sequence.
+ * `yarn run deploy:backend` \
+   Runs the backend server. This requires that the backend first be built using
+   one of the above commands.
 
 ## Other Commands
