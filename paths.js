@@ -6,6 +6,8 @@ const model = join(src, 'model');
 const basic = join(view, 'basic');
 const styles = join(src, 'styles');
 const state = join(src, 'state');
+const build = join(root, 'build');
+const buildBackend = join(build, 'backend');
 module.exports = {
   src,
   view,
@@ -13,6 +15,7 @@ module.exports = {
   basic,
   styles,
   state,
+  buildBackend,
   test: join(root, 'test'),
   build: join(root, 'build'),
   public: join(root, 'public'),
