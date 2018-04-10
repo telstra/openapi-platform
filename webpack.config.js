@@ -54,7 +54,10 @@ const createWebpackSettings = envSettings => ({
       view: paths.view,
       model: paths.model,
       basic: paths.basic,
-      state: paths.state
+      state: paths.state,
+      client: paths.client,
+      backend: paths.backend,
+      frontend: paths.frontend
     }
   },
   stats

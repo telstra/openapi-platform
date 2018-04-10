@@ -20,7 +20,10 @@
         "test/*": ["test/*"],
         "config/*": ["config/*"],
         "basic/*": ["src/view/basic/*"],
-        "state/*": ["src/state/*"]
+        "state/*": ["src/state/*"],
+        "client/*": ["src/client/*"],
+        "backend/*": ["src/backend/*"],
+        "frontend/*": ["src/frontend/*"]
     },
   },
   "exclude": ["node_modules"]

@@ -76,6 +76,7 @@
     "@types/jss": "9.3.3",
     "@types/react": "16.0.40",
     "@types/react-dom": "16.0.4",
+    "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
     "commander": "2.15.0",
     "express": "4.16.3",
@@ -102,7 +103,8 @@
       "name": "Harry Ferrier"
     },
     {
-      "name": "Timothy Gebert"
+      "name": "Timothy Gebert",
+      "url": "https://github.com/TimGebert"
     },
     {
       "name": "Caleb Joseph",
