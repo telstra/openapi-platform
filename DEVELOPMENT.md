@@ -43,6 +43,15 @@ development:
    Runs the backend server. This requires that the backend first be built using
    one of the above commands.
 
+## Testing
+ * `yarn run test`
+   Runs all Jest tests in the `test` directory, displaying a summary of the
+   test results.
+ * `yarn run ci-test`
+   Runs the `checker:types` and `test` commands in succession, to both run the
+   TypeScript type checker and Jest tests. Intended for use with continuous
+   integration, rather than to be run directly.
+
 ## Other Commands
  * `yarn run checker:types` \
    Runs the TypeScript type checker on the codebase, displaying the output.
