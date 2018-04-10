@@ -3,6 +3,7 @@ import { SpecificationList } from 'basic/SpecificationList';
 import { observer } from 'mobx-react';
 import { state } from 'state/SpecificationState';
 import { Route } from 'react-router-dom';
+import { ContentContainer } from 'basic/ContentContainer';
 /**
  * An overview of the current state of Swagger Platform.
  * Includes, for example, a list of all the specications registered on the platform.
@@ -10,13 +11,15 @@ import { Route } from 'react-router-dom';
 export const Overview: SFC<{}> = observer(() => (
   <Route
     render={({ history }) => (
-      <SpecificationList
-        specifications={state.specificationList}
-        // Go to the specification viewing route when you select a specification
-        onSpecificationSelected={specification =>
-          history.push(`/specifications/${specification.id}`)
-        }
-      />
+      <ContentContainer>
+        <SpecificationList
+          specifications={state.specificationList}
+          // Go to the specification viewing route when you select a specification
+          onSpecificationSelected={specification =>
+            history.push(`/specifications/${specification.id}`)
+          }
+        />
+      </ContentContainer>
     )}
   />
 ));
