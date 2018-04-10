@@ -38,9 +38,24 @@ development:
    Helper command to run `webpack` while displaying progress messages. Not
    intended for direct use.
  * `yarn run build` \
-   Runs the `clean` and `build:dev` commands in sequence.
+   Runs the `clean` and `build:dev` commands in succession.
  * `yarn run deploy:backend` \
    Runs the backend server. This requires that the backend first be built using
    one of the above commands.
 
 ## Other Commands
+ * `yarn run checker:types` \
+   Runs the TypeScript type checker on the codebase, displaying the output.
+   This will display any serious errors in the code, such as invalid syntax or
+   the use of incorrect types.
+ * `yarn run checker:lint` \
+   Runs the linter on the codebase, displaying the output. This will display
+   any linter warnings or errors, as configured for the project.
+ * `yarn run checker` \
+   Runs the linter and TypeScript type checker on the codebase, displaying the
+   output. This is the same as running the `checker:types` and `checker:lint`
+   commands in succession. Use the `watch:checker` command to automatically
+   rerun this command when changes are made.
+ * `yarn run format` \
+   Reformats all JavaScript and TypeScript code in the project, using Prettier.
+   **Note that this action will overwrite files without creating a backup.**
