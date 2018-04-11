@@ -30,6 +30,10 @@ export function getSpecifications(): Specification[] {
 }
 
 export function addSpecification(titleString?: string): Specification {
+  /* Adds a specification to the list 
+   * @param {string} titleString - optional argument to provide a specification title
+   * @return {Specification} - specification object that was created
+   */
   console.log('adding specification with id: ' + count);
   let spec: Specification;
   if (titleString) {
