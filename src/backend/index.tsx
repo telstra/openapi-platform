@@ -2,7 +2,11 @@ import express from 'express';
 import { generateSdk } from 'client/sdkGeneration';
 import bodyParser from 'body-parser';
 import { Specification } from 'model/Specification';
-import { getSpecificationById, getSpecifications } from 'backend/specifications';
+import {
+  getSpecificationById,
+  getSpecifications,
+  addSpecification
+} from 'backend/specifications';
 
 async function run(port: number) {
   const app: express.Express = express();
@@ -29,6 +33,21 @@ async function run(port: number) {
       res.statusCode = 404;
       res.send(null);
     }
+  });
+
+  /* API Method to add a specification
+   * @params {string} req.body.title - optional parameter to specify title of Specification
+   * @return {Promise<Specification>} - The Specification that was created
+   */
+  app.post('/addspecification', async (req, res) => {
+    const title: string = req.body.title;
+    let spec: Specification;
+    if (title) {
+      spec = addSpecification(title);
+    } else {
+      spec = addSpecification();
+    }
+    res.send(spec);
   });
 
   app.listen(port);

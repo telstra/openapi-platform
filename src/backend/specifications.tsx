@@ -1,6 +1,7 @@
 import { Specification } from 'model/Specification';
 
 // TODO: Replace this list
+let count = 0;
 let specifications: Specification[] = [
   {
     id: 1234,
@@ -26,4 +27,17 @@ export function getSpecifications(): Specification[] {
  * @return {Specification[]} - returns an array containing all specifications
  */
   return specifications;
+}
+
+export function addSpecification(titleString?: string): Specification {
+  console.log('adding specification with id: ' + count);
+  let spec: Specification;
+  if (titleString) {
+    spec = { id: count, title: titleString };
+  } else {
+    spec = { id: count };
+  }
+  specifications.push(spec);
+  count += 1;
+  return spec;
 }
