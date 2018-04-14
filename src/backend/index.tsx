@@ -40,16 +40,20 @@ async function run(port: number) {
   });
 
   /** API Method to add a specification
-   * @param {string} req.body.title - optional parameter to specify title of Specification
+   * @param {string} req.body.title - the title of specification
+   * @param {string} req.body.path - the path to the specification file
+   * @param {string} req.body.description - optional description of the specification
    * @return {Promise<Specification>} - The Specification that was created
    */
   app.post('/addspecification', async (req, res) => {
     const title: string = req.body.title;
+    const path: string = req.body.path;
+    const description: string = req.body.string;
     let spec: Specification;
-    if (title) {
-      spec = addSpecification(title);
+    if (description) {
+      spec = addSpecification(title, path);
     } else {
-      spec = addSpecification();
+      spec = addSpecification(title, path, description);
     }
     res.json(spec);
   });

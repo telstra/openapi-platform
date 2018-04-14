@@ -5,7 +5,9 @@ let count = 0;
 const specifications: Specification[] = [
   {
     id: 1234,
-    title: 'TestSpecification'
+    title: 'TestSpecification',
+    path: 'testspec.yaml',
+    sdks: []
   }
 ];
 
@@ -30,18 +32,31 @@ export function getSpecifications(): Specification[] {
 }
 
 /** Adds a specification to the list
- * @param {string} titleString - optional argument to provide a specification title
+ * @param {string} path - path to the swagger specification file
+ * @param {string} titleString - a specification title
+ * @param {string} description - optional specification description
  * @return {Specification} - specification object that was created
  */
-export function addSpecification(titleString?: string): Specification {
-  console.log('adding specification with id: ' + count);
+export function addSpecification(
+  path: string,
+  titleString: string,
+  description?: string
+): Specification {
   let spec: Specification;
-  if (titleString) {
-    spec = { id: count, title: titleString };
+
+  if (description) {
+    spec = {
+      id: count,
+      title: titleString,
+      description: description,
+      path: path,
+      sdks: []
+    };
   } else {
-    spec = { id: count };
+    spec = { id: count, title: titleString, path: path, sdks: [] };
   }
+
   specifications.push(spec);
-  count += 1;
+  count++;
   return spec;
 }
