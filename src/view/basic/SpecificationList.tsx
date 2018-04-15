@@ -16,10 +16,6 @@ export interface SpecificationListProps extends React.DOMAttributes<HTMLDivEleme
  */
 
 export class SpecificationList extends Component<SpecificationListProps> {
-  state = {
-    expanded: null
-  };
-
   render() {
     const {
       specifications,
@@ -27,7 +23,6 @@ export class SpecificationList extends Component<SpecificationListProps> {
       onSpecificationExpanded,
       onSpecificationSelected
     } = this.props;
-    const { expanded } = this.state;
 
     return (
       <div>
