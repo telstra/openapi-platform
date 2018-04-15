@@ -6,6 +6,8 @@ import Typography from 'material-ui/Typography';
 
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: Specification[];
+  expandedSpecificationId: number | null;
+  onSpecificationExpanded: (id: number | null) => void;
   onSpecificationSelected: (specification: Specification) => void;
 }
 
@@ -18,14 +20,13 @@ export class SpecificationList extends Component<SpecificationListProps> {
     expanded: null
   };
 
-  handleChange = id => (event, expanded) => {
-    this.setState({
-      expanded: expanded ? id : null
-    });
-  };
-
   render() {
-    const { specifications, onSpecificationSelected } = this.props;
+    const {
+      specifications,
+      expandedSpecificationId,
+      onSpecificationExpanded,
+      onSpecificationSelected
+    } = this.props;
     const { expanded } = this.state;
 
     return (
@@ -40,8 +41,10 @@ export class SpecificationList extends Component<SpecificationListProps> {
               <SpecificationItem
                 key={specification.id}
                 specification={specification}
-                expanded={expanded === specification.id}
-                onPanelChange={this.handleChange(specification.id)}
+                expanded={expandedSpecificationId === specification.id}
+                onPanelChange={(event, expanded) =>
+                  onSpecificationExpanded(expanded ? specification.id : null)
+                }
                 onClick={() => onSpecificationSelected(specification)}
               />
             ))}

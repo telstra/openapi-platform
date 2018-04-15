@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
+  expandedSpecificationId: number | null;
 }
 
 class BasicSpecificationState {
@@ -14,6 +15,7 @@ class BasicSpecificationState {
   get specificationList(): Specification[] {
     return Array.from(this.specifications.values()).map(value => value);
   }
+  @observable expandedSpecificationId: number | null = null;
 }
 
 export const state: SpecificationState = new BasicSpecificationState();

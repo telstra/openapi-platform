@@ -11,6 +11,9 @@ export const Overview: SFC<{}> = observer(({ history }) => (
   <ContentContainer>
     <SpecificationList
       specifications={state.specificationList}
+      expandedSpecificationId={state.expandedSpecificationId}
+      // Expands/collapses a specification
+      onSpecificationExpanded={id => (state.expandedSpecificationId = id)}
       // Go to the specification viewing route when you select a specification
       onSpecificationSelected={specification =>
         history.push(`/specifications/${specification.id}`)
