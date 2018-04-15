@@ -1,6 +1,6 @@
 import React, { SFC } from 'react';
 import Drawer from 'material-ui/Drawer';
-import * as Icons from 'material-ui-icons';
+import * as Icons from '@material-ui/icons';
 import { List, ListItem, ListItemIcon, ListItemText } from 'material-ui';
 import { state as profileState } from 'state/ProfileState';
 import { Route } from 'react-router-dom';
