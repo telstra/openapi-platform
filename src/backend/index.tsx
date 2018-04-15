@@ -58,6 +58,20 @@ async function run(port: number) {
     res.json(spec);
   });
 
+  /** API Method to return the list of specifications
+   * @return {Promise<Specification[]>} - The array of stored Specifications
+   */
+  app.post('/getspecifications', async (req, res) => {
+    // CORS
+    const untypedOrigin: string | string[] | undefined = req.headers.origin;
+    if (untypedOrigin) {
+      const origin: string =
+        typeof untypedOrigin === 'string' ? untypedOrigin : untypedOrigin[0];
+      res.set('Access-Control-Allow-Origin', origin);
+    }
+    res.json(getSpecifications());
+  });
+
   app.listen(port);
 }
 const envPort: string | undefined = process.env.PORT;

@@ -1,13 +1,39 @@
 import { Specification } from 'model/Specification';
+import { BuildStatus } from 'model/SDK';
 
 // TODO: Replace this list
 let count = 0;
 const specifications: Specification[] = [
   {
-    id: 1234,
-    title: 'TestSpecification',
-    path: 'testspec.yaml',
-    sdks: []
+    id: 0,
+    title: 'Birds',
+    description: 'A Bird API, for Birds',
+    path: 'git.example.com/swagger-specs/birds.yaml',
+    sdks: [
+      {
+        id: 10,
+        name: 'Java',
+        latestVersion: 'v1.0.34',
+        buildStatus: BuildStatus.SUCCESS
+      },
+      {
+        id: 12,
+        name: 'Node.js',
+        latestVersion: 'v1.0.35',
+        buildStatus: BuildStatus.RUNNING
+      },
+      { id: 11, name: 'Haskell', latestVersion: 'v0', buildStatus: BuildStatus.NOTRUN }
+    ]
+  },
+  {
+    id: 1,
+    title: 'Test',
+    description:
+      'A test API for testing with a very long description that should truncate when displayed in the list',
+    path: 'git.example.com/swagger-specs/test.yaml',
+    sdks: [
+      { id: 20, name: 'FORTRAN', latestVersion: 'alpha', buildStatus: BuildStatus.FAIL }
+    ]
   }
 ];
 
