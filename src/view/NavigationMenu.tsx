@@ -39,7 +39,7 @@ class NavigationState {
   @observable public open: boolean = false;
   @computed
   public get actionName(): string {
-    return this.open ? 'Closed' : 'Open';
+    return this.open ? 'Close' : 'Open';
   }
   @action
   public toggleOpen(): void {
