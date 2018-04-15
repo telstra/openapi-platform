@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { config } from 'config';
 import { generateSdk } from 'client/sdkGeneration';
 import { Specification } from 'model/Specification';
 import {
@@ -13,8 +14,8 @@ async function run(port: number) {
   const app: express.Express = express();
   app.use(bodyParser.json());
 
-  // Enables CORS requests in development mode
-  if (process.env.NODE_ENV === 'development') {
+  // Enables CORS requests if configured to do so
+  if (config.backend.useCors) {
     app.use(cors());
   }
 
@@ -75,5 +76,5 @@ async function run(port: number) {
   app.listen(port);
 }
 const envPort: string | undefined = process.env.PORT;
-const port: number = envPort ? Number.parseInt(envPort) : 8080;
+const port: number = envPort ? Number.parseInt(envPort) : config.backend.port;
 run(port);

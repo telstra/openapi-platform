@@ -1,7 +1,8 @@
-import { Specification } from 'model/Specification';
-import { BuildStatus } from 'model/SDK';
 import { observable, computed } from 'mobx';
 import fetch from 'node-fetch';
+import { config } from 'config';
+import { Specification } from 'model/Specification';
+import { BuildStatus } from 'model/SDK';
 
 export interface SpecificationState {
   specifications: Map<number, Specification>;
@@ -20,6 +21,6 @@ class BasicSpecificationState {
 
 export const state: SpecificationState = new BasicSpecificationState();
 
-fetch('http://localhost:8080/getspecifications', { method: 'POST' })
+fetch(config.frontend.baseApiUrl + 'getspecifications', { method: 'POST' })
   .then(res => res.json())
   .then(json => json.map((spec, idx) => state.specifications.set(idx, spec)));
