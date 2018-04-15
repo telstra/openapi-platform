@@ -1,6 +1,7 @@
 import express from 'express';
-import { generateSdk } from 'client/sdkGeneration';
 import bodyParser from 'body-parser';
+import cors from 'cors';
+import { generateSdk } from 'client/sdkGeneration';
 import { Specification } from 'model/Specification';
 import {
   getSpecificationById,
@@ -11,6 +12,12 @@ import {
 async function run(port: number) {
   const app: express.Express = express();
   app.use(bodyParser.json());
+
+  // Enables CORS requests in development mode
+  if (process.env.NODE_ENV === 'development') {
+    app.use(cors());
+  }
+
   app.get('/', (req, res) => {
     res.json({
       status: 'Success',
@@ -62,13 +69,6 @@ async function run(port: number) {
    * @return {Promise<Specification[]>} - The array of stored Specifications
    */
   app.post('/getspecifications', async (req, res) => {
-    // CORS
-    const untypedOrigin: string | string[] | undefined = req.headers.origin;
-    if (untypedOrigin) {
-      const origin: string =
-        typeof untypedOrigin === 'string' ? untypedOrigin : untypedOrigin[0];
-      res.set('Access-Control-Allow-Origin', origin);
-    }
     res.json(getSpecifications());
   });
 
