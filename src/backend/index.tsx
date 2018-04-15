@@ -51,9 +51,9 @@ async function run(port: number) {
     const description: string = req.body.string;
     let spec: Specification;
     if (description) {
-      spec = addSpecification(title, path);
-    } else {
       spec = addSpecification(title, path, description);
+    } else {
+      spec = addSpecification(title, path);
     }
     res.json(spec);
   });
