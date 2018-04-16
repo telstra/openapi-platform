@@ -1,6 +1,8 @@
 import express from 'express';
-import { generateSdk } from 'client/sdkGeneration';
 import bodyParser from 'body-parser';
+import cors from 'cors';
+import { config } from 'config';
+import { generateSdk } from 'client/sdkGeneration';
 import { Specification } from 'model/Specification';
 import {
   getSpecificationById,
@@ -11,6 +13,12 @@ import {
 async function run(port: number) {
   const app: express.Express = express();
   app.use(bodyParser.json());
+
+  // Enables CORS requests if configured to do so
+  if (config.backend.useCors) {
+    app.use(cors());
+  }
+
   app.get('/', (req, res) => {
     res.json({
       status: 'Success',
@@ -40,22 +48,33 @@ async function run(port: number) {
   });
 
   /** API Method to add a specification
-   * @param {string} req.body.title - optional parameter to specify title of Specification
+   * @param {string} req.body.title - the title of specification
+   * @param {string} req.body.path - the path to the specification file
+   * @param {string} req.body.description - optional description of the specification
    * @return {Promise<Specification>} - The Specification that was created
    */
   app.post('/addspecification', async (req, res) => {
     const title: string = req.body.title;
+    const path: string = req.body.path;
+    const description: string = req.body.string;
     let spec: Specification;
-    if (title) {
-      spec = addSpecification(title);
+    if (description) {
+      spec = addSpecification(title, path, description);
     } else {
-      spec = addSpecification();
+      spec = addSpecification(title, path);
     }
     res.json(spec);
+  });
+
+  /** API Method to return the list of specifications
+   * @return {Promise<Specification[]>} - The array of stored Specifications
+   */
+  app.post('/getspecifications', async (req, res) => {
+    res.json(getSpecifications());
   });
 
   app.listen(port);
 }
 const envPort: string | undefined = process.env.PORT;
-const port: number = envPort ? Number.parseInt(envPort) : 8080;
+const port: number = envPort ? Number.parseInt(envPort) : config.backend.port;
 run(port);

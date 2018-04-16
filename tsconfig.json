@@ -24,7 +24,7 @@
         "client/*": ["src/client/*"],
         "backend/*": ["src/backend/*"],
         "frontend/*": ["src/frontend/*"]
-    },
+    }
   },
   "exclude": ["node_modules"]
 }
