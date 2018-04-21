@@ -1,5 +1,5 @@
 import React, { SFC } from 'react';
-import { BuildStatus } from 'model/SDK';
+import { BuildStatus } from 'model/Sdk';
 import red from 'material-ui/colors/red';
 import green from 'material-ui/colors/green';
 import amber from 'material-ui/colors/amber';
