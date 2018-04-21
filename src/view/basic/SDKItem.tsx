@@ -1,20 +1,31 @@
 import React, { SFC } from 'react';
-import { SDK, BuildStatus } from 'model/SDK';
+import { Sdk, BuildStatus } from 'model/Sdk';
 import Typography from 'material-ui/Typography';
 import { createStyled } from 'view/createStyled';
-import { BuildStatusChip } from './BuildStatusChip';
+import { BuildStatusChip } from 'basic/BuildStatusChip';
 import Grid from 'material-ui/Grid';
 import { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
 
 const Styled: any = createStyled(theme => ({
-  secondary: {
-    color: theme.palette.text.secondary
+  sdkItemContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    '& > *:not(:first-child)': {
+      marginLeft: theme.spacing.unit
+    }
+  },
+  // TODO: Regularly used classes like this should be defined somewhere else
+  center: {
+    marginLeft: 'auto',
+    marginRight: 'auto'
   }
 }));
 
-export interface SDKItemProps extends React.DOMAttributes<HTMLDivElement> {
-  sdk: SDK;
+export interface SdkItemProps extends React.DOMAttributes<HTMLDivElement> {
+  sdk: Sdk;
 }
 
 /**
@@ -22,29 +33,23 @@ export interface SDKItemProps extends React.DOMAttributes<HTMLDivElement> {
  * For use in lists, grids, etc.
  */
 
-export const SDKItem: SFC<SDKItemProps> = ({ sdk }) => (
+export const SdkItem: SFC<SdkItemProps> = ({ sdk }) => (
   <Styled>
     {({ classes }) => (
-      <ListItem>
-        <Grid container alignItems="center">
-          <Grid item xs={4}>
-            <ListItemText primary={sdk.name} />
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="body1" className={classes.secondary}>
-              {sdk.latestVersion}
-            </Typography>
-          </Grid>
-          <Grid container xs={2} justify="center">
-            <BuildStatusChip buildStatus={sdk.buildStatus} />
-          </Grid>
-          <Grid container xs={2} justify="center">
-            <Button disabled={sdk.buildStatus === BuildStatus.RUNNING}>
-              {sdk.buildStatus === BuildStatus.RUNNING ? 'Running...' : 'Run'}
-            </Button>
-          </Grid>
-        </Grid>
-      </ListItem>
+      <div className={classes.sdkItemContainer}>
+        <Typography>{sdk.name}</Typography>
+        <Typography variant="body1" color="textSecondary">
+          {sdk.latestVersion}
+        </Typography>
+        <div>
+          <BuildStatusChip buildStatus={sdk.buildStatus} />
+        </div>
+        <div>
+          <Button disabled={sdk.buildStatus === BuildStatus.RUNNING}>
+            {sdk.buildStatus === BuildStatus.RUNNING ? 'Running...' : 'Run'}
+          </Button>
+        </div>
+      </div>
     )}
   </Styled>
 );

@@ -21,7 +21,8 @@ const Styled = createStyled(theme => ({
   content: {
     flexBasis: '600px',
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    minWidth: 0
   }
 }));
 

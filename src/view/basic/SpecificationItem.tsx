@@ -13,28 +13,53 @@ import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Edit from '@material-ui/icons/Edit';
-import { SDKItem } from './SDKItem';
+import { SdkItem } from 'basic/SdkItem';
 
 const Styled: any = createStyled(theme => ({
-  secondary: {
-    color: theme.palette.text.secondary
-  },
-  block: {
-    display: 'block'
-  },
   bordered: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: '2px'
   },
-  extraGutter: {
-    marginBottom: theme.spacing.unit * 2
-  },
-  rightButton: {
-    float: 'right',
-    margin: theme.spacing.unit
-  },
   indent: {
     marginLeft: theme.spacing.unit
+  },
+  specSummary: {
+    display: 'flex'
+  },
+  summarySection: {
+    minWidth: 0
+  },
+  summaryTitle: {
+    minWidth: 0,
+    flexBasis: '220px',
+    flexShrink: 1,
+    flexGrow: 0
+  },
+  summaryDescription: {
+    minWidth: 0,
+    flexBasis: '100px',
+    flexShrink: 1,
+    flexGrow: 1
+  },
+  detailSection: {
+    flexGrow: 1
+  },
+  sdkHeader: {
+    display: 'flex',
+    flexGrow: 1,
+    flexShrink: 0,
+    minWidth: 0,
+    alignItems: 'center'
+  },
+  sdkTitleSection: {
+    flexGrow: 1,
+    flexShrink: 0
+  },
+  sdkHeaderActions: {
+    flexGrow: 0,
+    flexShrink: 1,
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit
   }
 }));
 
@@ -57,55 +82,59 @@ export const SpecificationItem: SFC<SpecificationItemProps> = ({
   <Styled>
     {({ classes }) => (
       <ExpansionPanel expanded={expanded} onChange={onPanelChange}>
-        <ExpansionPanelSummary expandIcon={expanded ? <Close /> : <Info />}>
-          <Grid container>
-            <Grid item xs={4}>
-              <Typography variant={expanded ? 'title' : 'body1'}>
-                {specification.title}
-              </Typography>
-            </Grid>
-            <Grid item xs={4} zeroMinWidth>
-              <Typography noWrap variant="body1" className={classes.secondary}>
-                {!expanded && specification.description ? specification.description : ''}
-              </Typography>
-            </Grid>
-          </Grid>
+        <ExpansionPanelSummary
+          classes={{ content: classes.summarySection }}
+          expandIcon={expanded ? <Close /> : <Info />}
+        >
+          <div className={classes.summaryTitle}>
+            <Typography noWrap variant={expanded ? 'title' : 'body1'}>
+              {specification.title}
+            </Typography>
+          </div>
+          <div className={classes.summaryDescription}>
+            <Typography noWrap color="textSecondary" variant="body1">
+              {!expanded && specification.description ? specification.description : ''}
+            </Typography>
+          </div>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.block}>
-          <Typography
-            variant="body1"
-            className={`${classes.extraGutter} ${classes.indent}`}
-          >
-            {specification.description || ''}
-          </Typography>
-          <Typography variant="subheading" gutterBottom className={classes.indent}>
-            Specification File
-          </Typography>
-          <List className={`${classes.bordered} ${classes.extraGutter}`} dense>
-            <ListItem>
-              <ListItemText primary={specification.path} />
-              <ListItemSecondaryAction>
-                <IconButton aria-label="Edit">
-                  <Edit />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </List>
-          <Grid container alignItems="center">
-            <Grid xs={10}>
-              <Typography variant="subheading" className={classes.indent}>
-                SDKs
-              </Typography>
-            </Grid>
-            <Grid xs={2}>
-              <Button variant="flat" color="primary" className={classes.rightButton}>
-                Run all
-              </Button>
-            </Grid>
-          </Grid>
-          <List className={classes.bordered}>
-            {specification.sdks.map(sdk => <SDKItem sdk={sdk} key={sdk.id} />)}
-          </List>
+        <ExpansionPanelDetails>
+          <div className={classes.detailSection}>
+            <Typography className={classes.indent}>
+              {specification.description}
+            </Typography>
+            <Typography variant="subheading" gutterBottom className={classes.indent}>
+              Specification File
+            </Typography>
+            <List className={classes.bordered} dense>
+              <ListItem>
+                <ListItemText primary={specification.path} />
+                <ListItemSecondaryAction>
+                  <IconButton aria-label="Edit">
+                    <Edit />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+            <div className={classes.sdkHeader}>
+              <div className={classes.sdkTitleSection}>
+                <Typography variant="subheading" className={classes.indent}>
+                  SDKs
+                </Typography>
+              </div>
+              <div className={classes.sdkHeaderActions}>
+                <Button variant="flat" color="primary">
+                  Run all
+                </Button>
+              </div>
+            </div>
+            <List className={classes.bordered}>
+              {specification.sdks.map(sdk => (
+                <ListItem>
+                  <SdkItem sdk={sdk} key={sdk.id} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     )}

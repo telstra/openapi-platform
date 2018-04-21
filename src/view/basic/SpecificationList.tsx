@@ -3,7 +3,7 @@ import Grid from 'material-ui/Grid';
 import { Specification } from 'model/Specification';
 import { SpecificationItem } from 'basic/SpecificationItem';
 import Typography from 'material-ui/Typography';
-
+import { createStyled } from 'view/createStyled';
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: Specification[];
   expandedSpecificationId: number | null;
@@ -11,42 +11,46 @@ export interface SpecificationListProps extends React.DOMAttributes<HTMLDivEleme
   onSpecificationSelected: (specification: Specification) => void;
 }
 
+const Styled = createStyled(theme => ({
+  specificationSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '800px',
+    width: '100%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  }
+}));
+
 /**
  * Lists a series of specifications
  */
-
-export class SpecificationList extends Component<SpecificationListProps> {
-  render() {
-    const {
-      specifications,
-      expandedSpecificationId,
-      onSpecificationExpanded,
-      onSpecificationSelected
-    } = this.props;
-
-    return (
+export const SpecificationList = ({
+  specifications,
+  expandedSpecificationId,
+  onSpecificationExpanded,
+  onSpecificationSelected
+}) => (
+  <Styled>
+    {({ classes }) => (
       <div>
-        <Grid container justify="center">
-          <Grid item xs={3} />
-          <Grid item xs={6}>
-            <Typography variant="display1" gutterBottom>
-              Overview
-            </Typography>
-            {specifications.map(specification => (
-              <SpecificationItem
-                key={specification.id}
-                specification={specification}
-                expanded={expandedSpecificationId === specification.id}
-                onPanelChange={(event, expanded) =>
-                  onSpecificationExpanded(expanded ? specification.id : null)
-                }
-                onClick={() => onSpecificationSelected(specification)}
-              />
-            ))}
-          </Grid>
-          <Grid item xs={3} />
-        </Grid>
+        <div className={classes.specificationSection}>
+          <Typography variant="display1" gutterBottom>
+            Overview
+          </Typography>
+          {specifications.map(specification => (
+            <SpecificationItem
+              key={specification.id}
+              specification={specification}
+              expanded={expandedSpecificationId === specification.id}
+              onPanelChange={(event, expanded) =>
+                onSpecificationExpanded(expanded ? specification.id : null)
+              }
+              onClick={() => onSpecificationSelected(specification)}
+            />
+          ))}
+        </div>
       </div>
-    );
-  }
-}
+    )}
+  </Styled>
+);
