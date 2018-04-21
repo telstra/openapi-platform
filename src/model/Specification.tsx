@@ -1,4 +1,4 @@
-import { Sdk } from './SDK';
+import { Sdk } from 'model/Sdk';
 
 export interface Specification {
   readonly id: number; // Just an example field. Not necessarily part of Specification
