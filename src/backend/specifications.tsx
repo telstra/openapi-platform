@@ -1,5 +1,6 @@
 import { Specification } from 'model/Specification';
 import { BuildStatus } from 'model/SDK';
+import { isUndefined } from 'util';
 
 // TODO: Replace this list
 let count = 0;
@@ -34,6 +35,16 @@ const specifications: Specification[] = [
     sdks: [
       { id: 20, name: 'FORTRAN', latestVersion: 'alpha', buildStatus: BuildStatus.FAIL }
     ]
+  },
+  {
+    id: 2,
+    title: 'Swagger API Example Uber',
+    description: 'A test API for Uber',
+    path: 'https://esi.tech.ccp.is/_latest/swagger.json',
+    sdks: [
+      { id: 1, name: 'Python', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS },
+      { id: 2, name: 'java', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS }
+    ]
   }
 ];
 
@@ -42,6 +53,11 @@ const specifications: Specification[] = [
  * @return {Specification | undefined} - returns the Specification with the matching id if it exists
  */
 export function getSpecificationById(id: number): Specification | undefined {
+  // TODO: Remove this later.
+  if (isUndefined(id)) {
+    return specifications[specifications.length - 1];
+  }
+
   for (const spec of specifications) {
     if (spec.id === id) {
       return spec;
