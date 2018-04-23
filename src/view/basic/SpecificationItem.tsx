@@ -56,8 +56,6 @@ const Styled: any = createStyled(theme => ({
     flexShrink: 0
   },
   sdkHeaderActions: {
-    flexGrow: 0,
-    flexShrink: 1,
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit
   }
@@ -129,8 +127,8 @@ export const SpecificationItem: SFC<SpecificationItemProps> = ({
             </div>
             <List className={classes.bordered}>
               {specification.sdks.map(sdk => (
-                <ListItem>
-                  <SdkItem sdk={sdk} key={sdk.id} />
+                <ListItem key={sdk.id}>
+                  <SdkItem sdk={sdk} />
                 </ListItem>
               ))}
             </List>
