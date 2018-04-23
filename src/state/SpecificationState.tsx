@@ -2,7 +2,7 @@ import { observable, computed } from 'mobx';
 import fetch from 'node-fetch';
 import { config } from 'config';
 import { Specification } from 'model/Specification';
-import { BuildStatus } from 'model/SDK';
+import { BuildStatus } from 'model/Sdk';
 
 export interface SpecificationState {
   specifications: Map<number, Specification>;

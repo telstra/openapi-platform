@@ -1,4 +1,4 @@
-export interface SDK {
+export interface Sdk {
   id: number;
   name: string;
   latestVersion: string;
