@@ -1,6 +1,5 @@
 import { Specification } from 'model/Specification';
 import { BuildStatus } from 'model/SDK';
-import { isUndefined } from 'util';
 
 // TODO: Replace this list
 let count = 0;
@@ -54,7 +53,7 @@ const specifications: Specification[] = [
  */
 export function getSpecificationById(id: number): Specification | undefined {
   // TODO: Remove this later.
-  if (isUndefined(id)) {
+  if (id === undefined) {
     return specifications[specifications.length - 1];
   }
 
