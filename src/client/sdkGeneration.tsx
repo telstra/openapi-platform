@@ -15,17 +15,15 @@ export async function generateSdk(spec: Specification): Promise<any> {
   console.log('generateSdk');
   let body = { swaggerUrl: spec.path };
   console.log(body);
-  return fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
+  let response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
-  })
-    .then(res => res.json())
-    .then(json => {
-      console.log(json);
-      if (json.type == 'error') {
-        return BAD_SPECIFICATION;
-      }
-      return json.link;
-    });
+  });
+  let fulfilled = await response.json();
+  console.log(fulfilled);
+  if (fulfilled.type == 'error') {
+    return BAD_SPECIFICATION;
+  }
+  return fulfilled.link;
 }
