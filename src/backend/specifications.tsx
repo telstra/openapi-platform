@@ -52,11 +52,6 @@ const specifications: Specification[] = [
  * @return {Specification | undefined} - returns the Specification with the matching id if it exists
  */
 export function getSpecificationById(id: number): Specification | undefined {
-  // TODO: Remove this later.
-  if (id === undefined) {
-    return specifications[specifications.length - 1];
-  }
-
   for (const spec of specifications) {
     if (spec.id === id) {
       return spec;
