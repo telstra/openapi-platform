@@ -13,14 +13,14 @@ export async function generateSdk(spec: Specification): Promise<any> {
   // TODO: Get it working for .yaml files like below.
   // 'https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v2.0/yaml/uber.yaml' }
   console.log('generateSdk');
-  let body = { swaggerUrl: spec.path };
+  const body = { swaggerUrl: spec.path };
   console.log(body);
-  let response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
+  const response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
   });
-  let fulfilled = await response.json();
+  const fulfilled = await response.json();
   console.log(fulfilled);
   if (fulfilled.type == 'error') {
     return BAD_SPECIFICATION;
