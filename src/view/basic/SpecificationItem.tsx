@@ -31,9 +31,7 @@ const Styled: any = createStyled(theme => ({
   },
   summaryTitle: {
     minWidth: 0,
-    flexBasis: '220px',
-    flexShrink: 1,
-    flexGrow: 0
+    flexBasis: '220px'
   },
   summaryDescription: {
     minWidth: 0,
