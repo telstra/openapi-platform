@@ -34,6 +34,16 @@ const specifications: Specification[] = [
     sdks: [
       { id: 20, name: 'FORTRAN', latestVersion: 'alpha', buildStatus: BuildStatus.FAIL }
     ]
+  },
+  {
+    id: 2,
+    title: 'Swagger API Example Uber',
+    description: 'A test API for Uber',
+    path: 'https://esi.tech.ccp.is/_latest/swagger.json',
+    sdks: [
+      { id: 1, name: 'Python', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS },
+      { id: 2, name: 'java', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS }
+    ]
   }
 ];
 
