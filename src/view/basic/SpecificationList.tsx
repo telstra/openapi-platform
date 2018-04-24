@@ -4,7 +4,6 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
-import { AddSpecificationModal } from 'basic/AddSpecificationModal';
 import { SpecificationItem } from 'basic/SpecificationItem';
 
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
@@ -13,9 +12,6 @@ export interface SpecificationListProps extends React.DOMAttributes<HTMLDivEleme
   onSpecificationExpanded: (id: number | null) => void;
   onSpecificationSelected: (specification: Specification) => void;
   onAddSpecificationModalOpened: () => void;
-  onAddSpecificationModalClosed: () => void;
-  addSpecificationModalOpen: boolean;
-  onSpecificationAdded: (specification: Specification) => Promise<boolean>;
 }
 
 const Styled = createStyled(theme => ({
@@ -41,10 +37,7 @@ export const SpecificationList = ({
   expandedSpecificationId,
   onSpecificationExpanded,
   onSpecificationSelected,
-  onAddSpecificationModalOpened,
-  onAddSpecificationModalClosed,
-  addSpecificationModalOpen,
-  onSpecificationAdded
+  onAddSpecificationModalOpened
 }) => (
   <Styled>
     {({ classes }) => (
@@ -73,11 +66,6 @@ export const SpecificationList = ({
             Add Specification
           </Button>
         </div>
-        <AddSpecificationModal
-          open={addSpecificationModalOpen}
-          onClose={onAddSpecificationModalClosed}
-          onSpecificationAdded={onSpecificationAdded}
-        />
       </div>
     )}
   </Styled>

@@ -1,13 +1,15 @@
 import React, { SFC } from 'react';
+import { Route } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { state } from 'state/SpecificationState';
+import { AddSpecificationModal } from 'view/AddSpecificationModal';
 import { ContentContainer } from 'basic/ContentContainer';
 import { SpecificationList } from 'basic/SpecificationList';
 /**
  * An overview of the current state of Swagger Platform.
  * Includes, for example, a list of all the specications registered on the platform.
  */
-export const Overview: SFC<{}> = observer(({ history, match }) => (
+export const Overview: SFC<{}> = observer(({ history }) => (
   <ContentContainer>
     <SpecificationList
       specifications={state.specificationList}
@@ -20,12 +22,7 @@ export const Overview: SFC<{}> = observer(({ history, match }) => (
       }
       // Opens the 'Add Specification' modal
       onAddSpecificationModalOpened={() => history.push('/add')}
-      // Closes the 'Add Specification' modal
-      onAddSpecificationModalClosed={() => history.push('/')}
-      // Whether or not the 'Add Specification' modal is open
-      addSpecificationModalOpen={match.params.modal === 'add'}
-      // Adds a specification
-      onSpecificationAdded={specification => state.addSpecification(specification)}
     />
+    <Route path="/add" component={AddSpecificationModal} />
   </ContentContainer>
 ));

@@ -1,16 +1,11 @@
 import React, { SFC, SyntheticEvent } from 'react';
+import { Observer } from 'mobx-react';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import { createStyled } from 'view/createStyled';
 import { Specification } from 'model/Specification';
-
-export interface AddSpecificationModalProps extends React.DOMAttributes<HTMLDivElement> {
-  open: boolean;
-  onClose: (event: SyntheticEvent<{}>) => void;
-  onSpecificationAdded: (specification: Specification) => Promise<boolean>;
-}
 
 const Styled: any = createStyled(theme => ({
   modalPaper: {
@@ -34,25 +29,25 @@ const Styled: any = createStyled(theme => ({
   }
 }));
 
-export const AddSpecificationModal: SFC<AddSpecificationModalProps> = ({
-  open,
-  onClose,
-  onSpecificationAdded
-}) => (
+export const AddSpecificationModal: SFC<any> = ({ history }) => (
   <Styled>
     {({ classes }) => (
-      <Modal open={open} onClose={onClose}>
-        <div className={classes.modalPaper}>
-          <div className={classes.modalContent}>
-            <Typography variant="title">Add Specification</Typography>
-            <TextField id="name" label="Name" margin="normal" />
-          </div>
-          <div className={classes.buttonRow}>
-            <Button color="primary">Cancel</Button>
-            <Button color="primary">Add</Button>
-          </div>
-        </div>
-      </Modal>
+      <Observer>
+        {() => (
+          <Modal open={true} onClose={() => history.replace('/')}>
+            <div className={classes.modalPaper}>
+              <div className={classes.modalContent}>
+                <Typography variant="title">Add Specification</Typography>
+                <TextField id="name" label="Name" margin="normal" />
+              </div>
+              <div className={classes.buttonRow}>
+                <Button color="primary">Cancel</Button>
+                <Button color="primary">Add</Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+      </Observer>
     )}
   </Styled>
 );
