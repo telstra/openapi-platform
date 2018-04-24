@@ -40,7 +40,7 @@ export const Page: ComponentType<{}> = () => (
         </aside>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/" component={Overview} />
+            <Route exact path="/:modal(|add)" component={Overview} />
             <Route path="/specifications/:id" component={SpecificationViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />
             <Route path="/settings" component={SettingsViewer} />
