@@ -7,26 +7,26 @@ import { BuildStatus } from 'model/Sdk';
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
-  addSpecification: (
-    title: string,
-    path: string,
-    description?: string
-  ) => Promise<boolean>;
+  addSpecification: (info: AddedSpecification) => Promise<boolean>;
   expandedSpecificationId: number | null;
 }
-
-class BasicSpecificationState {
+export interface AddedSpecification {
+  path: string;
+  title?: string;
+  description?: string;
+}
+class BasicSpecificationState implements SpecificationState {
   @observable readonly specifications: Map<number, Specification> = new Map();
   @computed
   get specificationList(): Specification[] {
     return Array.from(this.specifications.values()).map(value => value);
   }
   @action
-  async addSpecification(
-    title: string,
-    path: string,
-    description?: string
-  ): Promise<boolean> {
+  async addSpecification({
+    title,
+    path,
+    description
+  }: AddedSpecification): Promise<boolean> {
     const result = await fetch(config.frontend.baseApiUrl + 'addspecification', {
       method: 'POST',
       body: JSON.stringify({
