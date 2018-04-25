@@ -100,10 +100,10 @@ class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
   @computed
   get urlError(): string | undefined {
     const url = this.formText.url;
-    if (!isWebUri(url)) {
-      return 'Error: Invalid URL';
-    } else if (url === undefined) {
+    if (url === undefined) {
       return 'Error: URL cannot be empty';
+    } else if (!isWebUri(url)) {
+      return 'Error: Invalid URL';
     } else {
       return undefined;
     }
@@ -171,7 +171,6 @@ class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
   }
 
   render() {
-    console.log('Rendered!');
     return (
       <Styled>
         {({ classes }) => (
