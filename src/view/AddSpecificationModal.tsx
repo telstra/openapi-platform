@@ -57,7 +57,7 @@ interface ErrorData {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Currently entered form data
    */
@@ -272,4 +272,3 @@ class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
     );
   }
 }
-export { AddSpecificationModal };
