@@ -122,8 +122,10 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
   @action
   validateUrl(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (showErrorMesssage && this.urlError) {
-      this.error.url = this.urlError;
+    if (this.urlError) {
+      if (showErrorMesssage) {
+        this.error.url = this.urlError;
+      }
       valid = false;
     } else {
       this.error.url = undefined;
@@ -139,8 +141,10 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
   @action
   validateTitle(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (showErrorMesssage && this.titleError) {
-      this.error.title = this.titleError;
+    if (this.titleError) {
+      if (showErrorMesssage) {
+        this.error.title = this.titleError;
+      }
       valid = false;
     } else {
       this.error.title = undefined;
