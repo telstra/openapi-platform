@@ -11,25 +11,7 @@ import { isWebUri } from 'valid-url';
 import { state as specificationState } from 'state/SpecificationState';
 import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
-
-interface AddSpecificationModalState {
-  // Currently entered form data
-  formText: {
-    title: string;
-    url: string;
-    description: string;
-  };
-  // Current error messages (if any) for each form field
-  error: {
-    title: string | null;
-    url: string | null;
-  };
-  // Whether or not a progress indicator should be shown
-  showProgressIndicator: boolean;
-  // Whether or not the 'failed to add specification' modal is open
-  showErrorModal: boolean;
-}
-
+import { observable, action, autorun, computed } from 'mobx';
 const Styled: any = createStyled(theme => ({
   modalPaper: {
     position: 'absolute',
@@ -61,251 +43,248 @@ const Styled: any = createStyled(theme => ({
   }
 }));
 
+interface FormText {
+  title?: string;
+  url?: string;
+  description?: string;
+}
+
+interface FormError {
+  title?: string;
+  url?: string;
+}
 /**
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecificationModal extends Component<
-  RouteComponentProps<{}>,
-  AddSpecificationModalState
-> {
+export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
   /**
-   * Constructor for AddSpecificationModal.
-   *
-   * @param props The properties to construct the component with.
+   * Currently entered form data
    */
-  constructor(props: RouteComponentProps<{}>) {
-    super(props);
-    this.state = {
-      formText: {
-        title: '',
-        url: '',
-        description: ''
-      },
-      error: {
-        title: null,
-        url: null
-      },
-      showProgressIndicator: false,
-      showErrorModal: false
-    };
-  }
+  @observable
+  private readonly formText: FormText = {
+    title: '',
+    url: '',
+    description: ''
+  };
 
   /**
-   * Closes the modal.
+   * Current error messages (if any) for each form field
    */
-  closeModal(force: boolean = false) {
+  @observable
+  private readonly error: FormError = {
+    title: undefined,
+    url: undefined
+  };
+
+  /**
+   * Whether or not a progress indicator should be shown
+   */
+  @observable private showProgressIndicator: boolean = false;
+
+  /**
+   * Whether or not the 'failed to add specification' modal is open
+   */
+  @observable private showErrorModal: boolean = false;
+
+  closeModal() {
     this.props.history.replace('/');
   }
 
   /**
-   * Shows the 'failed to add specification' modal.
+   * @returns An error message if the title is invalid in some way
    */
-  showFailureModal() {
-    this.setState({
-      showErrorModal: true
-    });
+  @computed
+  get titleError(): string | undefined {
+    const title = this.formText.title;
+    return !title ? 'Error: Missing title' : undefined;
   }
 
   /**
-   * Hides the 'failed to add specification' modal.
+   * @returns An error message if the url is invalid in some way
    */
-  hideFailureModal() {
-    this.setState({
-      showErrorModal: false
-    });
-  }
-
-  /**
-   * Shows the progress indicators.
-   */
-  showProgressindicator() {
-    this.setState({
-      showProgressIndicator: true
-    });
-  }
-
-  /**
-   * Hides the progress indicator.
-   */
-  hideProgressIndicator() {
-    this.setState({
-      showProgressIndicator: false
-    });
-  }
-
-  /**
-   * Stores the value of the given text field.
-   *
-   * @param field The field to set the value of.
-   * @param value The value to set.
-   */
-  setFormText(field: keyof AddSpecificationModalState['formText'], value: string) {
-    this.setState(
-      prevState => ({
-        formText: {
-          ...prevState.formText,
-          [field]: value
-        }
-      }),
-      () => this.validateInput(true)
-    );
-  }
-
-  /**
-   * Sets the error message for the given text field.
-   *
-   * @param field The field to set the error of.
-   * @param error The error message to set, or null to clear the error message.
-   */
-  setFormError(
-    field: keyof AddSpecificationModalState['formText'],
-    error: string | null
-  ) {
-    this.setState(prevState => ({
-      error: {
-        ...prevState.error,
-        [field]: error
-      }
-    }));
-  }
-
-  /**
-   * Validates all form input.
-   *
-   * @param clearOnly If true, only clears validation errors rather than adding them.
-   * @returns true if the input was valid, false otherwise.
-   */
-  validateInput(clearOnly: boolean) {
-    let valid = true;
-    const title = this.state.formText.title;
-    if (title === '') {
-      if (!clearOnly) {
-        this.setFormError('title', 'Error: Missing title');
-      }
-      valid = false;
+  @computed
+  get urlError(): string | undefined {
+    const url = this.formText.url;
+    if (!url) {
+      return 'Error: URL cannot be empty';
+    } else if (!isWebUri(url)) {
+      return 'Error: Invalid URL';
     } else {
-      this.setFormError('title', null);
+      return undefined;
     }
-    const url = isWebUri(this.state.formText.url);
-    if (url === undefined) {
-      if (!clearOnly) {
-        this.setFormError('url', 'Error: Invalid URL');
+  }
+
+  /**
+   * Checks whether the specification's URL input is valid
+   * @param showErrorMesssage If false, clear the error message
+   */
+  @action
+  validateUrl(showErrorMesssage: boolean = true): boolean {
+    let valid: boolean;
+    if (this.urlError) {
+      if (showErrorMesssage) {
+        this.error.url = this.urlError;
       }
       valid = false;
     } else {
-      this.setFormError('url', null);
+      this.error.url = undefined;
+      valid = true;
     }
     return valid;
   }
 
   /**
+   * Checks whether the specification's title input is valid
+   * @param showErrorMesssage If false, clear the error message
+   */
+  @action
+  validateTitle(showErrorMesssage: boolean = true): boolean {
+    let valid: boolean;
+    if (this.titleError) {
+      if (showErrorMesssage) {
+        this.error.title = this.titleError;
+      }
+      valid = false;
+    } else {
+      this.error.title = undefined;
+      valid = true;
+    }
+    return valid;
+  }
+
+  /**
+   * @param showErrorMessages If false, only clears validation errors rather than adding them.
+   * @returns true if the input was valid, false otherwise.
+   */
+  @action
+  validateAllInputs(showErrorMessages: boolean = true) {
+    return this.validateTitle(showErrorMessages) && this.validateUrl(showErrorMessages);
+  }
+
+  /**
    * Event fired when the user presses the 'Add' button.
    */
+  @action
   async onAddSpecification() {
     // Validate input
-    if (!this.validateInput(false)) {
+    if (!this.validateAllInputs()) {
       return;
     }
 
     // Send the request to the backend
-    this.showProgressindicator();
-    const title = this.state.formText.title;
-    const path = isWebUri(this.state.formText.url);
+    this.showProgressIndicator = true;
+    const title = this.formText.title;
+    const path = isWebUri(this.formText.url);
     const description =
-      this.state.formText.description === ''
-        ? undefined
-        : this.state.formText.description;
-    if (await specificationState.addSpecification(title, path, description)) {
+      this.formText.description === '' ? undefined : this.formText.description;
+    if (await specificationState.addSpecification({ title, path, description })) {
       // Request was successful
       this.closeModal();
     } else {
       // Request failed
-      this.showFailureModal();
-      this.hideProgressIndicator();
+      this.showErrorModal = true;
+      this.showProgressIndicator = false;
     }
   }
 
-  /**
-   * Renders the modal.
-   */
   render() {
     return (
       <Styled>
         {({ classes }) => (
-          <div>
-            <Modal
-              open={true}
-              onClose={() => {
-                // Don't allow the modal to close if we're waiting for a specification to be added
-                if (!this.state.showProgressIndicator) {
-                  this.closeModal();
-                }
-              }}
-            >
-              <div className={classes.modalPaper}>
-                <div className={classes.modalContent}>
-                  <Typography variant="title">Add Specification</Typography>
-                  <TextField
-                    label={this.state.error.title || 'Title'}
-                    error={this.state.error.title !== null}
-                    onChange={event => this.setFormText('title', event.target.value)}
-                    value={this.state.formText.title}
-                    margin="normal"
-                  />
-                  <TextField
-                    label={this.state.error.url || 'URL'}
-                    error={this.state.error.url !== null}
-                    onChange={event => this.setFormText('url', event.target.value)}
-                    value={this.state.formText.url}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Description"
-                    onChange={event =>
-                      this.setFormText('description', event.target.value)
+          <Observer>
+            {() => (
+              <div>
+                <Modal
+                  open={true}
+                  onClose={() => {
+                    // Don't allow the modal to close if we're waiting for a specification to be added
+                    if (!this.showProgressIndicator) {
+                      this.closeModal();
                     }
-                    value={this.state.formText.description}
-                    multiline={true}
-                    rowsMax={3}
-                    margin="normal"
-                  />
-                </div>
-                <div className={classes.buttonRow}>
-                  <Button
-                    color="primary"
-                    disabled={this.state.showProgressIndicator}
-                    onClick={() => this.closeModal()}
+                  }}
+                >
+                  <div className={classes.modalPaper}>
+                    <div className={classes.modalContent}>
+                      <Typography variant="title">Add Specification</Typography>
+                      <TextField
+                        label={this.error.title || 'Title'}
+                        error={this.error.title !== undefined}
+                        onChange={event => {
+                          this.formText.title = event.target.value;
+                          this.validateTitle(false);
+                        }}
+                        onBlur={() => this.validateTitle()}
+                        value={this.formText.title}
+                        margin="normal"
+                      />
+                      <TextField
+                        label={this.error.url || 'URL'}
+                        error={this.error.url !== undefined}
+                        onChange={event => {
+                          this.formText.url = event.target.value;
+                          this.validateUrl(false);
+                        }}
+                        onBlur={() => this.validateUrl()}
+                        value={this.formText.url}
+                        margin="normal"
+                      />
+                      <TextField
+                        label="Description"
+                        onChange={event =>
+                          (this.formText.description = event.target.value)
+                        }
+                        value={this.formText.description}
+                        multiline={true}
+                        rowsMax={3}
+                        margin="normal"
+                      />
+                    </div>
+                    <div className={classes.buttonRow}>
+                      <Button
+                        color="primary"
+                        disabled={this.showProgressIndicator}
+                        onClick={() => this.closeModal()}
+                      >
+                        Cancel
+                      </Button>
+                      {this.showProgressIndicator ? (
+                        <CircularProgress
+                          size={24}
+                          className={classes.progressIndicator}
+                        />
+                      ) : (
+                        <Button color="primary" onClick={() => this.onAddSpecification()}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </Modal>
+                <Modal
+                  open={this.showErrorModal}
+                  onClose={() => (this.showErrorModal = false)}
+                >
+                  <div
+                    className={classNames(classes.modalPaper, classes.errorModalPaper)}
                   >
-                    Cancel
-                  </Button>
-                  {this.state.showProgressIndicator ? (
-                    <CircularProgress size={24} className={classes.progressIndicator} />
-                  ) : (
-                    <Button color="primary" onClick={() => this.onAddSpecification()}>
-                      Add
-                    </Button>
-                  )}
-                </div>
+                    <div className={classes.modalContent}>
+                      <Typography variant="title">Error</Typography>
+                      <Typography>An error occurred adding the specification.</Typography>
+                    </div>
+                    <div className={classes.buttonRow}>
+                      <Button
+                        color="primary"
+                        onClick={() => (this.showErrorModal = false)}
+                      >
+                        Ok
+                      </Button>
+                    </div>
+                  </div>
+                </Modal>
               </div>
-            </Modal>
-            <Modal
-              open={this.state.showErrorModal}
-              onClose={() => this.hideFailureModal()}
-            >
-              <div className={classNames(classes.modalPaper, classes.errorModalPaper)}>
-                <div className={classes.modalContent}>
-                  <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the specification.</Typography>
-                </div>
-                <div className={classes.buttonRow}>
-                  <Button color="primary" onClick={() => this.hideFailureModal()}>
-                    Ok
-                  </Button>
-                </div>
-              </div>
-            </Modal>
-          </div>
+            )}
+          </Observer>
         )}
       </Styled>
     );
