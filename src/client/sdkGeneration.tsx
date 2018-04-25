@@ -13,6 +13,7 @@ export async function generateSdk(spec: Specification): Promise<any> {
   console.log('generateSdk');
   const body = { swaggerUrl: spec.path };
   console.log(body);
+  // TODO: Allow language selection, should be from Specification.
   const response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
     method: 'POST',
     body: JSON.stringify(body),
