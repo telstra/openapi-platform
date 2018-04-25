@@ -40,7 +40,10 @@ module.exports = (env, argv) => {
           loader: 'babel-loader',
           options: {
             presets: createBabelPresets(envSettings),
-            plugins: ['transform-decorators-legacy', 'transform-class-properties']
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { legacy: true }],
+              '@babel/plugin-proposal-class-properties'
+            ]
           }
         }
       ]
