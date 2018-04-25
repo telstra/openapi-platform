@@ -10,11 +10,10 @@ export async function generateSdk(spec: Specification): Promise<any> {
   * @return {Promise<string>} - The URL from which the sdk can be downloaded
   */
 
-  // TODO: Get it working for .yaml files like below.
-  // 'https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v2.0/yaml/uber.yaml' }
   console.log('generateSdk');
   const body = { swaggerUrl: spec.path };
   console.log(body);
+  // TODO: Allow language selection, should be from Specification.
   const response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
     method: 'POST',
     body: JSON.stringify(body),
