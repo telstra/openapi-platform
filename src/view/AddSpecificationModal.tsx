@@ -159,7 +159,9 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
    */
   @action
   validateAllInputs(showErrorMessages: boolean = true) {
-    return this.validateTitle(showErrorMessages) && this.validateUrl(showErrorMessages);
+    const titleValid = this.validateTitle(showErrorMessages);
+    const urlValid = this.validateUrl(showErrorMessages);
+    return titleValid && urlValid;
   }
 
   /**
