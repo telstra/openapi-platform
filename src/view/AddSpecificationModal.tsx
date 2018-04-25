@@ -91,12 +91,18 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
     this.props.history.replace('/');
   }
 
+  /**
+   * @returns An error message if the title is invalid in some way
+   */
   @computed
   get titleError(): string | undefined {
     const title = this.formText.title;
     return title || title !== '' ? undefined : 'Error: Missing title';
   }
 
+  /**
+   * @returns An error message if the url is invalid in some way
+   */
   @computed
   get urlError(): string | undefined {
     const url = this.formText.url;
@@ -109,6 +115,10 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
     }
   }
 
+  /**
+   * Checks whether the specification's URL input is valid
+   * @param showErrorMesssage If false, clear the error message
+   */
   @action
   validateUrl(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
@@ -122,6 +132,10 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
     return valid;
   }
 
+  /**
+   * Checks whether the specification's title input is valid
+   * @param showErrorMesssage If false, clear the error message
+   */
   @action
   validateTitle(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
