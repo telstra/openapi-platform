@@ -42,7 +42,7 @@ module.exports = (env, argv) => {
             presets: createBabelPresets(envSettings),
             plugins: [
               ['@babel/plugin-proposal-decorators', { legacy: true }],
-              '@babel/plugin-proposal-class-properties'
+              ['@babel/plugin-proposal-class-properties', { loose: true }]
             ]
           }
         }
