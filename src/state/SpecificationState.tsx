@@ -7,7 +7,11 @@ import { BuildStatus } from 'model/Sdk';
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
-  addSpecification: (specification: Specification) => Promise<boolean>;
+  addSpecification: (
+    title: string,
+    path: string,
+    description?: string
+  ) => Promise<boolean>;
   expandedSpecificationId: number | null;
 }
 
@@ -18,14 +22,22 @@ class BasicSpecificationState {
     return Array.from(this.specifications.values()).map(value => value);
   }
   @action
-  async addSpecification(specification: Specification): Promise<boolean> {
+  async addSpecification(
+    title: string,
+    path: string,
+    description?: string
+  ): Promise<boolean> {
     const result = await fetch(config.frontend.baseApiUrl + 'addspecification', {
       method: 'POST',
-      body: JSON.stringify(specification),
+      body: JSON.stringify({
+        title,
+        path,
+        description
+      }),
       headers: { 'Content-Type': 'application/json' }
     });
-    const newSpecification = result.json() as Specification;
-    this.specifications.set(newSpecification.id, newSpecification);
+    const specification = (await result.json()) as Specification;
+    this.specifications.set(specification.id, specification);
     return true;
   }
   @observable expandedSpecificationId: number | null = null;

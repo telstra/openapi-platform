@@ -79,6 +79,7 @@
     "@types/react": "16.0.40",
     "@types/react-dom": "16.0.4",
     "@types/react-router": "4.0.24",
+    "@types/valid-url": "1.0.2",
     "body-parser": "1.18.2",
     "classnames": "2.2.5",
     "commander": "2.15.0",
@@ -95,7 +96,8 @@
     "react-jss": "8.4.0",
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
-    "typeface-roboto": "0.0.54"
+    "typeface-roboto": "0.0.54",
+    "valid-url": "1.0.9"
   },
   "contributors": [
     {

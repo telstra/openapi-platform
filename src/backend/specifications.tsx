@@ -5,7 +5,7 @@ import { BuildStatus } from 'model/Sdk';
 let count = 0;
 const specifications: Specification[] = [
   {
-    id: 0,
+    id: count++,
     title: 'Birds',
     description: 'A Bird API, for Birds',
     path: 'git.example.com/swagger-specs/birds.yaml',
@@ -26,7 +26,7 @@ const specifications: Specification[] = [
     ]
   },
   {
-    id: 1,
+    id: count++,
     title: 'Test',
     description:
       'A test API for testing with a very long description that should truncate when displayed in the list',
@@ -36,7 +36,7 @@ const specifications: Specification[] = [
     ]
   },
   {
-    id: 2,
+    id: count++,
     title: 'Swagger API Example Uber',
     description: 'A test API for Uber',
     path: 'https://esi.tech.ccp.is/_latest/swagger.json',
@@ -68,31 +68,30 @@ export function getSpecifications(): Specification[] {
 }
 
 /** Adds a specification to the list
+ * @param {string} title - the specification title
  * @param {string} path - path to the swagger specification file
- * @param {string} titleString - a specification title
  * @param {string} description - optional specification description
  * @return {Specification} - specification object that was created
  */
 export function addSpecification(
+  title: string,
   path: string,
-  titleString: string,
   description?: string
 ): Specification {
   let spec: Specification;
 
-  if (description) {
+  if (description !== undefined) {
     spec = {
-      id: count,
-      title: titleString,
-      description: description,
-      path: path,
+      id: count++,
+      title,
+      description,
+      path,
       sdks: []
     };
   } else {
-    spec = { id: count, title: titleString, path: path, sdks: [] };
+    spec = { id: count++, title, path, sdks: [] };
   }
 
   specifications.push(spec);
-  count++;
   return spec;
 }
