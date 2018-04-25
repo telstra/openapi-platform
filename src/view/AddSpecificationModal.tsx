@@ -49,7 +49,7 @@ interface FormText {
   description?: string;
 }
 
-interface ErrorData {
+interface FormError {
   title?: string;
   url?: string;
 }
@@ -72,7 +72,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
    * Current error messages (if any) for each form field
    */
   @observable
-  private readonly error: ErrorData = {
+  private readonly error: FormError = {
     title: undefined,
     url: undefined
   };
@@ -87,7 +87,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
    */
   @observable private showErrorModal: boolean = false;
 
-  closeModal(force: boolean = false) {
+  closeModal() {
     this.props.history.replace('/');
   }
 
@@ -97,7 +97,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
   @computed
   get titleError(): string | undefined {
     const title = this.formText.title;
-    return title || title !== '' ? undefined : 'Error: Missing title';
+    return !title ? 'Error: Missing title' : undefined;
   }
 
   /**
@@ -106,7 +106,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
   @computed
   get urlError(): string | undefined {
     const url = this.formText.url;
-    if (url === undefined) {
+    if (!url) {
       return 'Error: URL cannot be empty';
     } else if (!isWebUri(url)) {
       return 'Error: Invalid URL';
