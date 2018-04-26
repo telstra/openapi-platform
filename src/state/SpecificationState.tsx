@@ -7,7 +7,7 @@ import { BuildStatus } from 'model/Sdk';
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
-  addSpecification: (info: AddedSpecification) => Promise<boolean>;
+  addSpecification: (info: AddedSpecification) => Promise<void>;
   expandedSpecificationId: number | null;
 }
 export interface AddedSpecification {
@@ -26,7 +26,7 @@ class BasicSpecificationState implements SpecificationState {
     title,
     path,
     description
-  }: AddedSpecification): Promise<boolean> {
+  }: AddedSpecification): Promise<void> {
     const result = await fetch(config.frontend.baseApiUrl + 'addspecification', {
       method: 'POST',
       body: JSON.stringify({
@@ -36,9 +36,8 @@ class BasicSpecificationState implements SpecificationState {
       }),
       headers: { 'Content-Type': 'application/json' }
     });
-    const specification = (await result.json()) as Specification;
+    const specification: Specification = await result.json();
     this.specifications.set(specification.id, specification);
-    return true;
   }
   @observable expandedSpecificationId: number | null = null;
 }

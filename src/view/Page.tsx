@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { createStyled } from 'view/createStyled';
 import { NavigationMenu } from 'view/NavigationMenu';
@@ -41,8 +41,12 @@ export const Page: ComponentType<{}> = () => (
         </aside>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/" component={Overview} />
-            <Route path="/add" component={Overview} />
+            <Route
+              exact
+              path="/"
+              render={() => <Redirect to={{ pathname: '/overview' }} />}
+            />
+            <Route path="/overview" component={Overview} />
             <Route path="/specifications/:id" component={SpecificationViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />
             <Route path="/settings" component={SettingsViewer} />
