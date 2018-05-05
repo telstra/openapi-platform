@@ -115,7 +115,8 @@ module.exports = (env, argv) => {
     entry: ['@babel/polyfill', join(paths.src, 'frontend', 'index.tsx')],
     output: {
       path: join(__dirname, 'build', 'frontend'),
-      filename: '[name].js'
+      filename: '[name].js',
+      publicPath: '/'
     },
     plugins: [
       new HtmlWebpackPlugin({
