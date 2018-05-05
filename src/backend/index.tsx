@@ -6,19 +6,41 @@ import { dummySpecifications } from 'backend/dummySpecifications';
 import feathers from '@feathersjs/feathers';
 import express from '@feathersjs/express';
 import socketio from '@feathersjs/socketio';
-import Sequelize from 'sequelize';
+import swagger from 'feathers-swagger';
 import memory from 'feathers-memory';
 async function run(port: number) {
-  const sequelize = new Sequelize('sequelize', '', '', {
-    dialect: 'postgres',
-    storage: './db.postgres',
-    loggin: true
-  });
+  const specifications = memory();
+  specifications.docs = {
+    description: 'Swagger/OpenAPI specifications',
+    definitions: {
+      specifications: {
+        type: 'object',
+        additionalProperties: true
+      },
+      'specifications list': {
+        type: 'array'
+      }
+    }
+  };
   const app: express.Express = express(feathers());
-  app.use(express.json());
-  app.configure(express.rest());
-  app.configure(socketio());
-  app.use('/specifications', memory({}));
+  app
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
+    .configure(express.rest())
+    .configure(socketio())
+    .configure(
+      swagger({
+        docsPath: '/docs',
+        uiIndex: true,
+        info: {
+          title: 'Swagger Platform',
+          description: 'TODO: Someone describe swagger-platform :)'
+        }
+      })
+    )
+    .get('/', (req, res) => res.redirect('/docs'))
+    .use('/specifications', specifications)
+    .use(express.errorHandler());
   for (const specification of dummySpecifications) {
     await app.service('specifications').create(specification);
   }
@@ -26,14 +48,6 @@ async function run(port: number) {
   if (config.backend.useCors) {
     app.use(cors());
   }
-  app.use(express.errorHandler());
-
-  app.get('/', (req, res) => {
-    res.json({
-      status: 'Success',
-      message: 'It works!'
-    });
-  });
 
   /** API method to generate an sdk for a given specification
    * @param {string} req.body.id - ID of the specification to generate the SDK for
