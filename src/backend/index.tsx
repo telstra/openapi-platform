@@ -1,23 +1,32 @@
-import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import { config } from 'config';
 import { generateSdk } from 'client/sdkGeneration';
 import { Specification } from 'model/Specification';
-import {
-  getSpecificationById,
-  getSpecifications,
-  addSpecification
-} from 'backend/specifications';
-
+import { dummySpecifications } from 'backend/dummySpecifications';
+import feathers from '@feathersjs/feathers';
+import express from '@feathersjs/express';
+import socketio from '@feathersjs/socketio';
+import Sequelize from 'sequelize';
+import memory from 'feathers-memory';
 async function run(port: number) {
-  const app: express.Express = express();
-  app.use(bodyParser.json());
-
+  const sequelize = new Sequelize('sequelize', '', '', {
+    dialect: 'postgres',
+    storage: './db.postgres',
+    loggin: true
+  });
+  const app: express.Express = express(feathers());
+  app.use(express.json());
+  app.configure(express.rest());
+  app.configure(socketio());
+  app.use('/specifications', memory({}));
+  for (const specification of dummySpecifications) {
+    await app.service('specifications').create(specification);
+  }
   // Enables CORS requests if configured to do so
   if (config.backend.useCors) {
     app.use(cors());
   }
+  app.use(express.errorHandler());
 
   app.get('/', (req, res) => {
     res.json({
@@ -32,7 +41,9 @@ async function run(port: number) {
    */
   app.post('/generatesdk', async (req, res) => {
     const specificationId: number = req.body.id;
-    var spec: Specification | undefined = getSpecificationById(specificationId);
+    var spec: Specification | undefined = await app
+      .service('specifications')
+      .get(specificationId);
 
     if (spec != undefined) {
       const sdkUrl: String = await generateSdk(spec);
@@ -45,27 +56,6 @@ async function run(port: number) {
         status: 'failure'
       });
     }
-  });
-
-  /** API Method to add a specification
-   * @param {string} req.body.title - the title of specification
-   * @param {string} req.body.path - the path to the specification file
-   * @param {string} req.body.description - optional description of the specification
-   * @return {Promise<Specification>} - The Specification that was created
-   */
-  app.post('/addspecification', async (req, res) => {
-    const title: string = req.body.title;
-    const path: string = req.body.path;
-    const description: string | undefined = req.body.description;
-    let spec: Specification = addSpecification(title, path, description);
-    res.json(spec);
-  });
-
-  /** API Method to return the list of specifications
-   * @return {Promise<Specification[]>} - The array of stored Specifications
-   */
-  app.post('/getspecifications', async (req, res) => {
-    res.json(getSpecifications());
   });
 
   app.listen(port);

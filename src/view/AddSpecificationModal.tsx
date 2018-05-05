@@ -81,6 +81,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
       await specificationState.addSpecification(submittedSpecification);
       this.closeModal();
     } catch (e) {
+      console.error(e);
       this.showErrorModal = true;
     } finally {
       this.showProgressIndicator = false;
