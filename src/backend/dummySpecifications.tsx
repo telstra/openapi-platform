@@ -39,7 +39,8 @@ export const dummySpecifications: Specification[] = [
     id: count++,
     title: 'Swagger API Example Uber',
     description: 'A test API for Uber',
-    path: 'https://esi.tech.ccp.is/_latest/swagger.json',
+    path:
+      'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/uber.yaml',
     sdks: [
       { id: 1, name: 'Python', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS },
       { id: 2, name: 'java', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS }
