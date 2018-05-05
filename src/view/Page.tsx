@@ -1,13 +1,14 @@
 import React, { ComponentType } from 'react';
-import { SpecificationViewer } from 'view/SpecificationViewer';
-import { Overview } from 'view/Overview';
-import { Route, Switch } from 'react-router-dom';
-import { ProfileViewer } from 'view/ProfileViewer';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { createStyled } from 'view/createStyled';
 import { NavigationMenu } from 'view/NavigationMenu';
+import { Overview } from 'view/Overview';
+import { ProfileViewer } from 'view/ProfileViewer';
 import { SettingsViewer } from 'view/SettingsViewer';
+import { SpecificationViewer } from 'view/SpecificationViewer';
 import { NotFound } from 'basic/NotFound';
-import { observer } from 'mobx-react';
+
 const Styled = createStyled(theme => ({
   page: {
     display: 'flex',
@@ -40,7 +41,12 @@ export const Page: ComponentType<{}> = () => (
         </aside>
         <main className={classes.content}>
           <Switch>
-            <Route exact path="/" component={Overview} />
+            <Route
+              exact
+              path="/"
+              render={() => <Redirect to={{ pathname: '/overview' }} />}
+            />
+            <Route path="/overview" component={Overview} />
             <Route path="/specifications/:id" component={SpecificationViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />
             <Route path="/settings" component={SettingsViewer} />

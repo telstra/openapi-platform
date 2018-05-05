@@ -40,7 +40,10 @@ module.exports = (env, argv) => {
           loader: 'babel-loader',
           options: {
             presets: createBabelPresets(envSettings),
-            plugins: ['transform-decorators-legacy', 'transform-class-properties']
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { legacy: true }],
+              ['@babel/plugin-proposal-class-properties', { loose: true }]
+            ]
           }
         }
       ]
@@ -112,7 +115,8 @@ module.exports = (env, argv) => {
     entry: ['@babel/polyfill', join(paths.src, 'frontend', 'index.tsx')],
     output: {
       path: join(__dirname, 'build', 'frontend'),
-      filename: '[name].js'
+      filename: '[name].js',
+      publicPath: '/'
     },
     plugins: [
       new HtmlWebpackPlugin({

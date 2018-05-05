@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
+import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
-import { Specification } from 'model/Specification';
-import { SpecificationItem } from 'basic/SpecificationItem';
 import Typography from 'material-ui/Typography';
+import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
+import { SpecificationItem } from 'basic/SpecificationItem';
+
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: Specification[];
   expandedSpecificationId: number | null;
   onSpecificationExpanded: (id: number | null) => void;
   onSpecificationSelected: (specification: Specification) => void;
+  onAddSpecificationModalOpened: () => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -19,6 +22,10 @@ const Styled = createStyled(theme => ({
     width: '100%',
     marginLeft: 'auto',
     marginRight: 'auto'
+  },
+  addButton: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing.unit * 2
   }
 }));
 
@@ -29,7 +36,8 @@ export const SpecificationList = ({
   specifications,
   expandedSpecificationId,
   onSpecificationExpanded,
-  onSpecificationSelected
+  onSpecificationSelected,
+  onAddSpecificationModalOpened
 }) => (
   <Styled>
     {({ classes }) => (
@@ -49,6 +57,14 @@ export const SpecificationList = ({
               onClick={() => onSpecificationSelected(specification)}
             />
           ))}
+          <Button
+            variant="raised"
+            color="primary"
+            className={classes.addButton}
+            onClick={() => onAddSpecificationModalOpened()}
+          >
+            Add Specification
+          </Button>
         </div>
       </div>
     )}

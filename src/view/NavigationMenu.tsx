@@ -80,7 +80,7 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
                   />
                   <Divider />
                   <NavigationButton
-                    onClick={() => history.push('/')}
+                    onClick={() => history.push('/overview')}
                     icon={<Icons.Dashboard />}
                     primary="Overview"
                   />
