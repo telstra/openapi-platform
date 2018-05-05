@@ -6,14 +6,12 @@ import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
-import {
-  state as specificationState,
-  AddedSpecification
-} from 'state/SpecificationState';
 import { Specification } from 'model/Specification';
+import { AddedSpecification } from 'state/SpecificationState';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';
 import { FloatingModal } from 'basic/FloatingModal';
+import { Category } from 'model/Storybook';
 const Styled: any = createStyled(theme => ({
   modalPaper: {
     maxWidth: theme.spacing.unit * 64
@@ -64,7 +62,7 @@ export interface SpecificationModalProps {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecificationModal extends Component<SpecificationModalProps, {}> {
+export class SpecificationModal extends Component<SpecificationModalProps> {
   /**
    * Currently entered form data
    */
@@ -249,3 +247,17 @@ export class SpecificationModal extends Component<SpecificationModalProps, {}> {
     );
   }
 }
+
+export const storybook: Category<SpecificationModalProps> = {
+  Component: SpecificationModal,
+  stories: {
+    Submit: {
+      onCloseModal: () => {},
+      onSubmitSpecification: () => {},
+      showSubmitProgress: false,
+      submitButtonProps: {
+        children: 'Submit'
+      }
+    }
+  }
+};
