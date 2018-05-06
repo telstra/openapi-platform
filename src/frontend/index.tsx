@@ -6,14 +6,16 @@ import jss from 'jss';
 import 'typeface-roboto';
 import { ThemeProvider } from 'view/ThemeProvider';
 import * as jssGlobal from 'jss-global';
+
 jss
   .use(jssGlobal.default())
   .createStyleSheet({
+    // TODO: Cast this to any since the @types/jss seemed to not like this type for some reason
     '@global': {
       body: {
         margin: 0
       }
-    }
+    } as any
   })
   .attach();
 ReactDOM.render(

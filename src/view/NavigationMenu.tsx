@@ -95,7 +95,7 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
                   />
                   <Divider />
                   <NavigationButton
-                    onClick={() => history.push('/')}
+                    onClick={() => history.push('/overvie')}
                     icon={<Icons.Dashboard className={classes.navIcon} />}
                     primary="Overview"
                     classes={classes}

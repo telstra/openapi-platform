@@ -56,13 +56,8 @@ async function run(port: number) {
   app.post('/addspecification', async (req, res) => {
     const title: string = req.body.title;
     const path: string = req.body.path;
-    const description: string = req.body.string;
-    let spec: Specification;
-    if (description) {
-      spec = addSpecification(title, path, description);
-    } else {
-      spec = addSpecification(title, path);
-    }
+    const description: string | undefined = req.body.description;
+    let spec: Specification = addSpecification(title, path, description);
     res.json(spec);
   });
 
