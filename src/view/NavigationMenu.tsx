@@ -31,9 +31,16 @@ const Styled: any = createStyled(theme => ({
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen
     })
-  }
+  },
+  primaryButton: {
+    marginBottom: theme.spacing.unit
+  },
+  navIcon: theme.nav.icon,
+  navText: theme.nav.text
 }));
+
 export interface NavigationMenuProps {}
+
 // TODO: In this case, it would probably be better if we didn't use the same state for all NavigationMenu components
 class NavigationState {
   @observable public open: boolean = false;
@@ -47,10 +54,10 @@ class NavigationState {
   }
 }
 const navState = new NavigationState();
-const NavigationButton = ({ icon, primary, ...other }) => (
+const NavigationButton = ({ icon, primary, classes, ...other }) => (
   <ListItem button {...other}>
     <ListItemIcon>{icon}</ListItemIcon>
-    <ListItemText primary={primary} />
+    <ListItemText primary={primary} classes={{ primary: classes.navText }} />
   </ListItem>
 );
 export const NavigationMenu: SFC<NavigationMenuProps> = () => (
@@ -58,7 +65,7 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
     {({ classes }) => (
       <Route
         render={({ history }) => (
-          /* TODO: Unfortunately, render callbacks aren't considered with MobX's observer so we have to use the <Observer> syntax. 
+          /* TODO: Unfortunately, render callbacks aren't considered with MobX's observer so we have to use the <Observer> syntax.
             There might be a better way. */
           <Observer>
             {() => (
@@ -75,24 +82,35 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
                 <List component="nav">
                   <NavigationButton
                     onClick={() => navState.toggleOpen()}
-                    icon={navState.open ? <Icons.ChevronLeft /> : <Icons.ChevronRight />}
+                    icon={
+                      navState.open ? (
+                        <Icons.ChevronLeft className={classes.navIcon} />
+                      ) : (
+                        <Icons.ChevronRight className={classes.navIcon} />
+                      )
+                    }
                     primary={navState.actionName}
+                    classes={classes}
+                    className={classes.primaryButton}
                   />
                   <Divider />
                   <NavigationButton
                     onClick={() => history.push('/')}
-                    icon={<Icons.Dashboard />}
+                    icon={<Icons.Dashboard className={classes.navIcon} />}
                     primary="Overview"
+                    classes={classes}
                   />
                   <NavigationButton
                     onClick={() => history.push(`/profiles/${profileState.me.id}`)}
-                    icon={<Icons.AccountCircle />}
+                    icon={<Icons.AccountCircle className={classes.navIcon} />}
                     primary="Account"
+                    classes={classes}
                   />
                   <NavigationButton
                     onClick={() => history.push('/settings')}
-                    icon={<Icons.Settings />}
+                    icon={<Icons.Settings className={classes.navIcon} />}
                     primary="Settings"
+                    classes={classes}
                   />
                 </List>
               </Drawer>

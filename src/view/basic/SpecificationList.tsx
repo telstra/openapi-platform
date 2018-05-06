@@ -4,6 +4,7 @@ import { Specification } from 'model/Specification';
 import { SpecificationItem } from 'basic/SpecificationItem';
 import Typography from 'material-ui/Typography';
 import { createStyled } from 'view/createStyled';
+
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: Specification[];
   expandedSpecificationId: number | null;
@@ -35,9 +36,6 @@ export const SpecificationList = ({
     {({ classes }) => (
       <div>
         <div className={classes.specificationSection}>
-          <Typography variant="display1" gutterBottom>
-            Overview
-          </Typography>
           {specifications.map(specification => (
             <SpecificationItem
               key={specification.id}
