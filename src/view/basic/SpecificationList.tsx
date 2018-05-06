@@ -63,7 +63,7 @@ export const SpecificationList = ({
             className={classes.addButton}
             onClick={() => onAddSpecificationModalOpened()}
           >
-            Add Specification
+            Add Swagger Spec
           </Button>
         </div>
       </div>
