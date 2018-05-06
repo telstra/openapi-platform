@@ -38,7 +38,7 @@ const Styled: any = createStyled(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginTop: theme.spacing.unit
+    padding: theme.spacing.unit
   },
   progressIndicator: {
     margin: `0 ${theme.spacing.unit * 4}px`
@@ -198,50 +198,57 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                 onClose={() => this.props.onCloseModal()}
                 {...this.props.modalProps}
               >
-                <form className={classes.modalContent}>
-                  <Typography variant="title" className={classes.title}>
-                    Add Specification
-                  </Typography>
-                  <FormControl error={this.error.title !== undefined} margin="normal">
-                    <InputLabel htmlFor="title">Title</InputLabel>
-                    <Input
-                      id="title"
-                      onChange={event => {
-                        this.formText.title = event.target.value;
-                        this.validateTitle(false);
-                      }}
-                      onBlur={() => this.validateTitle()}
-                      value={this.formText.title}
-                    />
-                    <FormHelperText>{this.error.title || 'E.g. Petstore'}</FormHelperText>
-                  </FormControl>
-                  <FormControl error={this.error.url !== undefined} margin="dense">
-                    <InputLabel htmlFor="url">URL</InputLabel>
-                    <Input
-                      id="url"
-                      onChange={event => {
-                        this.formText.url = event.target.value;
-                        this.validateUrl(false);
-                      }}
-                      error={this.error.url !== undefined}
-                      onBlur={() => this.validateUrl()}
-                      value={this.formText.url}
-                    />
-                    <FormHelperText>
-                      {this.error.url ||
-                        'E.g. http://petstore.swagger.io/v2/swagger.json'}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl margin="dense">
-                    <InputLabel htmlFor="description">Description</InputLabel>
-                    <Input
-                      id="description"
-                      onChange={event => (this.formText.description = event.target.value)}
-                      value={this.formText.description}
-                      multiline={true}
-                      rowsMax={3}
-                    />
-                  </FormControl>
+                <form>
+                  <div className={classes.modalContent}>
+                    <Typography variant="title" className={classes.title}>
+                      Add Specification
+                    </Typography>
+                    <FormControl error={this.error.title !== undefined} margin="normal">
+                      <InputLabel htmlFor="title">Title</InputLabel>
+                      <Input
+                        id="title"
+                        onChange={event => {
+                          this.formText.title = event.target.value;
+                          this.validateTitle(false);
+                        }}
+                        onBlur={() => this.validateTitle()}
+                        value={this.formText.title}
+                      />
+                      <FormHelperText>
+                        {this.error.title || 'E.g. Petstore'}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl error={this.error.url !== undefined} margin="dense">
+                      <InputLabel htmlFor="url">URL</InputLabel>
+                      <Input
+                        id="url"
+                        onChange={event => {
+                          this.formText.url = event.target.value;
+                          this.validateUrl(false);
+                        }}
+                        error={this.error.url !== undefined}
+                        onBlur={() => this.validateUrl()}
+                        value={this.formText.url}
+                      />
+                      <FormHelperText>
+                        {this.error.url ||
+                          'E.g. http://petstore.swagger.io/v2/swagger.json'}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl margin="dense">
+                      <InputLabel htmlFor="description">Description</InputLabel>
+                      <Input
+                        id="description"
+                        onChange={event =>
+                          (this.formText.description = event.target.value)
+                        }
+                        value={this.formText.description}
+                        multiline={true}
+                        rowsMax={3}
+                      />
+                    </FormControl>
+                  </div>
+
                   <div className={classes.buttonRow}>
                     <Button
                       color="primary"
