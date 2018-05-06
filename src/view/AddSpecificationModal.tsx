@@ -66,7 +66,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
   @observable private showErrorModal: boolean = false;
 
   closeModal() {
-      this.props.history.push('/');
+    this.props.history.push('/');
   }
 
   /**
