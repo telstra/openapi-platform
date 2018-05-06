@@ -1,7 +1,17 @@
 import React, { Component, ReactNode } from 'react';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import { CircularProgress, Button, TextField, Typography, Modal } from 'material-ui';
+import {
+  CircularProgress,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  InputLabel,
+  Input,
+  Typography,
+  Modal
+} from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
@@ -28,7 +38,7 @@ const Styled: any = createStyled(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    marginTop: theme.spacing.unit
   },
   progressIndicator: {
     margin: `0 ${theme.spacing.unit * 4}px`
@@ -188,57 +198,71 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                 onClose={() => this.props.onCloseModal()}
                 {...this.props.modalProps}
               >
-                <div className={classes.modalContent}>
-                  <Typography variant="title">Add Specification</Typography>
-                  <TextField
-                    label={this.error.title || 'Title'}
-                    error={this.error.title !== undefined}
-                    onChange={event => {
-                      this.formText.title = event.target.value;
-                      this.validateTitle(false);
-                    }}
-                    onBlur={() => this.validateTitle()}
-                    value={this.formText.title}
-                    margin="normal"
-                  />
-                  <TextField
-                    label={this.error.url || 'URL'}
-                    error={this.error.url !== undefined}
-                    onChange={event => {
-                      this.formText.url = event.target.value;
-                      this.validateUrl(false);
-                    }}
-                    onBlur={() => this.validateUrl()}
-                    value={this.formText.url}
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Description"
-                    onChange={event => (this.formText.description = event.target.value)}
-                    value={this.formText.description}
-                    multiline={true}
-                    rowsMax={3}
-                    margin="normal"
-                  />
-                </div>
-                <div className={classes.buttonRow}>
-                  <Button
-                    color="primary"
-                    onClick={() => this.props.onCloseModal()}
-                    {...this.props.cancelButtonProps}
-                  >
-                    Cancel
-                  </Button>
-                  {this.props.showSubmitProgress ? (
-                    <CircularProgress size={24} className={classes.progressIndicator} />
-                  ) : (
+                <form className={classes.modalContent}>
+                  <Typography variant="title" className={classes.title}>
+                    Add Specification
+                  </Typography>
+                  <FormControl error={this.error.title !== undefined} margin="normal">
+                    <InputLabel htmlFor="title">Title</InputLabel>
+                    <Input
+                      id="title"
+                      onChange={event => {
+                        this.formText.title = event.target.value;
+                        this.validateTitle(false);
+                      }}
+                      onBlur={() => this.validateTitle()}
+                      value={this.formText.title}
+                    />
+                    <FormHelperText>{this.error.title || 'E.g. Petstore'}</FormHelperText>
+                  </FormControl>
+                  <FormControl error={this.error.url !== undefined} margin="dense">
+                    <InputLabel htmlFor="url">URL</InputLabel>
+                    <Input
+                      id="url"
+                      onChange={event => {
+                        this.formText.url = event.target.value;
+                        this.validateUrl(false);
+                      }}
+                      error={this.error.url !== undefined}
+                      onBlur={() => this.validateUrl()}
+                      value={this.formText.url}
+                    />
+                    <FormHelperText>
+                      {this.error.url ||
+                        'E.g. http://petstore.swagger.io/v2/swagger.json'}
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl margin="dense">
+                    <InputLabel htmlFor="description">Description</InputLabel>
+                    <Input
+                      id="description"
+                      onChange={event => (this.formText.description = event.target.value)}
+                      value={this.formText.description}
+                      multiline={true}
+                      rowsMax={3}
+                    />
+                  </FormControl>
+                  <div className={classes.buttonRow}>
                     <Button
                       color="primary"
-                      onClick={() => this.onSubmitSpecification()}
-                      {...this.props.submitButtonProps}
-                    />
-                  )}
-                </div>
+                      type="button"
+                      onClick={() => this.props.onCloseModal()}
+                      {...this.props.cancelButtonProps}
+                    >
+                      Cancel
+                    </Button>
+                    {this.props.showSubmitProgress ? (
+                      <CircularProgress size={24} className={classes.progressIndicator} />
+                    ) : (
+                      <Button
+                        color="primary"
+                        type="submit"
+                        onClick={() => this.onSubmitSpecification()}
+                        {...this.props.submitButtonProps}
+                      />
+                    )}
+                  </div>
+                </form>
               </FloatingModal>
             )}
           </Observer>
