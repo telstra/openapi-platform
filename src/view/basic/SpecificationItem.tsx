@@ -124,11 +124,13 @@ export const SpecificationItem: SFC<SpecificationItemProps> = ({
               </div>
             </div>
             <List className={classes.bordered}>
-              {specification.sdks.map(sdk => (
-                <ListItem key={sdk.id}>
-                  <SdkItem sdk={sdk} />
-                </ListItem>
-              ))}
+              {specification.sdks
+                ? specification.sdks.map(sdk => (
+                    <ListItem key={sdk.id}>
+                      <SdkItem sdk={sdk} />
+                    </ListItem>
+                  ))
+                : undefined}
             </List>
           </div>
         </ExpansionPanelDetails>

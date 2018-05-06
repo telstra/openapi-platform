@@ -1,9 +1,9 @@
 import { Specification } from 'model/Specification';
 import { BuildStatus } from 'model/Sdk';
 
-// TODO: Replace this list
 let count = 0;
-const specifications: Specification[] = [
+// TODO: Replace this list
+export const dummySpecifications: Specification[] = [
   {
     id: count++,
     title: 'Birds',
@@ -47,52 +47,3 @@ const specifications: Specification[] = [
     ]
   }
 ];
-
-/** Gets a specification with a matching id to what is provided
- * @param {number} id - the id of the specification to fetch
- * @return {Specification | undefined} - returns the Specification with the matching id if it exists
- */
-export function getSpecificationById(id: number): Specification | undefined {
-  for (const spec of specifications) {
-    if (spec.id === id) {
-      return spec;
-    }
-  }
-  return undefined;
-}
-
-/** Gets all Specifications
- * @return {Specification[]} - returns an array containing all specifications
- */
-export function getSpecifications(): Specification[] {
-  return specifications;
-}
-
-/** Adds a specification to the list
- * @param {string} title - the specification title
- * @param {string} path - path to the swagger specification file
- * @param {string} description - optional specification description
- * @return {Specification} - specification object that was created
- */
-export function addSpecification(
-  title: string,
-  path: string,
-  description?: string
-): Specification {
-  let spec: Specification;
-
-  if (description !== undefined) {
-    spec = {
-      id: count++,
-      title,
-      description,
-      path,
-      sdks: []
-    };
-  } else {
-    spec = { id: count++, title, path, sdks: [] };
-  }
-
-  specifications.push(spec);
-  return spec;
-}
