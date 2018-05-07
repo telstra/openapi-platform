@@ -9,7 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 // TODO: Add react-router's injected props
 export const ProfileViewer: SFC<any> = observer(() => (
-  <span>
+  <div>
     <SimpleToolbar
       title="Profile"
       searchPrompt="Search profiles"
@@ -28,5 +28,5 @@ export const ProfileViewer: SFC<any> = observer(() => (
       }
       <ProfileInformation profile={state.me} />
     </ContentContainer>
-  </span>
+  </div>
 ));

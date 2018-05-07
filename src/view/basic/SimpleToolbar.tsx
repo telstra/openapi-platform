@@ -6,6 +6,7 @@ import TextField from 'material-ui/TextField';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { createStyled } from 'view/createStyled';
+import { Category } from 'model/Storybook';
 
 export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> {
   title: string;
@@ -71,8 +72,20 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
           }}
           onChange={(event: any) => onSearchInputChange(event.target.value)}
         />
-        <section className={classes.actions}>{actions.map(action => action)}</section>
+        <section className={classes.actions}>{actions}</section>
       </Toolbar>
     )}
   </Styled>
 );
+
+export const storybook: Category<SimpleToolbarProps> = {
+  Component: SimpleToolbar,
+  stories: {
+    Generic: {
+      title: 'Title',
+      searchPrompt: 'Search',
+      onSearchInputChange: () => {},
+      actions: []
+    }
+  }
+};

@@ -1,14 +1,16 @@
 import React, { SFC } from 'react';
-import Drawer from 'material-ui/Drawer';
-import * as Icons from '@material-ui/icons';
-import { List, ListItem, ListItemIcon, ListItemText } from 'material-ui';
-import { state as profileState } from 'state/ProfileState';
 import { Route } from 'react-router-dom';
 import { observable, action, autorun, computed } from 'mobx';
 import { observer, Observer } from 'mobx-react';
-import { createStyled } from 'view/createStyled';
-import Divider from 'material-ui/Divider';
 import classNames from 'classnames';
+import { List, ListItem, ListItemIcon, ListItemText } from 'material-ui';
+import Drawer from 'material-ui/Drawer';
+import Divider from 'material-ui/Divider';
+import * as Icons from '@material-ui/icons';
+
+import { createStyled } from 'view/createStyled';
+import { state as profileState } from 'state/ProfileState';
+
 // TODO: Maybe come back to this and see if we can get proper type validation going
 const Styled: any = createStyled(theme => ({
   navPaper: {
@@ -49,9 +51,9 @@ class NavigationState {
     return this.open ? 'Close' : 'Open';
   }
   @action
-  public toggleOpen(): void {
+  public toggleOpen = (): void => {
     this.open = !this.open;
-  }
+  };
 }
 const navState = new NavigationState();
 const NavigationButton = ({ icon, primary, classes, ...other }) => (
@@ -81,7 +83,7 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
               >
                 <List component="nav">
                   <NavigationButton
-                    onClick={() => navState.toggleOpen()}
+                    onClick={navState.toggleOpen}
                     icon={
                       navState.open ? (
                         <Icons.ChevronLeft className={classes.navIcon} />
@@ -95,7 +97,7 @@ export const NavigationMenu: SFC<NavigationMenuProps> = () => (
                   />
                   <Divider />
                   <NavigationButton
-                    onClick={() => history.push('/overvie')}
+                    onClick={() => history.push('/overview')}
                     icon={<Icons.Dashboard className={classes.navIcon} />}
                     primary="Overview"
                     classes={classes}
