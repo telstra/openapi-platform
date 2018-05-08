@@ -12,17 +12,17 @@ export const dummySpecifications: Specification[] = [
     sdks: [
       {
         id: 10,
-        name: 'Java',
-        latestVersion: 'v1.0.34',
+        client: 'Java',
+        version: 'v1.0.34',
         buildStatus: BuildStatus.SUCCESS
       },
       {
         id: 12,
-        name: 'Node.js',
-        latestVersion: 'v1.0.35',
+        client: 'Node.js',
+        version: 'v1.0.35',
         buildStatus: BuildStatus.RUNNING
       },
-      { id: 11, name: 'Haskell', latestVersion: 'v0', buildStatus: BuildStatus.NOTRUN }
+      { id: 11, client: 'Haskell', version: 'v0', buildStatus: BuildStatus.NOTRUN }
     ]
   },
   {
@@ -32,7 +32,7 @@ export const dummySpecifications: Specification[] = [
       'A test API for testing with a very long description that should truncate when displayed in the list',
     path: 'git.example.com/swagger-specs/test.yaml',
     sdks: [
-      { id: 20, name: 'FORTRAN', latestVersion: 'alpha', buildStatus: BuildStatus.FAIL }
+      { id: 20, client: 'FORTRAN', version: 'alpha', buildStatus: BuildStatus.FAIL }
     ]
   },
   {
@@ -42,8 +42,8 @@ export const dummySpecifications: Specification[] = [
     path:
       'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/uber.yaml',
     sdks: [
-      { id: 1, name: 'Python', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS },
-      { id: 2, name: 'java', latestVersion: 'alpha', buildStatus: BuildStatus.SUCCESS }
+      { id: 1, client: 'Python', version: 'alpha', buildStatus: BuildStatus.SUCCESS },
+      { id: 2, client: 'Java', version: 'alpha', buildStatus: BuildStatus.SUCCESS }
     ]
   }
 ];

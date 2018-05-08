@@ -4,17 +4,25 @@ import { config } from 'config';
 import { Specification } from 'model/Specification';
 import { BuildStatus } from 'model/Sdk';
 import { client } from 'client/BackendClient';
+
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
   addSpecification: (info: AddedSpecification) => Promise<void>;
   expandedSpecificationId: number | null;
 }
+
 export interface AddedSpecification {
   path: string;
   title?: string;
   description?: string;
 }
+
+export interface AddedSdk {
+  client: string;
+  version: string;
+}
+
 class BasicSpecificationState implements SpecificationState {
   @observable readonly specifications: Map<number, Specification> = new Map();
   @computed

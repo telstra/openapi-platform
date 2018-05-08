@@ -1,7 +1,7 @@
 export interface Sdk {
   id: number;
-  name: string;
-  latestVersion: string;
+  client: string;
+  version: string;
   buildStatus: BuildStatus;
 }
 

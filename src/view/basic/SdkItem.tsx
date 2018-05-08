@@ -37,9 +37,9 @@ export const SdkItem: SFC<SdkItemProps> = ({ sdk }) => (
   <Styled>
     {({ classes }) => (
       <div className={classes.sdkItemContainer}>
-        <Typography>{sdk.name}</Typography>
+        <Typography>{sdk.client}</Typography>
         <Typography variant="body1" color="textSecondary">
-          {sdk.latestVersion}
+          {sdk.version}
         </Typography>
         <div>
           <BuildStatusChip buildStatus={sdk.buildStatus} />
