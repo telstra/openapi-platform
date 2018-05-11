@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import cors from 'cors';
 import { config } from 'config';
 import { generateSdk } from 'client/sdkGeneration';
