@@ -164,7 +164,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  async onSubmitSpecification() {
+  onSubmitSpecification() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;

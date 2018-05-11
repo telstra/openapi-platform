@@ -167,7 +167,7 @@ export class SdkModal extends Component<SdkModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  async onSubmitSdk() {
+  onSubmitSdk() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
