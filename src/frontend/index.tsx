@@ -4,6 +4,7 @@ import { Page } from 'view/Page';
 import { BrowserRouter } from 'react-router-dom';
 import jss from 'jss';
 import 'typeface-roboto';
+import 'typeface-roboto-mono';
 import { ThemeProvider } from 'view/ThemeProvider';
 import * as jssGlobal from 'jss-global';
 

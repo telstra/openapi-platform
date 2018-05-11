@@ -1,11 +1,9 @@
 import React, { SFC } from 'react';
-import { Specification } from 'model/Specification';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import { createStyled } from 'view/createStyled';
 import Info from '@material-ui/icons/InfoOutline';
 import Close from '@material-ui/icons/Close';
 import Grid from 'material-ui/Grid';
@@ -13,6 +11,9 @@ import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Edit from '@material-ui/icons/Edit';
+
+import { Specification } from 'model/Specification';
+import { createStyled } from 'view/createStyled';
 import { SdkItem } from 'basic/SdkItem';
 
 const Styled: any = createStyled(theme => ({
@@ -69,7 +70,6 @@ export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivEleme
  * Very basic information about a specification.
  * For use in lists, grids, etc.
  */
-
 export const SpecificationItem: SFC<SpecificationItemProps> = ({
   specification,
   expanded,

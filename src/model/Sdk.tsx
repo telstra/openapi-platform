@@ -1,8 +1,15 @@
 export interface Sdk {
   id: number;
-  client: string;
-  version: string;
+  target: string;
+  version?: string;
+  options?: any;
   buildStatus: BuildStatus;
+}
+
+export interface AddedSdk {
+  target: string;
+  version?: string;
+  options?: any;
 }
 
 export enum BuildStatus {
@@ -11,3 +18,93 @@ export enum BuildStatus {
   SUCCESS,
   FAIL
 }
+
+export const SDK_TARGETS = [
+  'ada',
+  'ada-server',
+  'akka-scala',
+  'android',
+  'apache2',
+  'apex',
+  'aspnetcore',
+  'bash',
+  'clojure',
+  'cpprest',
+  'csharp',
+  'csharp-dotnet2',
+  'cwiki',
+  'dart',
+  'dynamic-html',
+  'eiffel',
+  'elixir',
+  'elm',
+  'erlang-client',
+  'erlang-server',
+  'finch',
+  'flash',
+  'go',
+  'go-server',
+  'groovy',
+  'haskell',
+  'haskell-http-client',
+  'html',
+  'html2',
+  'inflector',
+  'java',
+  'java-pkmst',
+  'java-play-framework',
+  'java-vertx',
+  'javascript',
+  'javascript-closure-angular',
+  'jaxrs',
+  'jaxrs-cxf',
+  'jaxrs-cxf-cdi',
+  'jaxrs-cxf-client',
+  'jaxrs-resteasy',
+  'jaxrs-resteasy-eap',
+  'jaxrs-spec',
+  'jmeter',
+  'kotlin',
+  'lua',
+  'lumen',
+  'msf4j',
+  'nancyfx',
+  'nodejs-server',
+  'objc',
+  'perl',
+  'php',
+  'php-silex',
+  'php-symfony',
+  'pistache-server',
+  'powershell',
+  'python',
+  'python-flask',
+  'qt5cpp',
+  'r',
+  'rails5',
+  'restbed',
+  'ruby',
+  'rust',
+  'rust-server',
+  'scala',
+  'scala-lagom-server',
+  'scalatra',
+  'scalaz',
+  'sinatra',
+  'slim',
+  'spring',
+  'swagger',
+  'swagger-yaml',
+  'swift',
+  'swift3',
+  'swift4',
+  'tizen',
+  'typescript-angular',
+  'typescript-angularjs',
+  'typescript-aurelia',
+  'typescript-fetch',
+  'typescript-jquery',
+  'typescript-node',
+  'undertow',
+  'ze-ph'
+];

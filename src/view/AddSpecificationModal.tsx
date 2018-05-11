@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from 'react';
+import { observable, action, autorun, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import { CircularProgress } from 'material-ui/Progress';
@@ -14,13 +15,9 @@ import {
 } from 'state/SpecificationState';
 import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
-import { observable, action, autorun, computed } from 'mobx';
 import { SpecificationModal } from 'basic/SpecificationModal';
 import { FloatingModal } from 'basic/FloatingModal';
 const Styled: any = createStyled(theme => ({
-  modalPaper: {
-    maxWidth: theme.spacing.unit * 64
-  },
   errorModalPaper: {
     maxWidth: theme.spacing.unit * 48
   },
@@ -34,9 +31,6 @@ const Styled: any = createStyled(theme => ({
     justifyContent: 'flex-end',
     alignItems: 'center',
     padding: theme.spacing.unit
-  },
-  progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
   }
 }));
 

@@ -2,22 +2,23 @@ import React, { Component, ReactNode } from 'react';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 import {
-  CircularProgress,
   Button,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormHelperText,
-  InputLabel,
   Input,
-  Typography,
-  Modal
+  InputLabel,
+  MenuItem,
+  Modal,
+  Select,
+  Typography
 } from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
-import { Specification } from 'model/Specification';
-import { AddedSpecification } from 'state/SpecificationState';
+import { Sdk, AddedSdk, SDK_TARGETS } from 'model/Sdk';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';
 import { FloatingModal } from 'basic/FloatingModal';
@@ -31,6 +32,9 @@ const Styled: any = createStyled(theme => ({
     flexDirection: 'column',
     padding: theme.spacing.unit * 3
   },
+  optionsText: {
+    fontFamily: 'Roboto Mono'
+  },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -43,22 +47,22 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export interface FormText {
-  title: string;
-  url: string;
-  description: string;
+  target: string;
+  version: string;
+  options: string;
 }
 
 export interface FormError {
-  title?: string;
-  url?: string;
+  target?: string;
+  options?: string;
 }
 
 export type OnCloseModal = () => void;
-export type OnSubmitSpecification = (spec: AddedSpecification) => void;
+export type OnSubmitSdk = (sdk: AddedSdk) => void;
 export type OnError = (error: FormError) => void;
-export interface SpecificationModalProps {
+export interface SdkModalProps {
   readonly onCloseModal: OnCloseModal;
-  readonly onSubmitSpecification: OnSubmitSpecification;
+  readonly onSubmitSdk: OnSubmitSdk;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -69,15 +73,15 @@ export interface SpecificationModalProps {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecificationModal extends Component<SpecificationModalProps> {
+export class SdkModal extends Component<SdkModalProps> {
   /**
    * Currently entered form data
    */
   @observable
   private readonly formText: FormText = {
-    title: '',
-    url: '',
-    description: ''
+    target: '',
+    version: '',
+    options: '{}'
   };
 
   /**
@@ -85,67 +89,66 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    */
   @observable
   private readonly error: FormError = {
-    title: undefined,
-    url: undefined
+    target: undefined,
+    options: undefined
   };
 
   /**
-   * @returns An error message if the title is invalid in some way
+   * @returns An error message if the target is invalid in some way
    */
   @computed
-  get titleError(): string | undefined {
-    const title = this.formText.title;
-    return !title ? 'Error: Missing title' : undefined;
+  get targetError(): string | undefined {
+    const title = this.formText.target;
+    return !title ? 'Error: Missing target' : undefined;
   }
 
   /**
-   * @returns An error message if the url is invalid in some way
-   */
-  @computed
-  get urlError(): string | undefined {
-    const url = this.formText.url;
-    if (!url) {
-      return 'Error: URL cannot be empty';
-    } else if (!isWebUri(url)) {
-      return 'Error: Invalid URL';
-    } else {
-      return undefined;
-    }
-  }
-
-  /**
-   * Checks whether the specification's URL input is valid
+   * Checks whether the SDK's target input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateUrl(showErrorMesssage: boolean = true): boolean {
+  validateTarget(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (this.urlError) {
+    if (this.targetError) {
       if (showErrorMesssage) {
-        this.error.url = this.urlError;
+        this.error.target = this.targetError;
       }
       valid = false;
     } else {
-      this.error.url = undefined;
+      this.error.target = undefined;
       valid = true;
     }
     return valid;
   }
 
   /**
-   * Checks whether the specification's title input is valid
+`  * @returns An error message if the options are invalid in some way
+   */
+  @computed
+  get optionsError(): string | undefined {
+    const optionsStr = this.formText.options;
+    try {
+      JSON.parse(optionsStr);
+      return undefined;
+    } catch (e) {
+      return 'Error: invalid JSON';
+    }
+  }
+
+  /**
+   * Checks whether the SDK's options input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateTitle(showErrorMesssage: boolean = true): boolean {
+  validateOptions(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (this.titleError) {
+    if (this.optionsError) {
       if (showErrorMesssage) {
-        this.error.title = this.titleError;
+        this.error.options = this.optionsError;
       }
       valid = false;
     } else {
-      this.error.title = undefined;
+      this.error.options = undefined;
       valid = true;
     }
     return valid;
@@ -157,26 +160,26 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    */
   @action
   validateAllInputs(showErrorMessages: boolean = true) {
-    const titleValid = this.validateTitle(showErrorMessages);
-    const urlValid = this.validateUrl(showErrorMessages);
-    return titleValid && urlValid;
+    const targetValid = this.validateTarget(showErrorMessages);
+    const optionsValid = this.validateOptions(showErrorMessages);
+    return targetValid && optionsValid;
   }
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  async onSubmitSpecification() {
+  async onSubmitSdk() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
     }
 
     // Send the request to the backend
-    const title = this.formText.title;
-    const path = isWebUri(this.formText.url);
-    const description = this.formText.description;
-    this.props.onSubmitSpecification({ title, path, description });
+    const target = this.formText.target;
+    const version = this.formText.version;
+    const options = JSON.parse(this.formText.options);
+    this.props.onSubmitSdk({ target, version, options });
   }
 
   render() {
@@ -195,50 +198,61 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add Swagger Spec
+                      Add SDK
                     </Typography>
-                    <FormControl error={this.error.title !== undefined} margin="normal">
-                      <InputLabel htmlFor="title">Title</InputLabel>
-                      <Input
-                        id="title"
+                    <FormControl error={this.error.target !== undefined} margin="dense">
+                      <InputLabel htmlFor="target">Target</InputLabel>
+                      <Select
+                        id="target"
                         onChange={event => {
-                          this.formText.title = event.target.value;
-                          this.validateTitle(false);
+                          this.formText.target = event.target.value;
+                          this.validateTarget(false);
                         }}
-                        onBlur={() => this.validateTitle()}
-                        value={this.formText.title}
-                      />
-                      <FormHelperText>
-                        {this.error.title || 'E.g. Petstore'}
-                      </FormHelperText>
-                    </FormControl>
-                    <FormControl error={this.error.url !== undefined} margin="dense">
-                      <InputLabel htmlFor="url">URL</InputLabel>
-                      <Input
-                        id="url"
-                        onChange={event => {
-                          this.formText.url = event.target.value;
-                          this.validateUrl(false);
+                        onBlur={() => this.validateTarget()}
+                        value={this.formText.target}
+                        inputProps={{
+                          name: 'age',
+                          id: 'age-simple'
                         }}
-                        onBlur={() => this.validateUrl()}
-                        value={this.formText.url}
-                      />
-                      <FormHelperText>
-                        {this.error.url ||
-                          'E.g. http://petstore.swagger.io/v2/swagger.json'}
-                      </FormHelperText>
+                      >
+                        {SDK_TARGETS.map(target => (
+                          <MenuItem key={target} value={target}>
+                            {target}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <FormHelperText>{this.error.target}</FormHelperText>
                     </FormControl>
                     <FormControl margin="dense">
-                      <InputLabel htmlFor="description">Description</InputLabel>
+                      <InputLabel htmlFor="version">Version</InputLabel>
                       <Input
-                        id="description"
-                        onChange={event =>
-                          (this.formText.description = event.target.value)
-                        }
-                        value={this.formText.description}
-                        multiline={true}
-                        rowsMax={3}
+                        id="version"
+                        onChange={event => {
+                          this.formText.version = event.target.value;
+                        }}
+                        value={this.formText.version}
                       />
+                      <FormHelperText>E.g. 1.2.34</FormHelperText>
+                    </FormControl>
+                    <FormControl error={this.error.options !== undefined} margin="dense">
+                      <InputLabel htmlFor="options">Options</InputLabel>
+                      <Input
+                        id="options"
+                        className={classes.optionsText}
+                        onChange={event => {
+                          this.formText.options = event.target.value;
+                          this.validateOptions(false);
+                        }}
+                        onBlur={() => this.validateOptions()}
+                        value={this.formText.options}
+                        multiline={true}
+                        rows={5}
+                        rowsMax={10}
+                      />
+                      <FormHelperText>
+                        {this.error.options ||
+                          'Target-specific options to pass to Swagger Codegen in JSON'}
+                      </FormHelperText>
                     </FormControl>
                   </div>
 
@@ -257,7 +271,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={() => this.onSubmitSpecification()}
+                        onClick={() => this.onSubmitSdk()}
                         {...this.props.submitButtonProps}
                       />
                     )}
@@ -272,12 +286,12 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   }
 }
 
-export const storybook: Category<SpecificationModalProps> = {
-  Component: SpecificationModal,
+export const storybook: Category<SdkModalProps> = {
+  Component: SdkModal,
   stories: {
     Submit: {
       onCloseModal: () => {},
-      onSubmitSpecification: () => {},
+      onSubmitSdk: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
         children: 'Submit'

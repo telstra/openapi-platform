@@ -18,11 +18,6 @@ export interface AddedSpecification {
   description?: string;
 }
 
-export interface AddedSdk {
-  client: string;
-  version: string;
-}
-
 class BasicSpecificationState implements SpecificationState {
   @observable readonly specifications: Map<number, Specification> = new Map();
   @computed
