@@ -12,7 +12,7 @@ import {
   state as specificationState,
   AddedSpecification
 } from 'state/SpecificationState';
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';
 import { SpecificationModal } from 'basic/SpecificationModal';

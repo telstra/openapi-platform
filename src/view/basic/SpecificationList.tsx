@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
 import { createStyled } from 'view/createStyled';
 import { SpecificationItem } from 'basic/SpecificationItem';
-
+import { HasId } from 'model/Entity';
+import { state } from 'state/SdkState';
 export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
-  specifications: Specification[];
+  specifications: HasId<Spec>[];
   expandedSpecificationId: number | null;
   onSpecificationExpanded: (id: number | null) => void;
-  onSpecificationSelected: (specification: Specification) => void;
+  onSpecificationSelected: (specification: Spec) => void;
   onAddSpecificationModalOpened: () => void;
 }
 
@@ -54,6 +55,7 @@ export const SpecificationList = ({
               onPanelChange={(event, expanded) =>
                 onSpecificationExpanded(expanded ? specification.id : null)
               }
+              sdks={state.specSdks.get(specification.id)}
               onClick={() => onSpecificationSelected(specification)}
             />
           ))}

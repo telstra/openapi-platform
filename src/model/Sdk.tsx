@@ -1,8 +1,10 @@
+import { HasId, Id } from 'model/Entity';
+
 export interface Sdk {
-  id: number;
   name: string;
   latestVersion: string;
   buildStatus: BuildStatus;
+  specId: Id;
 }
 
 export enum BuildStatus {
@@ -11,3 +13,5 @@ export enum BuildStatus {
   SUCCESS,
   FAIL
 }
+
+export interface SdkResponse {}

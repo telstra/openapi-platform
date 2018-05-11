@@ -1,5 +1,6 @@
 import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
+
 // TODO: Fill this in at some point
 export interface BackendClient {
   [key: string]: any;

@@ -1,7 +1,7 @@
 import React, { SFC } from 'react';
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
 export interface SpecificationInformationProps {
-  specification: Specification;
+  specification: Spec;
 }
 /**
  * Shows detailed information about a specified specification

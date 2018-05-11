@@ -1,12 +1,11 @@
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
 import fetch from 'node-fetch';
 
 const SWAGGER_CODEGEN_ENDPOINT = 'http://generator.swagger.io/api/gen/clients/';
-const BAD_SPECIFICATION = 'Error: Bad specification';
 
-export async function generateSdk(spec: Specification): Promise<any> {
+export async function generateSdk(spec: Spec): Promise<any> {
   /* Generates an SDK for a specification 
-  * @param {Specification} spec - The specification object for which the sdk needs to be generated
+  * @param {Spec} spec - The specification object for which the sdk needs to be generated
   * @return {Promise<string>} - The URL from which the sdk can be downloaded
   */
 
@@ -19,10 +18,9 @@ export async function generateSdk(spec: Specification): Promise<any> {
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
   });
-  const fulfilled = await response.json();
-  console.log(fulfilled);
-  if (fulfilled.type == 'error') {
-    return BAD_SPECIFICATION;
+  const json = await response.json();
+  if (json.type === 'error') {
+    throw new Error(json.message);
   }
-  return fulfilled.link;
+  return json;
 }

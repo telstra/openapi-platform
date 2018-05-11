@@ -1,5 +1,6 @@
 import React, { SFC } from 'react';
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
+import { HasId } from 'model/Entity';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails
@@ -14,6 +15,8 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import { SdkItem } from 'basic/SdkItem';
+import { state } from 'state/SdkState';
+import { Sdk } from 'model/Sdk';
 
 const Styled: any = createStyled(theme => ({
   bordered: {
@@ -60,9 +63,10 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivElement> {
-  specification: Specification;
+  specification: Spec;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
+  sdks?: HasId<Sdk>[];
 }
 
 /**
@@ -73,7 +77,8 @@ export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivEleme
 export const SpecificationItem: SFC<SpecificationItemProps> = ({
   specification,
   expanded,
-  onPanelChange
+  onPanelChange,
+  sdks = []
 }) => (
   <Styled>
     {({ classes }) => (
@@ -124,13 +129,11 @@ export const SpecificationItem: SFC<SpecificationItemProps> = ({
               </div>
             </div>
             <List className={classes.bordered}>
-              {specification.sdks
-                ? specification.sdks.map(sdk => (
-                    <ListItem key={sdk.id}>
-                      <SdkItem sdk={sdk} />
-                    </ListItem>
-                  ))
-                : undefined}
+              {sdks.map(sdk => (
+                <ListItem key={sdk.id}>
+                  <SdkItem sdk={sdk} />
+                </ListItem>
+              ))}
             </List>
           </div>
         </ExpansionPanelDetails>

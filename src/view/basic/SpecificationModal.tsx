@@ -6,7 +6,7 @@ import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
-import { Specification } from 'model/Specification';
+import { Spec } from 'model/Spec';
 import { AddedSpecification } from 'state/SpecificationState';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';

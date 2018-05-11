@@ -1,4 +1,3 @@
-import React from 'react';
 import { observable } from 'mobx';
 import { PaletteType } from 'material-ui';
 class SettingsState {
