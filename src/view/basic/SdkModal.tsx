@@ -203,7 +203,6 @@ export class SdkModal extends Component<SdkModalProps> {
                     <FormControl error={this.error.target !== undefined} margin="dense">
                       <InputLabel htmlFor="target">Target</InputLabel>
                       <Select
-                        id="target"
                         onChange={event => {
                           this.formText.target = event.target.value;
                           this.validateTarget(false);
@@ -211,8 +210,7 @@ export class SdkModal extends Component<SdkModalProps> {
                         onBlur={() => this.validateTarget()}
                         value={this.formText.target}
                         inputProps={{
-                          name: 'age',
-                          id: 'age-simple'
+                          id: 'target'
                         }}
                       >
                         {SDK_TARGETS.map(target => (
