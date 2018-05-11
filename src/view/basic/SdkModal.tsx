@@ -1,16 +1,15 @@
 import React, { Component, ReactNode } from 'react';
-import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
+import { observable, action, autorun, computed } from 'mobx';
+import { Observer } from 'mobx-react';
 import {
   Button,
   CircularProgress,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Input,
   InputLabel,
   MenuItem,
-  Modal,
   Select,
   Typography
 } from 'material-ui';
@@ -18,11 +17,11 @@ import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
+import { Category } from 'model/Storybook';
 import { Sdk, AddedSdk, SDK_TARGETS } from 'model/Sdk';
 import { createStyled } from 'view/createStyled';
-import { observable, action, autorun, computed } from 'mobx';
 import { FloatingModal } from 'basic/FloatingModal';
-import { Category } from 'model/Storybook';
+
 const Styled: any = createStyled(theme => ({
   modalPaper: {
     maxWidth: theme.spacing.unit * 64
@@ -59,7 +58,6 @@ export interface FormError {
 
 export type OnCloseModal = () => void;
 export type OnSubmitSdk = (sdk: AddedSdk) => void;
-export type OnError = (error: FormError) => void;
 export interface SdkModalProps {
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSdk: OnSubmitSdk;
