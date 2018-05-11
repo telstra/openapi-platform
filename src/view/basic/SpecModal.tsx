@@ -17,7 +17,7 @@ import { ModalProps } from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
 import { Spec } from 'model/Spec';
-import { AddedSpecification } from 'state/SpecificationState';
+import { AddedSpecification } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';
 import { FloatingModal } from 'basic/FloatingModal';
@@ -59,7 +59,7 @@ export interface FormError {
 export type OnCloseModal = () => void;
 export type OnSubmitSpecification = (spec: AddedSpecification) => void;
 export type OnError = (error: FormError) => void;
-export interface SpecificationModalProps {
+export interface SpecModalProps {
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSpecification: OnSubmitSpecification;
   readonly cancelButtonProps?: ButtonProps;
@@ -72,7 +72,7 @@ export interface SpecificationModalProps {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecificationModal extends Component<SpecificationModalProps> {
+export class SpecModal extends Component<SpecModalProps> {
   /**
    * Currently entered form data
    */
@@ -279,8 +279,8 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   }
 }
 
-export const storybook: Category<SpecificationModalProps> = {
-  Component: SpecificationModal,
+export const storybook: Category<SpecModalProps> = {
+  Component: SpecModal,
   stories: {
     Submit: {
       onCloseModal: () => {},

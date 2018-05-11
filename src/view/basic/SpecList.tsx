@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { Button, Grid, Typography } from 'material-ui';
 
-import { SpecificationItem } from 'basic/SpecificationItem';
+import { SpecItem } from 'basic/SpecItem';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
-import { state } from 'state/SdkState';
+import { state } from 'state/PlanState';
 import { createStyled } from 'view/createStyled';
-export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
+export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: HasId<Spec>[];
-  expandedSpecificationId: number | null;
-  onSpecificationExpanded: (id: number | null) => void;
-  onSpecificationSelected: (specification: Spec) => void;
-  onAddSpecificationModalOpened: () => void;
+  expandedSpecId: number | null;
+  onSpecExpanded: (id: number | null) => void;
+  onSpecSelected: (specification: Spec) => void;
+  onAddSpecModalOpened: () => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -28,26 +28,26 @@ const Styled = createStyled(theme => ({
 /**
  * Lists a series of specifications
  */
-export const SpecificationList = ({
+export const SpecList = ({
   specifications,
-  expandedSpecificationId,
-  onSpecificationExpanded,
-  onSpecificationSelected
+  expandedSpecId,
+  onSpecExpanded,
+  onSpecSelected
 }) => (
   <Styled>
     {({ classes }) => (
       <div>
         <div className={classes.specificationSection}>
           {specifications.map(specification => (
-            <SpecificationItem
+            <SpecItem
               key={specification.id}
               specification={specification}
-              expanded={expandedSpecificationId === specification.id}
+              expanded={expandedSpecId === specification.id}
               onPanelChange={(event, expanded) =>
-                onSpecificationExpanded(expanded ? specification.id : null)
+                onSpecExpanded(expanded ? specification.id : null)
               }
-              sdks={state.specSdks.get(specification.id)}
-              onClick={() => onSpecificationSelected(specification)}
+              plans={state.specPlans.get(specification.id)}
+              onClick={() => onSpecSelected(specification)}
             />
           ))}
         </div>

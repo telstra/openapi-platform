@@ -1,6 +1,6 @@
 import { HasId, Id } from 'model/Entity';
 
-export interface Sdk {
+export interface Plan {
   name: string;
   latestVersion: string;
   buildStatus: BuildStatus;

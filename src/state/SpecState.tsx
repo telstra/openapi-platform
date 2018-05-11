@@ -3,20 +3,20 @@ import fetch from 'node-fetch';
 import { config } from 'config';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
-import { BuildStatus } from 'model/Sdk';
+import { BuildStatus } from 'model/Plan';
 import { client } from 'client/BackendClient';
-export interface SpecificationState {
+export interface SpecState {
   specifications: Map<number, HasId<Spec>>;
   specificationList: HasId<Spec>[];
   addSpecification: (info: AddedSpecification) => Promise<void>;
-  expandedSpecificationId: number | null;
+  expandedSpecId: number | null;
 }
 export interface AddedSpecification {
   path: string;
   title?: string;
   description?: string;
 }
-class BasicSpecificationState implements SpecificationState {
+export class BasicSpecState implements SpecState {
   @observable readonly specifications: Map<number, HasId<Spec>> = new Map();
   @computed
   get specificationList(): HasId<Spec>[] {
@@ -30,10 +30,10 @@ class BasicSpecificationState implements SpecificationState {
       .create(addedSpec);
     this.specifications.set(specification.id, specification);
   }
-  @observable expandedSpecificationId: number | null = null;
+  @observable expandedSpecId: number | null = null;
 }
 
-export const state: SpecificationState = new BasicSpecificationState();
+export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()

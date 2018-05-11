@@ -1,13 +1,11 @@
 import React, { SFC } from 'react';
 import { observer } from 'mobx-react';
-import { SpecificationInformation } from 'basic/SpecificationInformation';
-import { state } from 'state/SpecificationState';
+import { SpecInformation } from 'basic/SpecInformation';
+import { state } from 'state/SpecState';
 import { ContentContainer } from 'basic/ContentContainer';
 // TODO: Fix the prop types for this
-export const SpecificationViewer: SFC<any> = observer(({ match }) => {
+export const SpecViewer: SFC<any> = observer(({ match }) => {
   const specification = state.specifications.get(match.id);
   // TODO: Probably show something if we couldn't find a specification
-  return specification ? (
-    <SpecificationInformation specification={specification} />
-  ) : null;
+  return specification ? <SpecInformation specification={specification} /> : null;
 });

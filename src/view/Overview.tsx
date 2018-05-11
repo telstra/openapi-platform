@@ -4,11 +4,11 @@ import { observer } from 'mobx-react';
 import IconButton from 'material-ui/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 
-import { state } from 'state/SpecificationState';
-import { AddSpecificationModal } from 'view/AddSpecificationModal';
+import { state } from 'state/SpecState';
+import { AddSpecModal } from 'view/AddSpecModal';
 import { ContentContainer } from 'basic/ContentContainer';
 import { SimpleToolbar } from 'basic/SimpleToolbar';
-import { SpecificationList } from 'basic/SpecificationList';
+import { SpecList } from 'basic/SpecList';
 
 /**
  * An overview of the current state of Swagger Platform.
@@ -29,17 +29,17 @@ export const Overview: SFC<{}> = observer(({ history, match }) => (
       ]}
     />
     <ContentContainer>
-      <SpecificationList
+      <SpecList
         specifications={state.specificationList}
-        expandedSpecificationId={state.expandedSpecificationId}
+        expandedSpecId={state.expandedSpecId}
         // Expands/collapses a specification
-        onSpecificationExpanded={id => (state.expandedSpecificationId = id)}
+        onSpecExpanded={id => (state.expandedSpecId = id)}
         // Go to the specification viewing route when you select a specification
-        onSpecificationSelected={specification =>
+        onSpecSelected={specification =>
           history.push(`/specifications/${specification.id}`)
         }
       />
-      <Route exact path={`${match.url}/add`} component={AddSpecificationModal} />
+      <Route exact path={`${match.url}/add`} component={AddSpecModal} />
     </ContentContainer>
   </div>
 ));

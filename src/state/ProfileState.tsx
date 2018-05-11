@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 export interface ProfileState {
   me: HasId<Profile>;
 }
-class BasicProfileState {
+export class BasicProfileState {
   @observable
   public me: HasId<Profile> = {
     id: 1, // dummy id

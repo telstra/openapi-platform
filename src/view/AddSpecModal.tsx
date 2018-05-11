@@ -8,14 +8,11 @@ import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import classNames from 'classnames';
 import { isWebUri } from 'valid-url';
-import {
-  state as specificationState,
-  AddedSpecification
-} from 'state/SpecificationState';
+import { state as specificationState, AddedSpecification } from 'state/SpecState';
 import { Spec } from 'model/Spec';
 import { createStyled } from 'view/createStyled';
 import { observable, action, autorun, computed } from 'mobx';
-import { SpecificationModal } from 'basic/SpecificationModal';
+import { SpecModal } from 'basic/SpecModal';
 import { FloatingModal } from 'basic/FloatingModal';
 const Styled: any = createStyled(theme => ({
   modalPaper: {
@@ -54,7 +51,7 @@ interface FormError {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -92,7 +89,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
         {({ classes }) => (
           <Observer>
             {() => [
-              <SpecificationModal
+              <SpecModal
                 submitButtonProps={{
                   children: 'Add'
                 }}

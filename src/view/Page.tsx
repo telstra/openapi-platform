@@ -6,7 +6,7 @@ import { NavigationMenu } from 'view/NavigationMenu';
 import { Overview } from 'view/Overview';
 import { ProfileViewer } from 'view/ProfileViewer';
 import { SettingsViewer } from 'view/SettingsViewer';
-import { SpecificationViewer } from 'view/SpecificationViewer';
+import { SpecViewer } from 'view/SpecViewer';
 import { NotFound } from 'basic/NotFound';
 
 const Styled = createStyled(theme => ({
@@ -47,7 +47,7 @@ export const Page: ComponentType<{}> = () => (
               render={() => <Redirect to={{ pathname: '/overview' }} />}
             />
             <Route path="/overview" component={Overview} />
-            <Route path="/specifications/:id" component={SpecificationViewer} />
+            <Route path="/specifications/:id" component={SpecViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />
             <Route path="/settings" component={SettingsViewer} />
             <Route component={NotFound} />

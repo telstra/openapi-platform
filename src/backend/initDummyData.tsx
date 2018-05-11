@@ -1,9 +1,9 @@
-import { BuildStatus, Sdk } from 'model/Sdk';
+import { BuildStatus, Plan } from 'model/Plan';
 import { OldSpec } from 'model/Spec';
 let count = 0;
 
 // TODO: Replace this list
-export async function initDummyData(specifications, sdks): Promise<void> {
+export async function initDummyData(specifications, plans): Promise<void> {
   const spec1 = await specifications.create({
     title: 'Birds',
     description: 'A Bird API, for Birds',
@@ -12,7 +12,7 @@ export async function initDummyData(specifications, sdks): Promise<void> {
   const addToSpec = async (spec, ...specSdks) => {
     for (const specSdk of specSdks) {
       console.log(
-        await sdks.create({
+        await plans.create({
           specId: spec.id,
           ...specSdk
         })

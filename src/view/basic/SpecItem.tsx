@@ -14,9 +14,9 @@ import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Edit from '@material-ui/icons/Edit';
-import { SdkItem } from 'basic/SdkItem';
-import { state } from 'state/SdkState';
-import { Sdk } from 'model/Sdk';
+import { PlanItem } from 'basic/PlanItem';
+import { state } from 'state/PlanState';
+import { Plan } from 'model/Plan';
 
 const Styled: any = createStyled(theme => ({
   bordered: {
@@ -62,11 +62,11 @@ const Styled: any = createStyled(theme => ({
   }
 }));
 
-export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivElement> {
+export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   specification: Spec;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  sdks?: HasId<Sdk>[];
+  plans?: HasId<Plan>[];
 }
 
 /**
@@ -74,11 +74,11 @@ export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivEleme
  * For use in lists, grids, etc.
  */
 
-export const SpecificationItem: SFC<SpecificationItemProps> = ({
+export const SpecItem: SFC<SpecItemProps> = ({
   specification,
   expanded,
   onPanelChange,
-  sdks = []
+  plans = []
 }) => (
   <Styled>
     {({ classes }) => (
@@ -129,9 +129,9 @@ export const SpecificationItem: SFC<SpecificationItemProps> = ({
               </div>
             </div>
             <List className={classes.bordered}>
-              {sdks.map(sdk => (
-                <ListItem key={sdk.id}>
-                  <SdkItem sdk={sdk} />
+              {plans.map(plan => (
+                <ListItem key={plan.id}>
+                  <PlanItem plan={plan} />
                 </ListItem>
               ))}
             </List>
