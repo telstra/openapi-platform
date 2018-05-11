@@ -22,7 +22,12 @@ export const dummySpecifications: Specification[] = [
         version: 'v1.0.35',
         buildStatus: BuildStatus.RUNNING
       },
-      { id: 11, target: 'haskell', version: 'v0', buildStatus: BuildStatus.NOTRUN }
+      {
+        id: 11,
+        target: 'haskell-http-client',
+        version: 'v0',
+        buildStatus: BuildStatus.NOTRUN
+      }
     ]
   },
   {
