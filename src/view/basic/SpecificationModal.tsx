@@ -137,7 +137,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  }
+  };
 
   /**
    * Checks whether the specification's title input is valid
@@ -156,7 +156,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  }
+  };
 
   /**
    * @param showErrorMessages If false, only clears validation errors rather than adding them.
@@ -164,7 +164,10 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    */
   @action
   private validateAllInputs(showErrorMessages: boolean = true) {
-    return this.validateTitle(showErrorMessages) && this.validateUrl(showErrorMessages);
+    return (
+      this.validateTitle(showErrorMessages) &&
+      this.validateUrl(showErrorMessages)
+    );
   }
 
   /**
@@ -182,23 +185,24 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
     const path = isWebUri(this.formText.url);
     const description = this.formText.description;
     this.props.onSubmitSpecification({ title, path, description });
-  }
+  };
 
   private onTitleChange = event => {
     this.formText.title = event.target.value;
     this.validateTitle(false);
-  }
+  };
 
   private forceValidateTitle = () => this.validateTitle();
 
   private onUrlChange = event => {
     this.formText.url = event.target.value;
     this.validateUrl(false);
-  }
+  };
 
   private forceValidateUrl = () => this.validateUrl();
 
-  private onFormTextChange = event => (this.formText.description = event.target.value);
+  private onFormTextChange = event =>
+    (this.formText.description = event.target.value);
 
   public render() {
     const {
@@ -226,7 +230,10 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                     <Typography variant="title" className={classes.title}>
                       Add Specification
                     </Typography>
-                    <FormControl error={this.error.title !== undefined} margin="normal">
+                    <FormControl
+                      error={this.error.title !== undefined}
+                      margin="normal"
+                    >
                       <InputLabel htmlFor="title">Title</InputLabel>
                       <Input
                         id="title"
@@ -238,7 +245,10 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                         {this.error.title || 'E.g. Petstore'}
                       </FormHelperText>
                     </FormControl>
-                    <FormControl error={this.error.url !== undefined} margin="dense">
+                    <FormControl
+                      error={this.error.url !== undefined}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="url">URL</InputLabel>
                       <Input
                         id="url"
@@ -274,7 +284,10 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       Cancel
                     </Button>
                     {showSubmitProgress ? (
-                      <CircularProgress size={24} className={classes.progressIndicator} />
+                      <CircularProgress
+                        size={24}
+                        className={classes.progressIndicator}
+                      />
                     ) : (
                       <Button
                         color="primary"

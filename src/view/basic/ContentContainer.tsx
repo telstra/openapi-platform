@@ -9,5 +9,7 @@ const Styled = createStyled(theme => ({
 }));
 
 export const ContentContainer: ComponentType<{}> = ({ children }) => (
-  <Styled>{({ classes }) => <div className={classes.content}>{children}</div>}</Styled>
+  <Styled>
+    {({ classes }) => <div className={classes.content}>{children}</div>}
+  </Styled>
 );

@@ -11,7 +11,8 @@ import { createStyled } from 'view/createStyled';
 const colorStatusArray = [grey[300], amber[500], green[600], red[900]];
 const statusStringArray = ['Never run', 'Running', 'Success', 'Failed'];
 
-export interface BuildStatusChipProps extends React.DOMAttributes<HTMLDivElement> {
+export interface BuildStatusChipProps
+  extends React.DOMAttributes<HTMLDivElement> {
   buildStatus: BuildStatus;
 }
 

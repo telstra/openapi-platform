@@ -21,10 +21,14 @@ export const FloatingModal: SFC<any> = ({ children, classes, ...other }) => (
   <Styled>
     {styledProps => (
       <Modal
-        classes={{ root: classNames(styledProps.classes.modalRoot, classes.root) }}
+        classes={{
+          root: classNames(styledProps.classes.modalRoot, classes.root),
+        }}
         {...other}
       >
-        <div className={classNames(styledProps.classes.modalPaper, classes.paper)}>
+        <div
+          className={classNames(styledProps.classes.modalPaper, classes.paper)}
+        >
           {children}
         </div>
       </Modal>

@@ -15,7 +15,7 @@ async function run(runPort: number) {
   specifications.docs = {
     description: 'Swagger/OpenAPI specifications',
     definitions: {
-      'specifications': {
+      specifications: {
         type: 'object',
         additionalProperties: true,
       },

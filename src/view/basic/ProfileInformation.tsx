@@ -22,7 +22,9 @@ export interface ProfileInformationProps {
   readonly profile: Profile;
 }
 
-export const ProfileInformation: SFC<ProfileInformationProps> = ({ profile }) => (
+export const ProfileInformation: SFC<ProfileInformationProps> = ({
+  profile,
+}) => (
   <Styled>
     {({ classes }) => (
       <Paper className={classes.paper}>

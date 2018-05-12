@@ -1,4 +1,10 @@
-import { FormControl, FormLabel, FormControlLabel, FormGroup, Switch } from 'material-ui';
+import {
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+} from 'material-ui';
 import Paper from 'material-ui/Paper';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { observer } from 'mobx-react';

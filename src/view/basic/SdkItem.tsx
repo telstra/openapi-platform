@@ -8,10 +8,10 @@ import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   sdkItemContainer: {
-    'display': 'flex',
-    'flexGrow': 1,
-    'alignItems': 'center',
-    'justifyContent': 'space-between',
+    display: 'flex',
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     '& > *:not(:first-child)': {
       marginLeft: theme.spacing.unit,
     },
