@@ -1,7 +1,9 @@
-import React, { SFC } from 'react';
-import { Modal } from 'material-ui';
-import { createStyled } from 'view/createStyled';
 import classNames from 'classnames';
+import { Modal } from 'material-ui';
+import React, { SFC } from 'react';
+
+import { createStyled } from 'view/createStyled';
+
 const Styled = createStyled(theme => ({
   modalRoot: {
     justifyContent: 'center'

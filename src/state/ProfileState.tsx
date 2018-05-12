@@ -1,8 +1,11 @@
-import { Profile } from 'model/Profile';
 import { observable } from 'mobx';
+
+import { Profile } from 'model/Profile';
+
 export interface ProfileState {
   me: Profile;
 }
+
 class BasicProfileState {
   @observable
   public me: Profile = {
@@ -10,4 +13,5 @@ class BasicProfileState {
     name: 'Name'
   };
 }
+
 export const state: ProfileState = new BasicProfileState();

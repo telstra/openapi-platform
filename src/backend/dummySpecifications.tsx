@@ -1,5 +1,5 @@
-import { Specification } from 'model/Specification';
 import { BuildStatus } from 'model/Sdk';
+import { Specification } from 'model/Specification';
 
 let count = 0;
 // TODO: Replace this list

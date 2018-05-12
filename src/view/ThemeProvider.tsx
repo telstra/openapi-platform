@@ -1,6 +1,6 @@
-import React, { SFC } from 'react';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui';
 import { observer } from 'mobx-react';
+import React, { SFC } from 'react';
 
 import { state } from 'state/SettingsState';
 

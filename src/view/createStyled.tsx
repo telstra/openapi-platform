@@ -1,4 +1,4 @@
-import { withStyles, withTheme } from 'material-ui';
+import { withStyles } from 'material-ui';
 /**
  * Alternative to withStyles that doesn't use HOCs
  * @see https://material-ui-next.com/customization/css-in-js/

@@ -1,6 +1,6 @@
-import React from 'react';
-import { observable } from 'mobx';
 import { PaletteType } from 'material-ui';
+import { observable } from 'mobx';
+
 class SettingsState {
   @observable public paletteType: PaletteType = 'light';
   @observable
@@ -8,4 +8,5 @@ class SettingsState {
   @observable public navContrastIcon: string = 'white';
   @observable public navContrastText: string = 'white';
 }
+
 export const state: SettingsState = new SettingsState();

@@ -1,11 +1,11 @@
-import React, { ComponentType } from 'react';
-import { observer } from 'mobx-react';
 import { FormControl, FormLabel, FormControlLabel, FormGroup, Switch } from 'material-ui';
-import Radio, { RadioGroup } from 'material-ui/Radio';
 import Paper from 'material-ui/Paper';
-import { SimpleToolbar } from 'basic/SimpleToolbar';
+import Radio, { RadioGroup } from 'material-ui/Radio';
+import { observer } from 'mobx-react';
+import React, { ComponentType } from 'react';
 
 import { ContentContainer } from 'basic/ContentContainer';
+import { SimpleToolbar } from 'basic/SimpleToolbar';
 import { state } from 'state/SettingsState';
 import { createStyled } from 'view/createStyled';
 
@@ -49,20 +49,28 @@ const sidebarBackgrounds = [
     label: 'Snowfall'
   }
 ];
+const onSearch = event => {};
+const toggleDarkTheme = (e, checked) => {
+  state.paletteType = checked ? 'dark' : 'light';
+};
+const setSidebarBackground = (e, value) => {
+  state.navBackground = sidebarBackgrounds[value].background;
+  state.navContrastIcon = sidebarBackgrounds[value].contrastIcon;
+  state.navContrastText = sidebarBackgrounds[value].contrastText;
+};
 
 // TODO: Add react-router's injected props
 export const SettingsViewer: ComponentType<{}> = observer(() => (
   <Styled>
     {({ classes }) => [
       <SimpleToolbar
+        key={0}
         title="Settings"
         searchPrompt="Filter settings"
-        onSearchInputChange={(input: string) => {
-          console.log(input);
-        }}
+        onSearchInputChange={onSearch}
         actions={[]}
       />,
-      <ContentContainer>
+      <ContentContainer key={1}>
         <Paper className={classes.paper}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Theme</FormLabel>
@@ -71,9 +79,7 @@ export const SettingsViewer: ComponentType<{}> = observer(() => (
                 control={
                   <Switch
                     checked={state.paletteType === 'dark'}
-                    onChange={e =>
-                      (state.paletteType = e.target.checked ? 'dark' : 'light')
-                    }
+                    onChange={toggleDarkTheme}
                     value={darkThemeLabel}
                   />
                 }
@@ -86,12 +92,7 @@ export const SettingsViewer: ComponentType<{}> = observer(() => (
               value={sidebarBackgrounds
                 .findIndex(s => s.background === state.navBackground)
                 .toString()}
-              onChange={e => {
-                let style = (e.target as any).value;
-                state.navBackground = sidebarBackgrounds[style].background;
-                state.navContrastIcon = sidebarBackgrounds[style].contrastIcon;
-                state.navContrastText = sidebarBackgrounds[style].contrastText;
-              }}
+              onChange={setSidebarBackground}
             >
               {sidebarBackgrounds.map((background, index) => (
                 <FormControlLabel

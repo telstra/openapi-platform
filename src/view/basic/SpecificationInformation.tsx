@@ -1,8 +1,11 @@
 import React, { SFC } from 'react';
+
 import { Specification } from 'model/Specification';
+
 export interface SpecificationInformationProps {
   specification: Specification;
 }
+
 /**
  * Shows detailed information about a specified specification
  */

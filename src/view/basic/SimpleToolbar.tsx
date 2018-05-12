@@ -1,17 +1,16 @@
-import React, { SFC } from 'react';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import Toolbar from 'material-ui/Toolbar';
-import TextField from 'material-ui/TextField';
 import SearchIcon from '@material-ui/icons/Search';
+import TextField from 'material-ui/TextField';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import React, { SFC } from 'react';
 
-import { createStyled } from 'view/createStyled';
 import { Category } from 'model/Storybook';
+import { createStyled } from 'view/createStyled';
 
 export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> {
   title: string;
   searchPrompt: string;
-  onSearchInputChange: (input: string) => void;
+  onSearchInputChange: (event: { target: { value: string } }) => void;
   actions: any[];
 }
 
@@ -70,7 +69,7 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
             endAdornment: <SearchIcon className={classes.searchIcon} />,
             className: classes.searchInput
           }}
-          onChange={(event: any) => onSearchInputChange(event.target.value)}
+          onChange={onSearchInputChange}
         />
         <section className={classes.actions}>{actions}</section>
       </Toolbar>

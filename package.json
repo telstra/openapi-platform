@@ -17,14 +17,14 @@
     "deploy:backend": "node ./build/backend/main.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
-    "checker:lint": "tslint \"src/**/*.{ts,tsx}\"",
+    "checker:lint": "tslint -p . \"src/**/*.{ts,tsx}\"",
     "test": "jest",
     "ci-test": "yarn checker:types && yarn test",
     "storybook": "start-storybook -p 9001"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && lint-staged && yarn test"
+      "pre-commit": "yarn checker && lint-staged && yarn test"
     }
   },
   "lint-staged": {

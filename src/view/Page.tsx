@@ -1,13 +1,13 @@
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { observer } from 'mobx-react';
+
+import { NotFound } from 'basic/NotFound';
 import { createStyled } from 'view/createStyled';
 import { NavigationMenu } from 'view/NavigationMenu';
 import { Overview } from 'view/Overview';
 import { ProfileViewer } from 'view/ProfileViewer';
 import { SettingsViewer } from 'view/SettingsViewer';
 import { SpecificationViewer } from 'view/SpecificationViewer';
-import { NotFound } from 'basic/NotFound';
 
 const Styled = createStyled(theme => ({
   page: {
@@ -27,6 +27,8 @@ const Styled = createStyled(theme => ({
   }
 }));
 
+const redirect = () => <Redirect to={{ pathname: '/overview' }} />;
+
 /**
  * The Swagger Platform page
  */
@@ -36,16 +38,12 @@ export const Page: ComponentType<{}> = () => (
       <div className={classes.page}>
         <aside className={classes.sideBar}>
           <nav>
-            <NavigationMenu />
+            <Route component={NavigationMenu} />
           </nav>
         </aside>
         <main className={classes.content}>
           <Switch>
-            <Route
-              exact
-              path="/"
-              render={() => <Redirect to={{ pathname: '/overview' }} />}
-            />
+            <Route exact path="/" render={redirect} />
             <Route path="/overview" component={Overview} />
             <Route path="/specifications/:id" component={SpecificationViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />

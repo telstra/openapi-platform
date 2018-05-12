@@ -1,8 +1,9 @@
-import React, { SFC } from 'react';
-import { Profile } from 'model/Profile';
-import { createStyled } from 'view/createStyled';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import React, { SFC } from 'react';
+
+import { Profile } from 'model/Profile';
+import { createStyled } from 'view/createStyled';
 
 const Styled = createStyled(theme => ({
   paper: {

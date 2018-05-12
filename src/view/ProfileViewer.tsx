@@ -1,11 +1,14 @@
-import React, { SFC } from 'react';
-import { observer } from 'mobx-react';
-import { state } from 'state/ProfileState';
-import { ProfileInformation } from 'src/view/basic/ProfileInformation';
-import { ContentContainer } from 'basic/ContentContainer';
-import { SimpleToolbar } from 'basic/SimpleToolbar';
-import IconButton from 'material-ui/IconButton';
 import AddIcon from '@material-ui/icons/Add';
+import IconButton from 'material-ui/IconButton';
+import { observer } from 'mobx-react';
+import React, { SFC } from 'react';
+
+import { ContentContainer } from 'basic/ContentContainer';
+import { ProfileInformation } from 'basic/ProfileInformation';
+import { SimpleToolbar } from 'basic/SimpleToolbar';
+import { state } from 'state/ProfileState';
+
+const onSearch = event => {};
 
 // TODO: Add react-router's injected props
 export const ProfileViewer: SFC<any> = observer(() => (
@@ -13,11 +16,9 @@ export const ProfileViewer: SFC<any> = observer(() => (
     <SimpleToolbar
       title="Profile"
       searchPrompt="Search profiles"
-      onSearchInputChange={(input: string) => {
-        console.log(input);
-      }}
+      onSearchInputChange={onSearch}
       actions={[
-        <IconButton aria-label="add">
+        <IconButton key={0} aria-label="add">
           <AddIcon />
         </IconButton>
       ]}
