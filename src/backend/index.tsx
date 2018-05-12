@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
