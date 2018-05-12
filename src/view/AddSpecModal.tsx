@@ -1,16 +1,13 @@
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
+import React, { Component } from 'react';
+
+import { Button, Typography } from 'material-ui';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
-import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 
 import { FloatingModal } from 'basic/FloatingModal';
-import { SpecificationModal } from 'basic/SpecificationModal';
-import {
-  state as specificationState,
-  AddedSpecification,
-} from 'state/SpecificationState';
+import { SpecModal } from 'basic/SpecModal';
+import { state as specState, AddedSpec } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -37,17 +34,17 @@ const Styled: any = createStyled(theme => ({
 }));
 
 /**
- * A modal window that allows the user to add a specification to the dashboard.
+ * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
   @observable private showProgressIndicator: boolean = false;
 
   /**
-   * Whether or not the 'failed to add specification' modal is open
+   * Whether or not the 'failed to add Spec' modal is open
    */
   @observable private showErrorModal: boolean = false;
 
@@ -63,10 +60,10 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onAddSpecification = async (submittedSpecification: AddedSpecification) => {
+  private onAddSpec = async (submittedSpec: AddedSpec) => {
     this.showProgressIndicator = true;
     try {
-      await specificationState.addSpecification(submittedSpecification);
+      await specState.addSpec(submittedSpec);
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -82,12 +79,12 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
         {({ classes }) => (
           <Observer>
             {() => [
-              <SpecificationModal
+              <SpecModal
                 key={0}
                 submitButtonProps={{
                   children: 'Add',
                 }}
-                onSubmitSpecification={this.onAddSpecification}
+                onSubmitSpec={this.onAddSpec}
                 onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,
@@ -99,7 +96,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the specification.</Typography>
+                  <Typography>An error occurred adding the Spec.</Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>

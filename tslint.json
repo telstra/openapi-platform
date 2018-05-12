@@ -18,6 +18,5 @@
         "named-imports-order": "any"
       }],
       "prefer-template": [true, "allow-single-concat"]
-    },
-    "rulesDirectory": []
+    }
 }

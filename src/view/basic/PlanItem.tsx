@@ -1,13 +1,13 @@
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
 import React, { SFC } from 'react';
 
+import { Button, Typography } from 'material-ui';
+
 import { BuildStatusChip } from 'basic/BuildStatusChip';
-import { Sdk, BuildStatus } from 'model/Sdk';
+import { Plan, BuildStatus } from 'model/Plan';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
-  sdkItemContainer: {
+  planItemContainer: {
     display: 'flex',
     flexGrow: 1,
     alignItems: 'center',
@@ -23,8 +23,8 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface SdkItemProps extends React.DOMAttributes<HTMLDivElement> {
-  sdk: Sdk;
+export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {
+  plan: Plan;
 }
 
 /**
@@ -32,20 +32,20 @@ export interface SdkItemProps extends React.DOMAttributes<HTMLDivElement> {
  * For use in lists, grids, etc.
  */
 
-export const SdkItem: SFC<SdkItemProps> = ({ sdk }) => (
+export const PlanItem: SFC<PlanItemProps> = ({ plan }) => (
   <Styled>
     {({ classes }) => (
-      <div className={classes.sdkItemContainer}>
-        <Typography>{sdk.name}</Typography>
+      <div className={classes.planItemContainer}>
+        <Typography>{plan.name}</Typography>
         <Typography variant="body1" color="textSecondary">
-          {sdk.latestVersion}
+          {plan.latestVersion}
         </Typography>
         <div>
-          <BuildStatusChip buildStatus={sdk.buildStatus} />
+          <BuildStatusChip buildStatus={plan.buildStatus} />
         </div>
         <div>
-          <Button disabled={sdk.buildStatus === BuildStatus.RUNNING}>
-            {sdk.buildStatus === BuildStatus.RUNNING ? 'Running...' : 'Run'}
+          <Button disabled={plan.buildStatus === BuildStatus.RUNNING}>
+            {plan.buildStatus === BuildStatus.RUNNING ? 'Running...' : 'Run'}
           </Button>
         </div>
       </div>

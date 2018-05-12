@@ -1,8 +1,10 @@
-export interface Sdk {
-  id: number;
+import { Id } from 'model/Entity';
+
+export interface Plan {
   name: string;
   latestVersion: string;
   buildStatus: BuildStatus;
+  specId: Id;
 }
 
 export enum BuildStatus {

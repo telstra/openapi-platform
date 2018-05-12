@@ -1,8 +1,7 @@
-import SearchIcon from '@material-ui/icons/Search';
-import TextField from 'material-ui/TextField';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
 import React, { SFC } from 'react';
+
+import * as Icons from '@material-ui/icons';
+import { TextField, Toolbar, Typography } from 'material-ui';
 
 import { Category } from 'model/Storybook';
 import { createStyled } from 'view/createStyled';
@@ -66,7 +65,7 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
           className={classes.searchArea}
           InputProps={{
             disableUnderline: true,
-            endAdornment: <SearchIcon className={classes.searchIcon} />,
+            endAdornment: <Icons.Search className={classes.searchIcon} />,
             className: classes.searchInput,
           }}
           onChange={onSearchInputChange}

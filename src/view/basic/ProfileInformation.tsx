@@ -1,6 +1,6 @@
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
 import React, { SFC } from 'react';
+
+import { Paper, Typography } from 'material-ui';
 
 import { Profile } from 'model/Profile';
 import { createStyled } from 'view/createStyled';

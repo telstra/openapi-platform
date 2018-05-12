@@ -1,18 +1,23 @@
-import Close from '@material-ui/icons/Close';
-import Edit from '@material-ui/icons/Edit';
-import Info from '@material-ui/icons/InfoOutline';
-import Button from 'material-ui/Button';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-import IconButton from 'material-ui/IconButton';
-import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
 import React, { Component } from 'react';
 
-import { SdkItem } from 'basic/SdkItem';
-import { Specification } from 'model/Specification';
+import * as Icons from '@material-ui/icons';
+import {
+  Button,
+  IconButton,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+} from 'material-ui';
+
+import { PlanItem } from 'basic/PlanItem';
+import { HasId } from 'model/Entity';
+import { Plan } from 'model/Plan';
+import { Spec } from 'model/Spec';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -59,11 +64,12 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivElement> {
-  specification: Specification;
+export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
+  spec: Spec;
   expanded: boolean;
-  onPanelChange: (specification: Specification, expanded: boolean) => void;
-  onSpecifiationOpen: (specification: Specification) => void;
+  onPanelChange: (event: any, expanded: boolean) => void;
+  onSpecOpen: (spec: Spec) => void;
+  plans?: Array<HasId<Plan>>;
 }
 
 /**
@@ -71,48 +77,42 @@ export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivEleme
  * For use in lists, grids, etc.
  */
 
-export class SpecificationItem extends Component<SpecificationItemProps, {}> {
+export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
-    this.props.onPanelChange(this.props.specification, expanded);
-
+    this.props.onPanelChange(this.props.spec, expanded);
   public render() {
-    const { specification, expanded } = this.props;
-
+    const { spec, expanded, plans = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
           <ExpansionPanel expanded={expanded} onChange={this.onChange}>
             <ExpansionPanelSummary
               classes={{ content: classes.summarySection }}
-              expandIcon={expanded ? <Close /> : <Info />}
+              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutline />}
             >
               <div className={classes.summaryTitle}>
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>
-                  {specification.title}
+                  {spec.title}
                 </Typography>
               </div>
               <div className={classes.summaryDescription}>
                 <Typography noWrap color="textSecondary" variant="body1">
-                  {!expanded && specification.description
-                    ? specification.description
-                    : ''}
+                  {!expanded && spec.description ? spec.description : ''}
                 </Typography>
               </div>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div className={classes.detailSection}>
-                <Typography className={classes.indent}>
-                  {specification.description}
-                </Typography>
+                <Typography className={classes.indent}>{spec.description}</Typography>
                 <Typography variant="subheading" gutterBottom className={classes.indent}>
                   Specification File
                 </Typography>
                 <List className={classes.bordered} dense>
                   <ListItem>
-                    <ListItemText primary={specification.path} />
+                    <ListItemText primary={spec.path} />
                     <ListItemSecondaryAction>
                       <IconButton aria-label="Edit">
-                        <Edit />
+                        <Icons.Edit />
                       </IconButton>
                     </ListItemSecondaryAction>
                   </ListItem>
@@ -130,13 +130,11 @@ export class SpecificationItem extends Component<SpecificationItemProps, {}> {
                   </div>
                 </div>
                 <List className={classes.bordered}>
-                  {specification.sdks
-                    ? specification.sdks.map(sdk => (
-                        <ListItem key={sdk.id}>
-                          <SdkItem sdk={sdk} />
-                        </ListItem>
-                      ))
-                    : undefined}
+                  {plans.map(plan => (
+                    <ListItem key={plan.id}>
+                      <PlanItem plan={plan} />
+                    </ListItem>
+                  ))}
                 </List>
               </div>
             </ExpansionPanelDetails>

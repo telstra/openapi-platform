@@ -1,3 +1,5 @@
+import React, { Component } from 'react';
+
 import {
   CircularProgress,
   Button,
@@ -11,12 +13,11 @@ import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
 import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
-import React, { Component } from 'react';
-import { isWebUri } from 'valid-url';
 
 import { FloatingModal } from 'basic/FloatingModal';
 import { Category } from 'model/Storybook';
-import { AddedSpecification } from 'state/SpecificationState';
+import { AddedSpec } from 'state/SpecState';
+import { isWebUri } from 'valid-url';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -54,11 +55,11 @@ export interface FormError {
 }
 
 export type OnCloseModal = () => void;
-export type OnSubmitSpecification = (spec: AddedSpecification) => void;
+export type OnSubmitSpec = (spec: AddedSpec) => void;
 export type OnError = (error: FormError) => void;
-export interface SpecificationModalProps {
+export interface SpecModalProps {
   readonly onCloseModal: OnCloseModal;
-  readonly onSubmitSpecification: OnSubmitSpecification;
+  readonly onSubmitSpec: OnSubmitSpec;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -66,10 +67,10 @@ export interface SpecificationModalProps {
 }
 
 /**
- * A modal window that allows the user to add a specification to the dashboard.
+ * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecificationModal extends Component<SpecificationModalProps> {
+export class SpecModal extends Component<SpecModalProps> {
   /**
    * Currently entered form data
    */
@@ -90,7 +91,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   };
 
   /**
-   * Whether or not the 'failed to add specification' modal is open
+   * Whether or not the 'failed to add Spec' modal is open
    */
   // TODO: use this for something
   // tslint:disable-next-line
@@ -121,7 +122,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   }
 
   /**
-   * Checks whether the specification's URL input is valid
+   * Checks whether the Spec's URL input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
@@ -140,7 +141,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   };
 
   /**
-   * Checks whether the specification's title input is valid
+   * Checks whether the Spec's title input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
@@ -171,7 +172,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitSpecification = async () => {
+  private onSubmitSpec = async () => {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
@@ -181,7 +182,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
     const title = this.formText.title;
     const path = isWebUri(this.formText.url);
     const description = this.formText.description;
-    this.props.onSubmitSpecification({ title, path, description });
+    this.props.onSubmitSpec({ title, path, description });
   };
 
   private onTitleChange = event => {
@@ -279,7 +280,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={this.onSubmitSpecification}
+                        onClick={this.onSubmitSpec}
                         {...submitButtonProps}
                       />
                     )}
@@ -294,12 +295,12 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   }
 }
 
-export const storybook: Category<SpecificationModalProps> = {
-  Component: SpecificationModal,
+export const storybook: Category<SpecModalProps> = {
+  Component: SpecModal,
   stories: {
     Submit: {
       onCloseModal: () => {},
-      onSubmitSpecification: () => {},
+      onSubmitSpec: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
         children: 'Submit',

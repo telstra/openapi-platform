@@ -7,7 +7,7 @@ import { NavigationMenu } from 'view/NavigationMenu';
 import { Overview } from 'view/Overview';
 import { ProfileViewer } from 'view/ProfileViewer';
 import { SettingsViewer } from 'view/SettingsViewer';
-import { SpecificationViewer } from 'view/SpecificationViewer';
+import { SpecViewer } from 'view/SpecViewer';
 
 const Styled = createStyled(theme => ({
   page: {
@@ -45,7 +45,7 @@ export const Page: ComponentType<{}> = () => (
           <Switch>
             <Route exact path="/" render={redirect} />
             <Route path="/overview" component={Overview} />
-            <Route path="/specifications/:id" component={SpecificationViewer} />
+            <Route path="/specs/:id" component={SpecViewer} />
             <Route path="/profiles/:id" component={ProfileViewer} />
             <Route path="/settings" component={SettingsViewer} />
             <Route component={NotFound} />

@@ -1,6 +1,7 @@
+import React, { SFC } from 'react';
+
 import classNames from 'classnames';
 import { Modal } from 'material-ui';
-import React, { SFC } from 'react';
 
 import { createStyled } from 'view/createStyled';
 

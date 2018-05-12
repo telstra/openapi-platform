@@ -1,37 +1,53 @@
-import Chip from 'material-ui/Chip';
-import amber from 'material-ui/colors/amber';
-import green from 'material-ui/colors/green';
-import grey from 'material-ui/colors/grey';
-import red from 'material-ui/colors/red';
 import React, { SFC } from 'react';
 
-import { BuildStatus } from 'model/Sdk';
-import { createStyled } from 'view/createStyled';
+import { Chip } from 'material-ui';
+import { red, green, amber, grey } from 'material-ui/colors';
 
-const colorStatusArray = [grey[300], amber[500], green[600], red[900]];
-const statusStringArray = ['Never run', 'Running', 'Success', 'Failed'];
+import { BuildStatus } from 'model/Plan';
+import { createStyled } from 'view/createStyled';
+// TODO: Should probably only have to have 1 switch case
+const buildStatusToLabel = ({ buildStatus }) => {
+  switch (buildStatus) {
+    case BuildStatus.NOTRUN:
+      return 'Never run';
+    case BuildStatus.RUNNING:
+      return 'Running';
+    case BuildStatus.SUCCESS:
+      return 'Success';
+    case BuildStatus.FAIL:
+      return 'Failed';
+  }
+};
+const buildStatusToColor = ({ buildStatus }) => {
+  switch (buildStatus) {
+    case BuildStatus.NOTRUN:
+      return grey[300];
+    case BuildStatus.RUNNING:
+      return amber[500];
+    case BuildStatus.SUCCESS:
+      return green[600];
+    case BuildStatus.FAIL:
+      return red[900];
+  }
+};
+const Styled: any = createStyled(theme => ({
+  root: ({ buildStatusColor }) => ({
+    backgroundColor: buildStatusColor,
+    color: theme.palette.getContrastText(buildStatusColor),
+  }),
+}));
 
 export interface BuildStatusChipProps extends React.DOMAttributes<HTMLDivElement> {
   buildStatus: BuildStatus;
 }
 
 /**
- * Very basic information about a specification.
+ * Very basic information about a Spec.
  * For use in lists, grids, etc.
  */
 
-export const BuildStatusChip: SFC<BuildStatusChipProps> = ({ buildStatus }) => {
-  const Styled: any = createStyled(theme => ({
-    root: {
-      backgroundColor: colorStatusArray[buildStatus],
-      color: theme.palette.getContrastText(colorStatusArray[buildStatus]),
-    },
-  }));
-  return (
-    <Styled>
-      {({ classes }) => (
-        <Chip className={classes.root} label={statusStringArray[buildStatus]} />
-      )}
-    </Styled>
-  );
-};
+export const BuildStatusChip: SFC<BuildStatusChipProps> = props => (
+  <Styled buildStatusColor={buildStatusToColor(props)}>
+    {({ classes }) => <Chip className={classes.root} label={buildStatusToLabel(props)} />}
+  </Styled>
+);
