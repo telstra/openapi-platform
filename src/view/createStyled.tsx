@@ -1,4 +1,3 @@
-import { withTheme } from 'material-ui';
 import withStyles from 'react-jss';
 /**
  * Alternative to withStyles that doesn't use HOCs
