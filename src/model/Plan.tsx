@@ -4,7 +4,6 @@ export interface Plan {
   name: string;
   latestVersion: string;
   buildStatus: BuildStatus;
-  info: any; // The response from the SDK generation request (TODO: Give this a type)
   specId: Id;
 }
 
@@ -14,4 +13,3 @@ export enum BuildStatus {
   SUCCESS,
   FAIL
 }
-
