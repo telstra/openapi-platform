@@ -201,7 +201,7 @@ export class SpecModal extends Component<SpecModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add Specification
+                      Add Swagger Spec
                     </Typography>
                     <FormControl error={this.error.title !== undefined} margin="normal">
                       <InputLabel htmlFor="title">Title</InputLabel>
