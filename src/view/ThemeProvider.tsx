@@ -8,23 +8,23 @@ export const ThemeProvider: SFC<{}> = observer(({ children }) => (
   <MuiThemeProvider
     theme={createMuiTheme({
       palette: {
-        type: state.paletteType
+        type: state.paletteType,
       },
       overrides: {
         MuiDrawer: {
           paper: {
-            background: state.navBackground
-          }
-        }
+            background: state.navBackground,
+          },
+        },
       },
       nav: {
         icon: {
-          color: state.navContrastIcon
+          color: state.navContrastIcon,
         },
         text: {
-          color: state.navContrastText
-        }
-      }
+          color: state.navContrastText,
+        },
+      },
     } as any)}
   >
     {children}

@@ -18,10 +18,10 @@ const Styled = createStyled(theme => ({
   title: {
     flex: 1,
     color: theme.palette.text.secondary,
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing.unit,
   },
   toolbar: {
-    borderBottom: `1px solid ${theme.palette.divider}`
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   searchArea: {
     flex: '1 1 800px',
@@ -29,21 +29,21 @@ const Styled = createStyled(theme => ({
     backgroundColor: theme.palette.action.hover,
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit / 4,
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   actions: {
     flex: 1,
     display: 'flex',
     flexDirection: 'row-reverse',
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing.unit,
   },
   searchIcon: {
     color: theme.palette.text.secondary,
-    margin: 'auto'
+    margin: 'auto',
   },
   searchInput: {
-    padding: `0 ${theme.spacing.unit}px`
-  }
+    padding: `0 ${theme.spacing.unit}px`,
+  },
 }));
 
 /**
@@ -53,7 +53,7 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
   title,
   searchPrompt,
   onSearchInputChange,
-  actions
+  actions,
 }) => (
   <Styled>
     {({ classes }) => (
@@ -67,7 +67,7 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
           InputProps={{
             disableUnderline: true,
             endAdornment: <SearchIcon className={classes.searchIcon} />,
-            className: classes.searchInput
+            className: classes.searchInput,
           }}
           onChange={onSearchInputChange}
         />
@@ -84,7 +84,7 @@ export const storybook: Category<SimpleToolbarProps> = {
       title: 'Title',
       searchPrompt: 'Search',
       onSearchInputChange: () => {},
-      actions: []
-    }
-  }
+      actions: [],
+    },
+  },
 };

@@ -15,14 +15,14 @@ async function run(runPort: number) {
   specifications.docs = {
     description: 'Swagger/OpenAPI specifications',
     definitions: {
-      specifications: {
+      'specifications': {
         type: 'object',
-        additionalProperties: true
+        additionalProperties: true,
       },
       'specifications list': {
-        type: 'array'
-      }
-    }
+        type: 'array',
+      },
+    },
   };
   const app: express.Express = express(feathers());
   app
@@ -36,9 +36,9 @@ async function run(runPort: number) {
         uiIndex: true,
         info: {
           title: 'Swagger Platform',
-          description: 'TODO: Someone describe swagger-platform :)'
-        }
-      })
+          description: 'TODO: Someone describe swagger-platform :)',
+        },
+      }),
     )
     .get('/', (req, res) => res.redirect('/docs'))
     .use('/specifications', specifications)
@@ -65,11 +65,11 @@ async function run(runPort: number) {
       const sdkUrl: string = await generateSdk(spec);
       res.json({
         status: 'success',
-        url: sdkUrl
+        url: sdkUrl,
       });
     } else {
       res.json({
-        status: 'failure'
+        status: 'failure',
       });
     }
   });

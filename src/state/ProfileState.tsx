@@ -10,7 +10,7 @@ class BasicProfileState {
   @observable
   public me: Profile = {
     id: 1, // dummy id
-    name: 'Name'
+    name: 'Name',
   };
 }
 

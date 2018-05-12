@@ -18,8 +18,8 @@ const Styled = createStyled(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     padding: theme.spacing.unit * 2,
-    boxSizing: 'border-box'
-  }
+    boxSizing: 'border-box',
+  },
 }));
 const darkThemeLabel = 'Dark';
 const sidebarBackgrounds = [
@@ -28,26 +28,26 @@ const sidebarBackgrounds = [
       'linear-gradient(-225deg, #3023AE 0%, #4084B9 47%, #6DC8D7 87%, #59C9C1 100%)',
     contrastText: 'white',
     contrastIcon: 'white',
-    label: 'Ocean Breeze'
+    label: 'Ocean Breeze',
   },
   {
     background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
     contrastText: 'white',
     contrastIcon: 'white',
-    label: 'Summet Sunset'
+    label: 'Summet Sunset',
   },
   {
     background: 'linear-gradient(to top, #09203F 0%, #537895 100%)',
     contrastText: 'white',
     contrastIcon: 'white',
-    label: 'Midnight'
+    label: 'Midnight',
   },
   {
     background: 'linear-gradient(to top, #E6E9F0 0%, #EEF1F5 100%)',
     contrastText: 'rgba(0, 0, 0, 0.63)',
     contrastIcon: 'rgba(100, 135, 185, 0.87)',
-    label: 'Snowfall'
-  }
+    label: 'Snowfall',
+  },
 ];
 const onSearch = event => {};
 const toggleDarkTheme = (e, checked) => {
@@ -105,7 +105,7 @@ export const SettingsViewer: ComponentType<{}> = observer(() => (
             </RadioGroup>
           </FormControl>
         </Paper>
-      </ContentContainer>
+      </ContentContainer>,
     ]}
   </Styled>
 ));

@@ -4,7 +4,7 @@ import Info from '@material-ui/icons/InfoOutline';
 import Button from 'material-ui/Button';
 import ExpansionPanel, {
   ExpansionPanelSummary,
-  ExpansionPanelDetails
+  ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import IconButton from 'material-ui/IconButton';
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
@@ -18,45 +18,45 @@ import { createStyled } from 'view/createStyled';
 const Styled: any = createStyled(theme => ({
   bordered: {
     border: `1px solid ${theme.palette.divider}`,
-    borderRadius: '2px'
+    borderRadius: '2px',
   },
   indent: {
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing.unit,
   },
   specSummary: {
-    display: 'flex'
+    display: 'flex',
   },
   summarySection: {
-    minWidth: 0
+    minWidth: 0,
   },
   summaryTitle: {
     minWidth: 0,
-    flexBasis: '220px'
+    flexBasis: '220px',
   },
   summaryDescription: {
     minWidth: 0,
     flexBasis: '100px',
     flexShrink: 1,
-    flexGrow: 1
+    flexGrow: 1,
   },
   detailSection: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   sdkHeader: {
     display: 'flex',
     flexGrow: 1,
     flexShrink: 0,
     minWidth: 0,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   sdkTitleSection: {
     flexGrow: 1,
-    flexShrink: 0
+    flexShrink: 0,
   },
   sdkHeaderActions: {
     marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit
-  }
+    marginBottom: theme.spacing.unit,
+  },
 }));
 
 export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivElement> {
@@ -73,7 +73,7 @@ export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivEleme
 
 export class SpecificationItem extends Component<SpecificationItemProps, {}> {
   private onChange = (event, expanded) =>
-    this.props.onPanelChange(this.props.specification, expanded);
+    this.props.onPanelChange(this.props.specification, expanded)
 
   public render() {
     const { specification, expanded } = this.props;

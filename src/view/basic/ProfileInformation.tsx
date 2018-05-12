@@ -14,8 +14,8 @@ const Styled = createStyled(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     padding: theme.spacing.unit * 2,
-    boxSizing: 'border-box'
-  }
+    boxSizing: 'border-box',
+  },
 }));
 
 export interface ProfileInformationProps {

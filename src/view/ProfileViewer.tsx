@@ -20,7 +20,7 @@ export const ProfileViewer: SFC<any> = observer(() => (
       actions={[
         <IconButton key={0} aria-label="add">
           <AddIcon />
-        </IconButton>
+        </IconButton>,
       ]}
     />
     <ContentContainer>

@@ -14,9 +14,9 @@ jss
     // TODO: Cast this to any since the @types/jss seemed to not like this type for some reason
     '@global': {
       body: {
-        margin: 0
-      }
-    } as any
+        margin: 0,
+      },
+    } as any,
   })
   .attach();
 ReactDOM.render(
@@ -25,5 +25,5 @@ ReactDOM.render(
       <Page />
     </BrowserRouter>
   </ThemeProvider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

@@ -24,8 +24,8 @@ export const BuildStatusChip: SFC<BuildStatusChipProps> = ({ buildStatus }) => {
   const Styled: any = createStyled(theme => ({
     root: {
       backgroundColor: colorStatusArray[buildStatus],
-      color: theme.palette.getContrastText(colorStatusArray[buildStatus])
-    }
+      color: theme.palette.getContrastText(colorStatusArray[buildStatus]),
+    },
   }));
   return (
     <Styled>

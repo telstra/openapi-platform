@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "format": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
+    "format": "tslint -p . --fix --force",
     "build": "run-s build:clean build:dev",
     "build:clean": "rm -rf build",
     "build:webpack": "webpack --progress",
@@ -24,7 +24,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker && lint-staged && yarn test"
+      "pre-commit": "yarn checker:types && lint-staged && yarn checker:lint && yarn test"
     }
   },
   "lint-staged": {
@@ -70,11 +70,10 @@
     "lint-staged": "7.0.0",
     "nodemon": "1.17.2",
     "npm-run-all": "4.1.2",
-    "prettier": "1.11.1",
     "react-test-renderer": "16.3.2",
     "style-loader": "0.20.3",
-    "tslint": "^5.10.0",
-    "tslint-react": "^3.5.1",
+    "tslint": "5.10.0",
+    "tslint-react": "3.5.1",
     "typescript": "2.7.1",
     "typescript-eslint-parser": "14.0.0",
     "webpack": "4.1.1",

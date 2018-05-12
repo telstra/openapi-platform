@@ -9,5 +9,5 @@ export enum BuildStatus {
   NOTRUN,
   RUNNING,
   SUCCESS,
-  FAIL
+  FAIL,
 }

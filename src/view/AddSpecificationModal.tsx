@@ -9,31 +9,31 @@ import { FloatingModal } from 'basic/FloatingModal';
 import { SpecificationModal } from 'basic/SpecificationModal';
 import {
   state as specificationState,
-  AddedSpecification
+  AddedSpecification,
 } from 'state/SpecificationState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   modalPaper: {
-    maxWidth: theme.spacing.unit * 64
+    maxWidth: theme.spacing.unit * 64,
   },
   errorModalPaper: {
-    maxWidth: theme.spacing.unit * 48
+    maxWidth: theme.spacing.unit * 48,
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
   },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit,
   },
   progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
-  }
+    margin: `0 ${theme.spacing.unit * 4}px`,
+  },
 }));
 
 /**
@@ -53,11 +53,11 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
 
   private closeModal = () => {
     this.props.history.push('/');
-  };
+  }
 
   private closeErrorModal = () => {
     this.showErrorModal = false;
-  };
+  }
 
   /**
    * Event fired when the user presses the 'Add' button.
@@ -74,7 +74,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
     } finally {
       this.showProgressIndicator = false;
     }
-  };
+  }
 
   public render() {
     return (
@@ -85,7 +85,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
               <SpecificationModal
                 key={0}
                 submitButtonProps={{
-                  children: 'Add'
+                  children: 'Add',
                 }}
                 onSubmitSpecification={this.onAddSpecification}
                 onCloseModal={this.closeModal}
@@ -106,7 +106,7 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
                     Ok
                   </Button>
                 </div>
-              </FloatingModal>
+              </FloatingModal>,
             ]}
           </Observer>
         )}

@@ -8,19 +8,19 @@ import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   sdkItemContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    'display': 'flex',
+    'flexGrow': 1,
+    'alignItems': 'center',
+    'justifyContent': 'space-between',
     '& > *:not(:first-child)': {
-      marginLeft: theme.spacing.unit
-    }
+      marginLeft: theme.spacing.unit,
+    },
   },
   // TODO: Regularly used classes like this should be defined somewhere else
   center: {
     marginLeft: 'auto',
-    marginRight: 'auto'
-  }
+    marginRight: 'auto',
+  },
 }));
 
 export interface SdkItemProps extends React.DOMAttributes<HTMLDivElement> {

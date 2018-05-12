@@ -15,30 +15,30 @@ import { createStyled } from 'view/createStyled';
 const Styled: any = createStyled(theme => ({
   navPaper: {
     overflowX: 'hidden',
-    position: 'relative'
+    position: 'relative',
   },
   navPaperClosed: {
     width: theme.spacing.unit * 7,
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 9
+      width: theme.spacing.unit * 9,
     },
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   navPaperOpen: {
     width: theme.spacing.unit * 24,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   primaryButton: {
-    marginBottom: theme.spacing.unit
+    marginBottom: theme.spacing.unit,
   },
   navIcon: theme.nav.icon,
-  navText: theme.nav.text
+  navText: theme.nav.text,
 }));
 
 const NavigationButton = ({ icon, primary, classes, ...other }) => (
@@ -57,7 +57,7 @@ export class NavigationMenu extends Component<RouteComponentProps<{}>, {}> {
   @action
   private toggleOpen = (): void => {
     this.open = !this.open;
-  };
+  }
 
   private goToOverview = () => this.props.history.push('/overview');
   private goToProfile = () => this.props.history.push(`/profiles/${profileState.me.id}`);
@@ -74,8 +74,8 @@ export class NavigationMenu extends Component<RouteComponentProps<{}>, {}> {
                 classes={{
                   paper: classNames(
                     classes.navPaper,
-                    this.open ? classes.navPaperOpen : classes.navPaperClosed
-                  )
+                    this.open ? classes.navPaperOpen : classes.navPaperClosed,
+                  ),
                 }}
                 open={this.open}
               >

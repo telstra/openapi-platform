@@ -6,15 +6,15 @@ import { createStyled } from 'view/createStyled';
 
 const Styled = createStyled(theme => ({
   modalRoot: {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   modalPaper: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     width: '100%',
     alignSelf: 'center',
-    margin: theme.spacing.unit * 2
-  }
+    margin: theme.spacing.unit * 2,
+  },
 }));
 
 export const FloatingModal: SFC<any> = ({ children, classes, ...other }) => (

@@ -18,8 +18,8 @@ const Styled = createStyled(theme => ({
     maxWidth: '800px',
     width: '100%',
     marginLeft: 'auto',
-    marginRight: 'auto'
-  }
+    marginRight: 'auto',
+  },
 }));
 
 /**
@@ -27,13 +27,13 @@ const Styled = createStyled(theme => ({
  */
 export class SpecificationList extends Component<SpecificationListProps, {}> {
   private panelExpand = (specification, expanded) =>
-    this.props.onSpecificationExpanded(expanded ? specification.id : null);
+    this.props.onSpecificationExpanded(expanded ? specification.id : null)
 
   public render() {
     const {
       specifications,
       expandedSpecificationId,
-      onSpecificationSelected
+      onSpecificationSelected,
     } = this.props;
 
     return (

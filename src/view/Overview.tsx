@@ -19,7 +19,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private onSearch = event => {};
   private addSpecification = () => this.props.history.push(`${this.props.match.url}/add`);
   private goToSpecification = specification =>
-    this.props.history.push(`/specifications/${specification.id}`);
+    this.props.history.push(`/specifications/${specification.id}`)
   private expandSpecification = id => (state.expandedSpecificationId = id);
 
   public render() {
@@ -34,7 +34,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
             actions={[
               <IconButton key={0} aria-label="add" onClick={this.addSpecification}>
                 <AddIcon />
-              </IconButton>
+              </IconButton>,
             ]}
           />,
           <ContentContainer key={1}>
@@ -51,7 +51,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               path={`${this.props.match.url}/add`}
               component={AddSpecificationModal}
             />
-          </ContentContainer>
+          </ContentContainer>,
         ]}
       </Observer>
     );

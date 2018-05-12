@@ -21,7 +21,7 @@ export async function generateSdk(spec: Specification): Promise<any> {
   const response = await fetch(SWAGGER_CODEGEN_ENDPOINT + 'python', {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
   const fulfilled = await response.json();
   console.log(fulfilled);

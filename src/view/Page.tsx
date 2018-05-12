@@ -13,18 +13,18 @@ const Styled = createStyled(theme => ({
   page: {
     display: 'flex',
     minHeight: '100vh',
-    background: theme.palette.background.default
+    background: theme.palette.background.default,
   },
   sideBar: {
     flexGrow: 0,
-    flexShrink: 0
+    flexShrink: 0,
   },
   content: {
     flexBasis: '600px',
     flexGrow: 1,
     flexShrink: 1,
-    minWidth: 0
-  }
+    minWidth: 0,
+  },
 }));
 
 const redirect = () => <Redirect to={{ pathname: '/overview' }} />;

@@ -10,5 +10,5 @@ export interface SpecificationInformationProps {
  * Shows detailed information about a specified specification
  */
 export const SpecificationInformation: SFC<SpecificationInformationProps> = ({
-  specification
+  specification,
 }) => <div>{specification.title}</div>;

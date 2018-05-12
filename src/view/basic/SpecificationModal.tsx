@@ -5,7 +5,7 @@ import {
   FormHelperText,
   InputLabel,
   Input,
-  Typography
+  Typography,
 } from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
@@ -21,25 +21,25 @@ import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   modalPaper: {
-    maxWidth: theme.spacing.unit * 64
+    maxWidth: theme.spacing.unit * 64,
   },
   errorModalPaper: {
-    maxWidth: theme.spacing.unit * 48
+    maxWidth: theme.spacing.unit * 48,
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
   },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit,
   },
   progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
-  }
+    margin: `0 ${theme.spacing.unit * 4}px`,
+  },
 }));
 
 export interface FormText {
@@ -77,7 +77,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   private readonly formText: FormText = {
     title: '',
     url: '',
-    description: ''
+    description: '',
   };
 
   /**
@@ -86,7 +86,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   @observable
   private readonly error: FormError = {
     title: undefined,
-    url: undefined
+    url: undefined,
   };
 
   /**
@@ -137,7 +137,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  };
+  }
 
   /**
    * Checks whether the specification's title input is valid
@@ -156,7 +156,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  };
+  }
 
   /**
    * @param showErrorMessages If false, only clears validation errors rather than adding them.
@@ -182,19 +182,19 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
     const path = isWebUri(this.formText.url);
     const description = this.formText.description;
     this.props.onSubmitSpecification({ title, path, description });
-  };
+  }
 
   private onTitleChange = event => {
     this.formText.title = event.target.value;
     this.validateTitle(false);
-  };
+  }
 
   private forceValidateTitle = () => this.validateTitle();
 
   private onUrlChange = event => {
     this.formText.url = event.target.value;
     this.validateUrl(false);
-  };
+  }
 
   private forceValidateUrl = () => this.validateUrl();
 
@@ -206,7 +206,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       modalProps,
       cancelButtonProps,
       showSubmitProgress,
-      submitButtonProps
+      submitButtonProps,
     } = this.props;
 
     return (
@@ -302,8 +302,8 @@ export const storybook: Category<SpecificationModalProps> = {
       onSubmitSpecification: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
-        children: 'Submit'
-      }
-    }
-  }
+        children: 'Submit',
+      },
+    },
+  },
 };
