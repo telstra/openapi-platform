@@ -11,12 +11,10 @@ export async function initDummyData(specifications, plans): Promise<void> {
   });
   const addToSpec = async (spec, ...specSdks) => {
     for (const specSdk of specSdks) {
-      console.log(
-        await plans.create({
-          specId: spec.id,
-          ...specSdk
-        })
-      );
+      await plans.create({
+        specId: spec.id,
+        ...specSdk
+      });
     }
   };
   await addToSpec(

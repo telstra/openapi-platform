@@ -8,7 +8,7 @@ import { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button';
 
 const Styled: any = createStyled(theme => ({
-  PlanItemContainer: {
+  planItemContainer: {
     display: 'flex',
     flexGrow: 1,
     alignItems: 'center',
@@ -36,7 +36,7 @@ export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {
 export const PlanItem: SFC<PlanItemProps> = ({ plan }) => (
   <Styled>
     {({ classes }) => (
-      <div className={classes.sdkItemContainer}>
+      <div className={classes.planItemContainer}>
         <Typography>{plan.name}</Typography>
         <Typography variant="body1" color="textSecondary">
           {plan.latestVersion}

@@ -88,7 +88,7 @@ async function run(port: number) {
   app.service('plans').hooks({
     before: {
       async create(context) {
-        await specs.get(plans.specId);
+        await specs.get(context.data.specId);
         context.data.buildStatus = BuildStatus.NOTRUN;
         // TODO: Will need to change this at some point
         context.data.latestVersion = 'TODO';
