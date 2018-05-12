@@ -40,10 +40,7 @@ const Styled: any = createStyled(theme => ({
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecificationModal extends Component<
-  RouteComponentProps<{}>,
-  {}
-> {
+export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -66,9 +63,7 @@ export class AddSpecificationModal extends Component<
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onAddSpecification = async (
-    submittedSpecification: AddedSpecification,
-  ) => {
+  private onAddSpecification = async (submittedSpecification: AddedSpecification) => {
     this.showProgressIndicator = true;
     try {
       await specificationState.addSpecification(submittedSpecification);
@@ -104,9 +99,7 @@ export class AddSpecificationModal extends Component<
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>
-                    An error occurred adding the specification.
-                  </Typography>
+                  <Typography>An error occurred adding the specification.</Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>

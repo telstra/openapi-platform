@@ -7,8 +7,7 @@ import React, { SFC } from 'react';
 import { Category } from 'model/Storybook';
 import { createStyled } from 'view/createStyled';
 
-export interface SimpleToolbarProps
-  extends React.DOMAttributes<HTMLDivElement> {
+export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> {
   title: string;
   searchPrompt: string;
   onSearchInputChange: (event: { target: { value: string } }) => void;

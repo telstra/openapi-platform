@@ -60,8 +60,7 @@ export class NavigationMenu extends Component<RouteComponentProps<{}>, {}> {
   };
 
   private goToOverview = () => this.props.history.push('/overview');
-  private goToProfile = () =>
-    this.props.history.push(`/profiles/${profileState.me.id}`);
+  private goToProfile = () => this.props.history.push(`/profiles/${profileState.me.id}`);
   private goToSettings = () => this.props.history.push('/settings');
 
   public render() {

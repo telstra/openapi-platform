@@ -7,11 +7,7 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import IconButton from 'material-ui/IconButton';
-import List, {
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-} from 'material-ui/List';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import React, { Component } from 'react';
 
@@ -63,8 +59,7 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface SpecificationItemProps
-  extends React.DOMAttributes<HTMLDivElement> {
+export interface SpecificationItemProps extends React.DOMAttributes<HTMLDivElement> {
   specification: Specification;
   expanded: boolean;
   onPanelChange: (specification: Specification, expanded: boolean) => void;
@@ -109,11 +104,7 @@ export class SpecificationItem extends Component<SpecificationItemProps, {}> {
                 <Typography className={classes.indent}>
                   {specification.description}
                 </Typography>
-                <Typography
-                  variant="subheading"
-                  gutterBottom
-                  className={classes.indent}
-                >
+                <Typography variant="subheading" gutterBottom className={classes.indent}>
                   Specification File
                 </Typography>
                 <List className={classes.bordered} dense>

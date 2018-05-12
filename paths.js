@@ -25,5 +25,5 @@ module.exports = {
   test: join(root, 'test'),
   build: join(root, 'build'),
   public: join(root, 'public'),
-  config: join(root, 'config')
+  config: join(root, 'config'),
 };

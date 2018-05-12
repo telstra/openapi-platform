@@ -5,7 +5,6 @@
         "tslint-react",
         "tslint-config-prettier"
     ],
-    "jsRules": {},
     "rules": {
       "interface-name": false,
       "jsx-boolean-value": [true, "never"],

@@ -26,9 +26,7 @@ export const FloatingModal: SFC<any> = ({ children, classes, ...other }) => (
         }}
         {...other}
       >
-        <div
-          className={classNames(styledProps.classes.modalPaper, classes.paper)}
-        >
+        <div className={classNames(styledProps.classes.modalPaper, classes.paper)}>
           {children}
         </div>
       </Modal>

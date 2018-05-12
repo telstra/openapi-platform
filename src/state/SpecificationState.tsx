@@ -17,8 +17,7 @@ export interface AddedSpecification {
 }
 
 class BasicSpecificationState implements SpecificationState {
-  @observable
-  public readonly specifications: Map<number, Specification> = new Map();
+  @observable public readonly specifications: Map<number, Specification> = new Map();
   @computed
   public get specificationList(): Specification[] {
     return Array.from(this.specifications.values()).map(value => value);

@@ -4,8 +4,7 @@ import { SpecificationItem } from 'basic/SpecificationItem';
 import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
 
-export interface SpecificationListProps
-  extends React.DOMAttributes<HTMLDivElement> {
+export interface SpecificationListProps extends React.DOMAttributes<HTMLDivElement> {
   specifications: Specification[];
   expandedSpecificationId: number | null;
   onSpecificationExpanded: (id: number | null) => void;

@@ -5,7 +5,9 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "format": "tslint -p . --fix --force && prettier --write",
+    "format": "run-s format:*",
+    "format:prettier": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
+    "format:lint": "yarn checker:lint --fix --force",
     "build": "run-s build:clean build:dev",
     "build:clean": "rm -rf build",
     "build:webpack": "webpack --progress",
@@ -17,19 +19,19 @@
     "deploy:backend": "node ./build/backend/main.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
-    "checker:lint": "tslint -p . \"src/**/*.{ts,tsx}\"",
+    "checker:lint": "tslint -p . \"{src,.storybook}/{**/,}*.{ts,tsx}\"",
     "test": "jest",
     "ci-test": "yarn checker:types && yarn test",
     "storybook": "start-storybook -p 9001"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && lint-staged && yarn checker:lint && yarn test"
+      "pre-commit": "yarn checker:types && lint-staged && yarn format:lint && yarn checker:lint && yarn test"
     }
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "yarn format",
+      "yarn format:prettier",
       "git add"
     ]
   },
@@ -70,11 +72,11 @@
     "lint-staged": "7.0.0",
     "nodemon": "1.17.2",
     "npm-run-all": "4.1.2",
-    "prettier": "^1.12.1",
+    "prettier": "1.12.1",
     "react-test-renderer": "16.3.2",
     "style-loader": "0.20.3",
     "tslint": "5.10.0",
-    "tslint-config-prettier": "^1.12.0",
+    "tslint-config-prettier": "1.12.0",
     "tslint-react": "3.5.1",
     "typescript": "2.7.1",
     "typescript-eslint-parser": "14.0.0",
