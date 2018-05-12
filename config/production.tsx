@@ -1,9 +1,9 @@
 export const productionConfig = {
   frontend: {
-    baseApiUrl: '/'
+    baseApiUrl: '/',
   },
   backend: {
     port: 80,
-    useCors: false
-  }
+    useCors: false,
+  },
 };

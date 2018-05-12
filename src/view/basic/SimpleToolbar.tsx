@@ -1,17 +1,15 @@
 import React, { SFC } from 'react';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import Toolbar from 'material-ui/Toolbar';
-import TextField from 'material-ui/TextField';
-import SearchIcon from '@material-ui/icons/Search';
 
-import { createStyled } from 'view/createStyled';
+import * as Icons from '@material-ui/icons';
+import { TextField, Toolbar, Typography } from 'material-ui';
+
 import { Category } from 'model/Storybook';
+import { createStyled } from 'view/createStyled';
 
 export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> {
   title: string;
   searchPrompt: string;
-  onSearchInputChange: (input: string) => void;
+  onSearchInputChange: (event: { target: { value: string } }) => void;
   actions: any[];
 }
 
@@ -19,10 +17,10 @@ const Styled = createStyled(theme => ({
   title: {
     flex: 1,
     color: theme.palette.text.secondary,
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing.unit,
   },
   toolbar: {
-    borderBottom: `1px solid ${theme.palette.divider}`
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   searchArea: {
     flex: '1 1 800px',
@@ -30,21 +28,21 @@ const Styled = createStyled(theme => ({
     backgroundColor: theme.palette.action.hover,
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit / 4,
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   actions: {
     flex: 1,
     display: 'flex',
     flexDirection: 'row-reverse',
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing.unit,
   },
   searchIcon: {
     color: theme.palette.text.secondary,
-    margin: 'auto'
+    margin: 'auto',
   },
   searchInput: {
-    padding: `0 ${theme.spacing.unit}px`
-  }
+    padding: `0 ${theme.spacing.unit}px`,
+  },
 }));
 
 /**
@@ -54,7 +52,7 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
   title,
   searchPrompt,
   onSearchInputChange,
-  actions
+  actions,
 }) => (
   <Styled>
     {({ classes }) => (
@@ -67,10 +65,10 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
           className={classes.searchArea}
           InputProps={{
             disableUnderline: true,
-            endAdornment: <SearchIcon className={classes.searchIcon} />,
-            className: classes.searchInput
+            endAdornment: <Icons.Search className={classes.searchIcon} />,
+            className: classes.searchInput,
           }}
-          onChange={(event: any) => onSearchInputChange(event.target.value)}
+          onChange={onSearchInputChange}
         />
         <section className={classes.actions}>{actions}</section>
       </Toolbar>
@@ -85,7 +83,7 @@ export const storybook: Category<SimpleToolbarProps> = {
       title: 'Title',
       searchPrompt: 'Search',
       onSearchInputChange: () => {},
-      actions: []
-    }
-  }
+      actions: [],
+    },
+  },
 };

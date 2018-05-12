@@ -8,7 +8,7 @@ export function createStories(moduleInfo) {
     if (storybookInfo && storybookInfo.Component && storybookInfo.stories) {
       const stories = storiesOf(
         storybookInfo.name ? storybookInfo.name : basename(path).replace(/\..*$/g, ''),
-        module
+        module,
       );
       Object.keys(storybookInfo.stories).forEach(storyKey => {
         const props = storybookInfo.stories[storyKey];

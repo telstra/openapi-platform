@@ -7,7 +7,7 @@ export interface BackendClient {
 }
 export function createBackendClient(): BackendClient {
   const socket = io('http://localhost:8080', {
-    transports: ['websocket']
+    transports: ['websocket'],
   });
   const app = feathers();
   app.configure(feathers.socketio(socket));

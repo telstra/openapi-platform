@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "allowJs": true,
     "skipLibCheck": true,
     "pretty": true,
     "target": "esnext",
     "module": "commonjs",
     "strict": true,
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
@@ -26,5 +26,5 @@
         "frontend/*": ["src/frontend/*"]
     }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "build", "dist"]
 }

@@ -1,4 +1,4 @@
-import { HasId, Id } from 'model/Entity';
+import { Id } from 'model/Entity';
 
 export interface Plan {
   name: string;
@@ -11,5 +11,5 @@ export enum BuildStatus {
   NOTRUN,
   RUNNING,
   SUCCESS,
-  FAIL
+  FAIL,
 }

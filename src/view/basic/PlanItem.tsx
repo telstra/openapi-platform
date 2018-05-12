@@ -1,11 +1,10 @@
 import React, { SFC } from 'react';
-import { Plan, BuildStatus } from 'model/Plan';
-import Typography from 'material-ui/Typography';
-import { createStyled } from 'view/createStyled';
+
+import { Button, Typography } from 'material-ui';
+
 import { BuildStatusChip } from 'basic/BuildStatusChip';
-import Grid from 'material-ui/Grid';
-import { ListItem, ListItemText } from 'material-ui/List';
-import Button from 'material-ui/Button';
+import { Plan, BuildStatus } from 'model/Plan';
+import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   planItemContainer: {
@@ -14,14 +13,14 @@ const Styled: any = createStyled(theme => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     '& > *:not(:first-child)': {
-      marginLeft: theme.spacing.unit
-    }
+      marginLeft: theme.spacing.unit,
+    },
   },
   // TODO: Regularly used classes like this should be defined somewhere else
   center: {
     marginLeft: 'auto',
-    marginRight: 'auto'
-  }
+    marginRight: 'auto',
+  },
 }));
 
 export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {

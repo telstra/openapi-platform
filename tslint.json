@@ -1,0 +1,22 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended",
+        "tslint-react",
+        "tslint-config-prettier"
+    ],
+    "rules": {
+      "interface-name": false,
+      "jsx-boolean-value": [true, "never"],
+      "jsx-no-multiline-js": false,
+      "member-ordering": false,
+      "no-console": [true, "log", "warn"],
+      "no-empty": false,
+      "no-unused-variable": true,
+      "object-literal-sort-keys": false,
+      "ordered-imports": [true, {
+        "named-imports-order": "any"
+      }],
+      "prefer-template": [true, "allow-single-concat"]
+    }
+}

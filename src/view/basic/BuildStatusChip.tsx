@@ -1,8 +1,10 @@
 import React, { SFC } from 'react';
-import { BuildStatus } from 'model/Plan';
-import { red, green, amber, grey } from 'material-ui/colors';
-import { createStyled } from 'view/createStyled';
+
 import { Chip } from 'material-ui';
+import { red, green, amber, grey } from 'material-ui/colors';
+
+import { BuildStatus } from 'model/Plan';
+import { createStyled } from 'view/createStyled';
 // TODO: Should probably only have to have 1 switch case
 const buildStatusToLabel = ({ buildStatus }) => {
   switch (buildStatus) {
@@ -31,8 +33,8 @@ const buildStatusToColor = ({ buildStatus }) => {
 const Styled: any = createStyled(theme => ({
   root: ({ buildStatusColor }) => ({
     backgroundColor: buildStatusColor,
-    color: theme.palette.getContrastText(buildStatusColor)
-  })
+    color: theme.palette.getContrastText(buildStatusColor),
+  }),
 }));
 
 export interface BuildStatusChipProps extends React.DOMAttributes<HTMLDivElement> {
@@ -40,7 +42,7 @@ export interface BuildStatusChipProps extends React.DOMAttributes<HTMLDivElement
 }
 
 /**
- * Very basic information about a specification.
+ * Very basic information about a Spec.
  * For use in lists, grids, etc.
  */
 
