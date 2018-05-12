@@ -1,57 +1,62 @@
 import React, { Component } from 'react';
-import { Button, Grid, Typography } from 'material-ui';
 
 import { SpecItem } from 'basic/SpecItem';
+import { Observer } from 'mobx-react';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
 import { state } from 'state/PlanState';
 import { createStyled } from 'view/createStyled';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
-  specifications: HasId<Spec>[];
+  specs: Array<HasId<Spec>>;
   expandedSpecId: number | null;
   onSpecExpanded: (id: number | null) => void;
-  onSpecSelected: (specification: Spec) => void;
-  onAddSpecModalOpened: () => void;
+  onSpecSelected: (Spec: Spec) => void;
 }
 
 const Styled = createStyled(theme => ({
-  specificationSection: {
+  specSection: {
     display: 'flex',
     flexDirection: 'column',
     maxWidth: '800px',
     width: '100%',
     marginLeft: 'auto',
-    marginRight: 'auto'
-  }
+    marginRight: 'auto',
+  },
 }));
 
 /**
- * Lists a series of specifications
+ * Lists a series of specs
  */
-export const SpecList = ({
-  specifications,
-  expandedSpecId,
-  onSpecExpanded,
-  onSpecSelected
-}) => (
-  <Styled>
-    {({ classes }) => (
-      <div>
-        <div className={classes.specificationSection}>
-          {specifications.map(specification => (
-            <SpecItem
-              key={specification.id}
-              specification={specification}
-              expanded={expandedSpecId === specification.id}
-              onPanelChange={(event, expanded) =>
-                onSpecExpanded(expanded ? specification.id : null)
-              }
-              plans={state.specPlans.get(specification.id)}
-              onClick={() => onSpecSelected(specification)}
-            />
-          ))}
-        </div>
-      </div>
-    )}
-  </Styled>
-);
+export class SpecList extends Component<SpecListProps, {}> {
+  private panelExpand = (specification, expanded) =>
+    this.props.onSpecExpanded(expanded ? specification.id : null);
+
+  public render() {
+    const { specs, expandedSpecId, onSpecSelected } = this.props;
+
+    return (
+      <Styled>
+        {({ classes }) => (
+          <Observer>
+            {() => (
+              <div>
+                <div className={classes.specSection}>
+                  {specs.map(spec => (
+                    <SpecItem
+                      key={spec.id}
+                      spec={spec}
+                      plans={state.specPlans.get(spec.id)}
+                      expanded={expandedSpecId === spec.id}
+                      onPanelChange={this.panelExpand}
+                      onSpecOpen={onSpecSelected}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Observer>
+        )}
+      </Styled>
+    );
+  }
+}

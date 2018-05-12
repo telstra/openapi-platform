@@ -1,18 +1,17 @@
+import { client } from 'client/BackendClient';
 import { observable, computed } from 'mobx';
-import { PaletteType } from 'material-ui';
 import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
-import { client } from 'client/BackendClient';
 class PlanState {
   @observable public readonly plans: Map<Id, HasId<Plan>> = new Map();
   @computed
-  public get specPlans(): Map<Id, HasId<Plan>[]> {
+  public get specPlans(): Map<Id, Array<HasId<Plan>>> {
     const specPlans = new Map();
-    for (const sdk of this.plans.values()) {
-      if (specPlans.has(sdk.specId)) {
-        specPlans.get(sdk.specId).push(sdk);
+    for (const plan of this.plans.values()) {
+      if (specPlans.has(plan.specId)) {
+        specPlans.get(plan.specId).push(plan);
       } else {
-        specPlans.set(sdk.specId, [sdk]);
+        specPlans.set(plan.specId, [plan]);
       }
     }
     return specPlans;
@@ -22,4 +21,4 @@ export const state: PlanState = new PlanState();
 client
   .service('plans')
   .find()
-  .then(plans => plans.forEach(sdk => state.plans.set(sdk.id, sdk)));
+  .then(plans => plans.forEach(plan => state.plans.set(plan.id, plan)));

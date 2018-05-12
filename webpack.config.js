@@ -8,7 +8,7 @@ module.exports = (env, argv) => {
   const createBabelPresets = envSettings => [
     ['@babel/preset-env', envSettings],
     '@babel/preset-react',
-    '@babel/preset-typescript'
+    '@babel/preset-typescript',
   ];
   const stats = {
     colors: true,
@@ -29,7 +29,7 @@ module.exports = (env, argv) => {
     chunkModules: false,
     chunkOrigins: false,
     moduleTrace: false,
-    children: false
+    children: false,
   };
   const createWebpackSettings = envSettings => ({
     mode: 'development',
@@ -47,13 +47,13 @@ module.exports = (env, argv) => {
                 '@babel/plugin-transform-runtime',
                 {
                   polyfill: false,
-                  regenerator: true
-                }
-              ]
-            ]
-          }
-        }
-      ]
+                  regenerator: true,
+                },
+              ],
+            ],
+          },
+        },
+      ],
     },
     devtool: 'cheap-module-source-map',
     resolve: {
@@ -68,10 +68,10 @@ module.exports = (env, argv) => {
         state: paths.state,
         client: paths.client,
         backend: paths.backend,
-        frontend: paths.frontend
-      }
+        frontend: paths.frontend,
+      },
     },
-    stats
+    stats,
   });
   const backendPlugins = [];
   if (argv.mode === 'development') {
@@ -80,9 +80,9 @@ module.exports = (env, argv) => {
       new WebpackShellPlugin({
         onBuildEnd: [
           'echo "Rebuilding backend...\n',
-          `nodemon ${backendIndex} --quiet --watch ./build/backend`
-        ]
-      })
+          `nodemon ${backendIndex} --quiet --watch ./build/backend`,
+        ],
+      }),
     );
   }
   const backend = {
@@ -91,30 +91,30 @@ module.exports = (env, argv) => {
     entry: join(paths.src, 'backend', 'index.tsx'),
     output: {
       path: join(__dirname, 'build', 'backend'),
-      filename: '[name].js'
+      filename: '[name].js',
     },
     plugins: backendPlugins,
     externals: [nodeExternals()],
     ...createWebpackSettings({
       targets: {
-        node: 'current'
-      }
-    })
+        node: 'current',
+      },
+    }),
   };
   let frontend = createWebpackSettings({
     targets: {
-      browsers: ['last 2 versions']
-    }
+      browsers: ['last 2 versions'],
+    },
   });
   frontend.module.rules.push(
     {
       test: /\.css$/,
-      use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
+      use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
     },
     {
       test: /\.(svg|tff|woff2?)$/,
-      loader: 'file-loader'
-    }
+      loader: 'file-loader',
+    },
   );
   frontend = {
     name: 'Frontend',
@@ -123,14 +123,14 @@ module.exports = (env, argv) => {
     output: {
       path: join(__dirname, 'build', 'frontend'),
       filename: '[name].js',
-      publicPath: '/'
+      publicPath: '/',
     },
     plugins: [
       new HtmlWebpackPlugin({
         title: 'Swagger Platform',
-        template: join(paths.public, 'index.html')
+        template: join(paths.public, 'index.html'),
       }),
-      new HotModuleReplacementPlugin()
+      new HotModuleReplacementPlugin(),
     ],
     devServer: {
       hot: true,
@@ -140,9 +140,9 @@ module.exports = (env, argv) => {
       port: 3000,
       progress: true,
       historyApiFallback: true,
-      stats
+      stats,
     },
-    ...frontend
+    ...frontend,
   };
   return [backend, frontend];
 };

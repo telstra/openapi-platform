@@ -1,40 +1,35 @@
+import { client } from 'client/BackendClient';
 import { observable, computed, action } from 'mobx';
-import fetch from 'node-fetch';
-import { config } from 'config';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
-import { BuildStatus } from 'model/Plan';
-import { client } from 'client/BackendClient';
 export interface SpecState {
-  specifications: Map<number, HasId<Spec>>;
-  specificationList: HasId<Spec>[];
-  addSpecification: (info: AddedSpecification) => Promise<void>;
+  specs: Map<number, HasId<Spec>>;
+  specList: Array<HasId<Spec>>;
+  addSpec: (info: AddedSpec) => Promise<void>;
   expandedSpecId: number | null;
 }
-export interface AddedSpecification {
+
+export interface AddedSpec {
   path: string;
   title?: string;
   description?: string;
 }
 export class BasicSpecState implements SpecState {
-  @observable readonly specifications: Map<number, HasId<Spec>> = new Map();
+  @observable public readonly specs: Map<number, HasId<Spec>> = new Map();
   @computed
-  get specificationList(): HasId<Spec>[] {
-    return Array.from(this.specifications.values()).map(value => value);
+  public get specList(): Array<HasId<Spec>> {
+    return Array.from(this.specs.values()).map(value => value);
   }
   @action
-  async addSpecification(addedSpec: AddedSpecification): Promise<void> {
-    console.log(addedSpec);
-    const specification: HasId<Spec> = await client
-      .service('specifications')
-      .create(addedSpec);
-    this.specifications.set(specification.id, specification);
+  public async addSpec(addedSpec: AddedSpec): Promise<void> {
+    const spec: HasId<Spec> = await client.service('specifications').create(addedSpec);
+    this.specs.set(spec.id, spec);
   }
-  @observable expandedSpecId: number | null = null;
+  @observable public expandedSpecId: number | null = null;
 }
 
 export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()
-  .then(json => json.map(spec => state.specifications.set(spec.id, spec)));
+  .then(json => json.map(spec => state.specs.set(spec.id, spec)));
