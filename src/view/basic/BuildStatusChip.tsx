@@ -1,11 +1,12 @@
-import React, { SFC } from 'react';
-import { BuildStatus } from 'model/Sdk';
-import red from 'material-ui/colors/red';
-import green from 'material-ui/colors/green';
-import amber from 'material-ui/colors/amber';
-import grey from 'material-ui/colors/grey';
-import { createStyled } from 'view/createStyled';
 import Chip from 'material-ui/Chip';
+import amber from 'material-ui/colors/amber';
+import green from 'material-ui/colors/green';
+import grey from 'material-ui/colors/grey';
+import red from 'material-ui/colors/red';
+import React, { SFC } from 'react';
+
+import { BuildStatus } from 'model/Sdk';
+import { createStyled } from 'view/createStyled';
 
 const colorStatusArray = [grey[300], amber[500], green[600], red[900]];
 const statusStringArray = ['Never run', 'Running', 'Success', 'Failed'];
@@ -23,8 +24,8 @@ export const BuildStatusChip: SFC<BuildStatusChipProps> = ({ buildStatus }) => {
   const Styled: any = createStyled(theme => ({
     root: {
       backgroundColor: colorStatusArray[buildStatus],
-      color: theme.palette.getContrastText(colorStatusArray[buildStatus])
-    }
+      color: theme.palette.getContrastText(colorStatusArray[buildStatus]),
+    },
   }));
   return (
     <Styled>

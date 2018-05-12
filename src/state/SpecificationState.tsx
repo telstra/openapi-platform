@@ -1,35 +1,35 @@
 import { observable, computed, action } from 'mobx';
-import fetch from 'node-fetch';
-import { config } from 'config';
-import { Specification } from 'model/Specification';
-import { BuildStatus } from 'model/Sdk';
+
 import { client } from 'client/BackendClient';
+import { Specification } from 'model/Specification';
+
 export interface SpecificationState {
   specifications: Map<number, Specification>;
   specificationList: Specification[];
   addSpecification: (info: AddedSpecification) => Promise<void>;
   expandedSpecificationId: number | null;
 }
+
 export interface AddedSpecification {
   path: string;
   title?: string;
   description?: string;
 }
+
 class BasicSpecificationState implements SpecificationState {
-  @observable readonly specifications: Map<number, Specification> = new Map();
+  @observable public readonly specifications: Map<number, Specification> = new Map();
   @computed
-  get specificationList(): Specification[] {
+  public get specificationList(): Specification[] {
     return Array.from(this.specifications.values()).map(value => value);
   }
   @action
-  async addSpecification(addedSpec: AddedSpecification): Promise<void> {
-    console.log(addedSpec);
+  public async addSpecification(addedSpec: AddedSpecification): Promise<void> {
     const specification: Specification = await client
       .service('specifications')
       .create(addedSpec);
     this.specifications.set(specification.id, specification);
   }
-  @observable expandedSpecificationId: number | null = null;
+  @observable public expandedSpecificationId: number | null = null;
 }
 
 export const state: SpecificationState = new BasicSpecificationState();

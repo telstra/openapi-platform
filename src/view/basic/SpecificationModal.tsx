@@ -1,48 +1,45 @@
-import React, { Component, ReactNode } from 'react';
-import { Observer } from 'mobx-react';
-import { RouteComponentProps } from 'react-router';
 import {
   CircularProgress,
   Button,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   InputLabel,
   Input,
   Typography,
-  Modal
 } from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
-import classNames from 'classnames';
+import { observable, action, computed } from 'mobx';
+import { Observer } from 'mobx-react';
+import React, { Component } from 'react';
 import { isWebUri } from 'valid-url';
-import { Specification } from 'model/Specification';
-import { AddedSpecification } from 'state/SpecificationState';
-import { createStyled } from 'view/createStyled';
-import { observable, action, autorun, computed } from 'mobx';
+
 import { FloatingModal } from 'basic/FloatingModal';
 import { Category } from 'model/Storybook';
+import { AddedSpecification } from 'state/SpecificationState';
+import { createStyled } from 'view/createStyled';
+
 const Styled: any = createStyled(theme => ({
   modalPaper: {
-    maxWidth: theme.spacing.unit * 64
+    maxWidth: theme.spacing.unit * 64,
   },
   errorModalPaper: {
-    maxWidth: theme.spacing.unit * 48
+    maxWidth: theme.spacing.unit * 48,
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
   },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit,
   },
   progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
-  }
+    margin: `0 ${theme.spacing.unit * 4}px`,
+  },
 }));
 
 export interface FormText {
@@ -80,7 +77,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   private readonly formText: FormText = {
     title: '',
     url: '',
-    description: ''
+    description: '',
   };
 
   /**
@@ -89,12 +86,14 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
   @observable
   private readonly error: FormError = {
     title: undefined,
-    url: undefined
+    url: undefined,
   };
 
   /**
    * Whether or not the 'failed to add specification' modal is open
    */
+  // TODO: use this for something
+  // tslint:disable-next-line
   @observable private showErrorModal: boolean = false;
 
   /**
@@ -126,7 +125,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateUrl(showErrorMesssage: boolean = true): boolean {
+  private validateUrl = (showErrorMesssage: boolean = true): boolean => {
     let valid: boolean;
     if (this.urlError) {
       if (showErrorMesssage) {
@@ -138,14 +137,14 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  }
+  };
 
   /**
    * Checks whether the specification's title input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateTitle(showErrorMesssage: boolean = true): boolean {
+  private validateTitle = (showErrorMesssage: boolean = true): boolean => {
     let valid: boolean;
     if (this.titleError) {
       if (showErrorMesssage) {
@@ -157,14 +156,14 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
       valid = true;
     }
     return valid;
-  }
+  };
 
   /**
    * @param showErrorMessages If false, only clears validation errors rather than adding them.
    * @returns true if the input was valid, false otherwise.
    */
   @action
-  validateAllInputs(showErrorMessages: boolean = true) {
+  private validateAllInputs(showErrorMessages: boolean = true) {
     return this.validateTitle(showErrorMessages) && this.validateUrl(showErrorMessages);
   }
 
@@ -172,7 +171,7 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  async onSubmitSpecification() {
+  private onSubmitSpecification = async () => {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
@@ -183,9 +182,33 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
     const path = isWebUri(this.formText.url);
     const description = this.formText.description;
     this.props.onSubmitSpecification({ title, path, description });
-  }
+  };
 
-  render() {
+  private onTitleChange = event => {
+    this.formText.title = event.target.value;
+    this.validateTitle(false);
+  };
+
+  private forceValidateTitle = () => this.validateTitle();
+
+  private onUrlChange = event => {
+    this.formText.url = event.target.value;
+    this.validateUrl(false);
+  };
+
+  private forceValidateUrl = () => this.validateUrl();
+
+  private onFormTextChange = event => (this.formText.description = event.target.value);
+
+  public render() {
+    const {
+      onCloseModal,
+      modalProps,
+      cancelButtonProps,
+      showSubmitProgress,
+      submitButtonProps,
+    } = this.props;
+
     return (
       <Styled>
         {({ classes }) => (
@@ -194,9 +217,9 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
               <FloatingModal
                 key={0}
                 classes={{ paper: classes.modalPaper }}
-                open={true}
-                onClose={() => this.props.onCloseModal()}
-                {...this.props.modalProps}
+                open
+                onClose={onCloseModal}
+                {...modalProps}
               >
                 <form>
                   <div className={classes.modalContent}>
@@ -207,11 +230,8 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       <InputLabel htmlFor="title">Title</InputLabel>
                       <Input
                         id="title"
-                        onChange={event => {
-                          this.formText.title = event.target.value;
-                          this.validateTitle(false);
-                        }}
-                        onBlur={() => this.validateTitle()}
+                        onChange={this.onTitleChange}
+                        onBlur={this.forceValidateTitle}
                         value={this.formText.title}
                       />
                       <FormHelperText>
@@ -222,12 +242,9 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       <InputLabel htmlFor="url">URL</InputLabel>
                       <Input
                         id="url"
-                        onChange={event => {
-                          this.formText.url = event.target.value;
-                          this.validateUrl(false);
-                        }}
+                        onChange={this.onUrlChange}
                         error={this.error.url !== undefined}
-                        onBlur={() => this.validateUrl()}
+                        onBlur={this.forceValidateUrl}
                         value={this.formText.url}
                       />
                       <FormHelperText>
@@ -239,11 +256,9 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                       <InputLabel htmlFor="description">Description</InputLabel>
                       <Input
                         id="description"
-                        onChange={event =>
-                          (this.formText.description = event.target.value)
-                        }
+                        onChange={this.onFormTextChange}
                         value={this.formText.description}
-                        multiline={true}
+                        multiline
                         rowsMax={3}
                       />
                     </FormControl>
@@ -253,19 +268,19 @@ export class SpecificationModal extends Component<SpecificationModalProps> {
                     <Button
                       color="primary"
                       type="button"
-                      onClick={() => this.props.onCloseModal()}
-                      {...this.props.cancelButtonProps}
+                      onClick={onCloseModal}
+                      {...cancelButtonProps}
                     >
                       Cancel
                     </Button>
-                    {this.props.showSubmitProgress ? (
+                    {showSubmitProgress ? (
                       <CircularProgress size={24} className={classes.progressIndicator} />
                     ) : (
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={() => this.onSubmitSpecification()}
-                        {...this.props.submitButtonProps}
+                        onClick={this.onSubmitSpecification}
+                        {...submitButtonProps}
                       />
                     )}
                   </div>
@@ -287,8 +302,8 @@ export const storybook: Category<SpecificationModalProps> = {
       onSubmitSpecification: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
-        children: 'Submit'
-      }
-    }
-  }
+        children: 'Submit',
+      },
+    },
+  },
 };

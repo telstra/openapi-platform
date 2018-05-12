@@ -1,8 +1,9 @@
-import React, { SFC } from 'react';
-import { Profile } from 'model/Profile';
-import { createStyled } from 'view/createStyled';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import React, { SFC } from 'react';
+
+import { Profile } from 'model/Profile';
+import { createStyled } from 'view/createStyled';
 
 const Styled = createStyled(theme => ({
   paper: {
@@ -13,8 +14,8 @@ const Styled = createStyled(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     padding: theme.spacing.unit * 2,
-    boxSizing: 'border-box'
-  }
+    boxSizing: 'border-box',
+  },
 }));
 
 export interface ProfileInformationProps {

@@ -1,27 +1,29 @@
 import 'source-map-support/register';
-import cors from 'cors';
+import express from '@feathersjs/express';
+import feathers from '@feathersjs/feathers';
+import socketio from '@feathersjs/socketio';
 import { config } from 'config';
+import cors from 'cors';
+import memory from 'feathers-memory';
+import swagger from 'feathers-swagger';
+
+import { dummySpecifications } from 'backend/dummySpecifications';
 import { generateSdk } from 'client/sdkGeneration';
 import { Specification } from 'model/Specification';
-import { dummySpecifications } from 'backend/dummySpecifications';
-import feathers from '@feathersjs/feathers';
-import express from '@feathersjs/express';
-import socketio from '@feathersjs/socketio';
-import swagger from 'feathers-swagger';
-import memory from 'feathers-memory';
-async function run(port: number) {
+
+async function run(runPort: number) {
   const specifications = memory();
   specifications.docs = {
     description: 'Swagger/OpenAPI specifications',
     definitions: {
       specifications: {
         type: 'object',
-        additionalProperties: true
+        additionalProperties: true,
       },
       'specifications list': {
-        type: 'array'
-      }
-    }
+        type: 'array',
+      },
+    },
   };
   const app: express.Express = express(feathers());
   app
@@ -35,9 +37,9 @@ async function run(port: number) {
         uiIndex: true,
         info: {
           title: 'Swagger Platform',
-          description: 'TODO: Someone describe swagger-platform :)'
-        }
-      })
+          description: 'TODO: Someone describe swagger-platform :)',
+        },
+      }),
     )
     .get('/', (req, res) => res.redirect('/docs'))
     .use('/specifications', specifications)
@@ -56,25 +58,26 @@ async function run(port: number) {
    */
   app.post('/generatesdk', async (req, res) => {
     const specificationId: number = req.body.id;
-    var spec: Specification | undefined = await app
+    const spec: Specification | undefined = await app
       .service('specifications')
       .get(specificationId);
 
-    if (spec != undefined) {
-      const sdkUrl: String = await generateSdk(spec);
+    if (spec !== undefined) {
+      const sdkUrl: string = await generateSdk(spec);
       res.json({
         status: 'success',
-        url: sdkUrl
+        url: sdkUrl,
       });
     } else {
       res.json({
-        status: 'failure'
+        status: 'failure',
       });
     }
   });
 
-  app.listen(port);
+  app.listen(runPort);
 }
+
 const envPort: string | undefined = process.env.PORT;
 const port: number = envPort ? Number.parseInt(envPort) : config.backend.port;
 run(port);

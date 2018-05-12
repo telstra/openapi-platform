@@ -1,55 +1,41 @@
-import React, { Component, ReactNode } from 'react';
-import { Observer } from 'mobx-react';
-import { RouteComponentProps } from 'react-router';
-import { CircularProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
-import classNames from 'classnames';
-import { isWebUri } from 'valid-url';
+import { observable, action } from 'mobx';
+import { Observer } from 'mobx-react';
+import React, { Component } from 'react';
+import { RouteComponentProps } from 'react-router';
+
+import { FloatingModal } from 'basic/FloatingModal';
+import { SpecificationModal } from 'basic/SpecificationModal';
 import {
   state as specificationState,
-  AddedSpecification
+  AddedSpecification,
 } from 'state/SpecificationState';
-import { Specification } from 'model/Specification';
 import { createStyled } from 'view/createStyled';
-import { observable, action, autorun, computed } from 'mobx';
-import { SpecificationModal } from 'basic/SpecificationModal';
-import { FloatingModal } from 'basic/FloatingModal';
+
 const Styled: any = createStyled(theme => ({
   modalPaper: {
-    maxWidth: theme.spacing.unit * 64
+    maxWidth: theme.spacing.unit * 64,
   },
   errorModalPaper: {
-    maxWidth: theme.spacing.unit * 48
+    maxWidth: theme.spacing.unit * 48,
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
   },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit,
   },
   progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
-  }
+    margin: `0 ${theme.spacing.unit * 4}px`,
+  },
 }));
 
-interface FormText {
-  title?: string;
-  url?: string;
-  description?: string;
-}
-
-interface FormError {
-  title?: string;
-  url?: string;
-}
 /**
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
@@ -65,15 +51,19 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
    */
   @observable private showErrorModal: boolean = false;
 
-  closeModal() {
+  private closeModal = () => {
     this.props.history.push('/');
-  }
+  };
+
+  private closeErrorModal = () => {
+    this.showErrorModal = false;
+  };
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  async onAddSpecification(submittedSpecification: AddedSpecification) {
+  private onAddSpecification = async (submittedSpecification: AddedSpecification) => {
     this.showProgressIndicator = true;
     try {
       await specificationState.addSpecification(submittedSpecification);
@@ -84,28 +74,27 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
     } finally {
       this.showProgressIndicator = false;
     }
-  }
+  };
 
-  render() {
+  public render() {
     return (
       <Styled>
         {({ classes }) => (
           <Observer>
             {() => [
               <SpecificationModal
+                key={0}
                 submitButtonProps={{
-                  children: 'Add'
+                  children: 'Add',
                 }}
-                onSubmitSpecification={specification =>
-                  this.onAddSpecification(specification)
-                }
-                onCloseModal={() => this.closeModal()}
+                onSubmitSpecification={this.onAddSpecification}
+                onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,
               <FloatingModal
                 key={1}
                 open={this.showErrorModal}
-                onClose={() => (this.showErrorModal = false)}
+                onClose={this.closeErrorModal}
                 classes={{ paper: classes.errorModalPaper }}
               >
                 <div className={classes.modalContent}>
@@ -113,11 +102,11 @@ export class AddSpecificationModal extends Component<RouteComponentProps<{}>, {}
                   <Typography>An error occurred adding the specification.</Typography>
                 </div>
                 <div className={classes.buttonRow}>
-                  <Button color="primary" onClick={() => (this.showErrorModal = false)}>
+                  <Button color="primary" onClick={this.closeErrorModal}>
                     Ok
                   </Button>
                 </div>
-              </FloatingModal>
+              </FloatingModal>,
             ]}
           </Observer>
         )}
