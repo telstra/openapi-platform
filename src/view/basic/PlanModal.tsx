@@ -198,6 +198,8 @@ export class PlanModal extends Component<PlanModalProps> {
 
   private forceValidateOptions = () => this.validateOptions();
 
+  private onAddButtonClick = () => this.onSubmitPlan();
+
   public render() {
     const {
       onCloseModal,
@@ -285,7 +287,7 @@ export class PlanModal extends Component<PlanModalProps> {
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={this.onSubmitPlan}
+                        onClick={this.onAddButtonClick}
                         {...submitButtonProps}
                       />
                     )}
