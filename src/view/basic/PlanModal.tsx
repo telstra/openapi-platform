@@ -1,7 +1,5 @@
-import React, { Component, ReactNode } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { observable, action, autorun, computed } from 'mobx';
-import { Observer } from 'mobx-react';
+import React, { Component } from 'react';
+
 import {
   Button,
   CircularProgress,
@@ -11,38 +9,40 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography
+  Typography,
 } from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
 import { ModalProps } from 'material-ui/Modal';
-import classNames from 'classnames';
-import { isWebUri } from 'valid-url';
-import { Category } from 'model/Storybook';
-import { Sdk, AddedSdk, SDK_TARGETS } from 'model/Sdk';
-import { createStyled } from 'view/createStyled';
+import { observable, action, computed } from 'mobx';
+import { Observer } from 'mobx-react';
+
 import { FloatingModal } from 'basic/FloatingModal';
+import { PLAN_TARGETS } from 'model/Plan';
+import { Category } from 'model/Storybook';
+import { AddedPlan } from 'state/PlanState';
+import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   modalPaper: {
-    maxWidth: theme.spacing.unit * 64
+    maxWidth: theme.spacing.unit * 64,
   },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
   },
   optionsText: {
-    fontFamily: 'Roboto Mono'
+    fontFamily: 'Roboto Mono',
   },
   buttonRow: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: theme.spacing.unit
+    padding: theme.spacing.unit,
   },
   progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`
-  }
+    margin: `0 ${theme.spacing.unit * 4}px`,
+  },
 }));
 
 export interface FormText {
@@ -57,10 +57,10 @@ export interface FormError {
 }
 
 export type OnCloseModal = () => void;
-export type OnSubmitSdk = (sdk: AddedSdk) => void;
-export interface SdkModalProps {
+export type OnSubmitPlan = (plan: AddedPlan) => void;
+export interface PlanModalProps {
   readonly onCloseModal: OnCloseModal;
-  readonly onSubmitSdk: OnSubmitSdk;
+  readonly onSubmitPlan: OnSubmitPlan;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -71,7 +71,7 @@ export interface SdkModalProps {
  * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SdkModal extends Component<SdkModalProps> {
+export class PlanModal extends Component<PlanModalProps> {
   /**
    * Currently entered form data
    */
@@ -79,7 +79,7 @@ export class SdkModal extends Component<SdkModalProps> {
   private readonly formText: FormText = {
     target: '',
     version: '',
-    options: '{}'
+    options: '{}',
   };
 
   /**
@@ -88,7 +88,7 @@ export class SdkModal extends Component<SdkModalProps> {
   @observable
   private readonly error: FormError = {
     target: undefined,
-    options: undefined
+    options: undefined,
   };
 
   /**
@@ -101,11 +101,11 @@ export class SdkModal extends Component<SdkModalProps> {
   }
 
   /**
-   * Checks whether the SDK's target input is valid
+   * Checks whether the plan's target input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateTarget(showErrorMesssage: boolean = true): boolean {
+  public validateTarget(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
     if (this.targetError) {
       if (showErrorMesssage) {
@@ -134,11 +134,11 @@ export class SdkModal extends Component<SdkModalProps> {
   }
 
   /**
-   * Checks whether the SDK's options input is valid
+   * Checks whether the plan's options input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  validateOptions(showErrorMesssage: boolean = true): boolean {
+  public validateOptions(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
     if (this.optionsError) {
       if (showErrorMesssage) {
@@ -157,7 +157,7 @@ export class SdkModal extends Component<SdkModalProps> {
    * @returns true if the input was valid, false otherwise.
    */
   @action
-  validateAllInputs(showErrorMessages: boolean = true) {
+  public validateAllInputs(showErrorMessages: boolean = true) {
     const targetValid = this.validateTarget(showErrorMessages);
     const optionsValid = this.validateOptions(showErrorMessages);
     return targetValid && optionsValid;
@@ -167,7 +167,7 @@ export class SdkModal extends Component<SdkModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  onSubmitSdk() {
+  public onSubmitPlan() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
@@ -177,10 +177,10 @@ export class SdkModal extends Component<SdkModalProps> {
     const target = this.formText.target;
     const version = this.formText.version;
     const options = JSON.parse(this.formText.options);
-    this.props.onSubmitSdk({ target, version, options });
+    this.props.onSubmitPlan({ target, version, options });
   }
 
-  render() {
+  public render() {
     return (
       <Styled>
         {({ classes }) => (
@@ -196,7 +196,7 @@ export class SdkModal extends Component<SdkModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add SDK
+                      Add Plan
                     </Typography>
                     <FormControl error={this.error.target !== undefined} margin="dense">
                       <InputLabel htmlFor="target">Target</InputLabel>
@@ -208,10 +208,10 @@ export class SdkModal extends Component<SdkModalProps> {
                         onBlur={() => this.validateTarget()}
                         value={this.formText.target}
                         inputProps={{
-                          id: 'target'
+                          id: 'target',
                         }}
                       >
-                        {SDK_TARGETS.map(target => (
+                        {PLAN_TARGETS.map(target => (
                           <MenuItem key={target} value={target}>
                             {target}
                           </MenuItem>
@@ -267,7 +267,7 @@ export class SdkModal extends Component<SdkModalProps> {
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={() => this.onSubmitSdk()}
+                        onClick={() => this.onSubmitPlan()}
                         {...this.props.submitButtonProps}
                       />
                     )}
@@ -282,16 +282,16 @@ export class SdkModal extends Component<SdkModalProps> {
   }
 }
 
-export const storybook: Category<SdkModalProps> = {
-  Component: SdkModal,
+export const storybook: Category<PlanModalProps> = {
+  Component: PlanModal,
   stories: {
     Submit: {
       onCloseModal: () => {},
-      onSubmitSdk: () => {},
+      onSubmitPlan: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
-        children: 'Submit'
-      }
-    }
-  }
+        children: 'Submit',
+      },
+    },
+  },
 };

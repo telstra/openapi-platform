@@ -1,13 +1,17 @@
-import { Profile } from 'model/Profile';
 import { observable } from 'mobx';
+import { HasId } from 'model/Entity';
+import { Profile } from 'model/Profile';
+
 export interface ProfileState {
-  me: Profile;
+  me: HasId<Profile>;
 }
-class BasicProfileState {
+
+export class BasicProfileState {
   @observable
-  public me: Profile = {
+  public me: HasId<Profile> = {
     id: 1, // dummy id
-    name: 'Name'
+    name: 'Name',
   };
 }
+
 export const state: ProfileState = new BasicProfileState();

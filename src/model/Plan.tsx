@@ -1,25 +1,21 @@
-export interface Sdk {
-  id: number;
+import { Id } from 'model/Entity';
+
+export interface Plan {
   target: string;
   version?: string;
   options?: any;
   buildStatus: BuildStatus;
-}
-
-export interface AddedSdk {
-  target: string;
-  version?: string;
-  options?: any;
+  specId: Id;
 }
 
 export enum BuildStatus {
   NOTRUN,
   RUNNING,
   SUCCESS,
-  FAIL
+  FAIL,
 }
 
-export const SDK_TARGETS = [
+export const PLAN_TARGETS = [
   'ada',
   'akka-scala',
   'android',
@@ -71,5 +67,5 @@ export const SDK_TARGETS = [
   'typescript-aurelia',
   'typescript-fetch',
   'typescript-jquery',
-  'typescript-node'
+  'typescript-node',
 ];

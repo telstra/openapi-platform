@@ -5,7 +5,9 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "format": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
+    "format": "run-s format:*",
+    "format:prettier": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
+    "format:lint": "yarn checker:lint --force --fix",
     "build": "run-s build:clean build:dev",
     "build:clean": "rm -rf build",
     "build:webpack": "webpack --progress",
@@ -17,19 +19,23 @@
     "deploy:backend": "node ./build/backend/main.js",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
-    "checker:lint": "eslint \"{**/,}*.{ts,tsx}\"",
+    "checker:lint": "tslint -p .",
     "test": "jest",
     "ci-test": "yarn checker:types && yarn test",
     "storybook": "start-storybook -p 9001"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && lint-staged && yarn test"
+      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn checker:lint && yarn test"
     }
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "yarn format",
+    "*.{js,jsx}": [
+      "yarn format:prettier",
+      "git add"
+    ],
+    "*.{ts,tsx}": [
+      "yarn format:prettier",
       "git add"
     ]
   },
@@ -63,12 +69,6 @@
     "babel-plugin-module-resolver": "3.1.0",
     "babel-runtime": "7.0.0-beta.3",
     "css-loader": "0.28.11",
-    "eslint": "4.19.1",
-    "eslint-config-prettier": "2.9.0",
-    "eslint-plugin-babel": "5.0.0",
-    "eslint-plugin-prettier": "2.6.0",
-    "eslint-plugin-react": "7.7.0",
-    "eslint-plugin-typescript": "0.11.0",
     "file-loader": "1.1.11",
     "html-webpack-plugin": "3.0.6",
     "husky": "0.15.0-rc.13",
@@ -76,9 +76,12 @@
     "lint-staged": "7.0.0",
     "nodemon": "1.17.2",
     "npm-run-all": "4.1.2",
-    "prettier": "1.11.1",
+    "prettier": "1.12.1",
     "react-test-renderer": "16.3.2",
     "style-loader": "0.20.3",
+    "tslint": "5.10.0",
+    "tslint-config-prettier": "1.12.0",
+    "tslint-react": "3.5.1",
     "typescript": "2.7.1",
     "typescript-eslint-parser": "14.0.0",
     "webpack": "4.1.1",
@@ -123,6 +126,7 @@
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
     "sequelize": "4.37.6",
+    "source-map-support": "^0.5.5",
     "typeface-roboto": "0.0.54",
     "typeface-roboto-mono": "0.0.54",
     "valid-url": "1.0.9"
