@@ -1,10 +1,5 @@
 import { BuildStatus } from 'model/Plan';
 export async function initDummyData(specs, plans): Promise<void> {
-  const spec1 = await specs.create({
-    title: 'Birds',
-    description: 'A Bird API, for Birds',
-    path: 'git.example.com/swagger-specs/birds.yaml',
-  });
   const addToSpec = async (spec, ...specPlans) => {
     for (const specPlan of specPlans) {
       await plans.create({
@@ -13,6 +8,58 @@ export async function initDummyData(specs, plans): Promise<void> {
       });
     }
   };
+
+  await addToSpec(
+    await specs.create({
+      title: 'Petstore',
+      description: 'The example specification by the Swagger/OpenAPI team themselves',
+      path: 'http://petstore.swagger.io/v2/swagger.json',
+    }),
+    {
+      target: 'java',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+    {
+      target: 'python',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+    {
+      target: 'go',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+  );
+
+  const spec0 = await specs.create({
+    title: 'Swagger Platform',
+    description: 'Open sourced service overlay for SDK management using swagger-codegen',
+    path: 'localhost:8080/swagger.json',
+  });
+  await addToSpec(
+    spec0,
+    {
+      target: 'java',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+    {
+      target: 'python',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+    {
+      target: 'go',
+      version: 'v1.0.0',
+      buildStatus: BuildStatus.NOTRUN,
+    },
+  );
+  const spec1 = await specs.create({
+    title: 'Birds',
+    description: 'A Bird API, for Birds',
+    path: 'git.example.com/swagger-specs/birds.yaml',
+  });
   await addToSpec(
     spec1,
     {

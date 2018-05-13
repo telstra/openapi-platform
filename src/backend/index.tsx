@@ -14,11 +14,11 @@ async function run(port: number) {
   specs.docs = {
     description: 'Swagger/OpenAPI specs',
     definitions: {
-      specs: {
+      specifications: {
         type: 'object',
         additionalProperties: true,
       },
-      'specs list': {
+      'specifications list': {
         type: 'array',
       },
     },
@@ -65,6 +65,10 @@ async function run(port: number) {
     },
   };
   const app: express.Express = express(feathers());
+  const swaggerInfo = {
+    title: 'Swagger Platform',
+    description: 'Open sourced service overlay for SDK management using swagger-codegen',
+  };
   app
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
@@ -74,10 +78,18 @@ async function run(port: number) {
       swagger({
         docsPath: '/docs',
         uiIndex: true,
-        info: {
-          title: 'Swagger Platform',
-          description: 'TODO: Someone describe swagger-platform :)',
-        },
+        info: swaggerInfo,
+      }),
+    )
+    /* 
+      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI, 
+      once for exposing the swagger JSON schema.
+    */
+    .configure(
+      swagger({
+        docsPath: '/swagger.json',
+        uiIndex: false,
+        info: swaggerInfo,
       }),
     )
     .get('/', (req, res) => res.redirect('/docs'))
@@ -101,15 +113,16 @@ async function run(port: number) {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const plan = await specs.get(context.data.planId);
+        const plan = await plans.get(context.data.planId);
         const spec = await specs.get(plan.specId);
-        const generationResponse = await generateSdk(spec);
+        const generationResponse = await generateSdk(spec, plan);
         /*
         TODO: The linkside of the info object is probably temporary.
         Might need to consider downloading the object from 
         wherever the Swagger gen API stores it.
         */
         context.data.info = generationResponse;
+
         return context;
       },
     },
