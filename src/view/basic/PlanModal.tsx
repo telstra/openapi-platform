@@ -105,7 +105,7 @@ export class PlanModal extends Component<PlanModalProps> {
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  public validateTarget(showErrorMesssage: boolean = true): boolean {
+  private validateTarget(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
     if (this.targetError) {
       if (showErrorMesssage) {
@@ -120,7 +120,7 @@ export class PlanModal extends Component<PlanModalProps> {
   }
 
   /**
-`  * @returns An error message if the options are invalid in some way
+   * @returns An error message if the options are invalid in some way
    */
   @computed
   get optionsError(): string | undefined {
@@ -138,7 +138,7 @@ export class PlanModal extends Component<PlanModalProps> {
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  public validateOptions(showErrorMesssage: boolean = true): boolean {
+  private validateOptions(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
     if (this.optionsError) {
       if (showErrorMesssage) {
@@ -157,7 +157,7 @@ export class PlanModal extends Component<PlanModalProps> {
    * @returns true if the input was valid, false otherwise.
    */
   @action
-  public validateAllInputs(showErrorMessages: boolean = true) {
+  private validateAllInputs(showErrorMessages: boolean = true) {
     const targetValid = this.validateTarget(showErrorMessages);
     const optionsValid = this.validateOptions(showErrorMessages);
     return targetValid && optionsValid;
@@ -167,7 +167,7 @@ export class PlanModal extends Component<PlanModalProps> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  public onSubmitPlan() {
+  private onSubmitPlan() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
@@ -180,7 +180,33 @@ export class PlanModal extends Component<PlanModalProps> {
     this.props.onSubmitPlan({ target, version, options });
   }
 
+  private onTargetChange = event => {
+    this.formText.target = event.target.value;
+    this.validateTarget(false);
+  };
+
+  private forceValidateTarget = () => this.validateTarget();
+
+  private onVersionChange = event => {
+    this.formText.version = event.target.value;
+  };
+
+  private onOptionsChange = event => {
+    this.formText.options = event.target.value;
+    this.validateOptions(false);
+  };
+
+  private forceValidateOptions = () => this.validateOptions();
+
   public render() {
+    const {
+      onCloseModal,
+      modalProps,
+      cancelButtonProps,
+      showSubmitProgress,
+      submitButtonProps,
+    } = this.props;
+
     return (
       <Styled>
         {({ classes }) => (
@@ -189,9 +215,9 @@ export class PlanModal extends Component<PlanModalProps> {
               <FloatingModal
                 key={0}
                 classes={{ paper: classes.modalPaper }}
-                open={true}
-                onClose={() => this.props.onCloseModal()}
-                {...this.props.modalProps}
+                open
+                onClose={onCloseModal}
+                {...modalProps}
               >
                 <form>
                   <div className={classes.modalContent}>
@@ -201,11 +227,8 @@ export class PlanModal extends Component<PlanModalProps> {
                     <FormControl error={this.error.target !== undefined} margin="dense">
                       <InputLabel htmlFor="target">Target</InputLabel>
                       <Select
-                        onChange={event => {
-                          this.formText.target = event.target.value;
-                          this.validateTarget(false);
-                        }}
-                        onBlur={() => this.validateTarget()}
+                        onChange={this.onTargetChange}
+                        onBlur={this.forceValidateTarget}
                         value={this.formText.target}
                         inputProps={{
                           id: 'target',
@@ -223,9 +246,7 @@ export class PlanModal extends Component<PlanModalProps> {
                       <InputLabel htmlFor="version">Version</InputLabel>
                       <Input
                         id="version"
-                        onChange={event => {
-                          this.formText.version = event.target.value;
-                        }}
+                        onChange={this.onVersionChange}
                         value={this.formText.version}
                       />
                       <FormHelperText>E.g. 1.2.34</FormHelperText>
@@ -235,13 +256,10 @@ export class PlanModal extends Component<PlanModalProps> {
                       <Input
                         id="options"
                         className={classes.optionsText}
-                        onChange={event => {
-                          this.formText.options = event.target.value;
-                          this.validateOptions(false);
-                        }}
-                        onBlur={() => this.validateOptions()}
+                        onChange={this.onOptionsChange}
+                        onBlur={this.forceValidateOptions}
                         value={this.formText.options}
-                        multiline={true}
+                        multiline
                         rows={5}
                         rowsMax={10}
                       />
@@ -256,19 +274,19 @@ export class PlanModal extends Component<PlanModalProps> {
                     <Button
                       color="primary"
                       type="button"
-                      onClick={() => this.props.onCloseModal()}
-                      {...this.props.cancelButtonProps}
+                      onClick={onCloseModal}
+                      {...cancelButtonProps}
                     >
                       Cancel
                     </Button>
-                    {this.props.showSubmitProgress ? (
+                    {showSubmitProgress ? (
                       <CircularProgress size={24} className={classes.progressIndicator} />
                     ) : (
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={() => this.onSubmitPlan()}
-                        {...this.props.submitButtonProps}
+                        onClick={this.onSubmitPlan}
+                        {...submitButtonProps}
                       />
                     )}
                   </div>
