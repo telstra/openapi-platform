@@ -36,9 +36,9 @@ export const PlanItem: SFC<PlanItemProps> = ({ plan }) => (
   <Styled>
     {({ classes }) => (
       <div className={classes.planItemContainer}>
-        <Typography>{plan.name}</Typography>
+        <Typography>{plan.target}</Typography>
         <Typography variant="body1" color="textSecondary">
-          {plan.latestVersion}
+          {plan.version}
         </Typography>
         <div>
           <BuildStatusChip buildStatus={plan.buildStatus} />

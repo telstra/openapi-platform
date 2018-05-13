@@ -16,18 +16,18 @@ export async function initDummyData(specs, plans): Promise<void> {
   await addToSpec(
     spec1,
     {
-      name: 'Java',
-      latestVersion: 'v1.0.34',
+      target: 'java',
+      version: 'v1.0.34',
       buildStatus: BuildStatus.SUCCESS,
     },
     {
-      name: 'Node.js',
-      latestVersion: 'v1.0.35',
+      target: 'javascript',
+      version: 'v1.0.35',
       buildStatus: BuildStatus.RUNNING,
     },
     {
-      name: 'Haskell',
-      latestVersion: 'v0',
+      target: 'haskell-http-client',
+      version: 'v0',
       buildStatus: BuildStatus.NOTRUN,
     },
   );
@@ -38,8 +38,8 @@ export async function initDummyData(specs, plans): Promise<void> {
     path: 'git.example.com/swagger-specs/test.yaml',
   });
   await addToSpec(spec2, {
-    name: 'FORTRAN',
-    latestVersion: 'alpha',
+    target: 'go',
+    version: 'alpha',
     buildStatus: BuildStatus.FAIL,
   });
   const spec3 = await specs.create({
@@ -51,13 +51,13 @@ export async function initDummyData(specs, plans): Promise<void> {
   await addToSpec(
     spec3,
     {
-      name: 'Python',
-      latestVersion: 'alpha',
+      target: 'python',
+      version: 'alpha',
       buildStatus: BuildStatus.SUCCESS,
     },
     {
-      name: 'java',
-      latestVersion: 'alpha',
+      target: 'java',
+      version: 'alpha',
       buildStatus: BuildStatus.SUCCESS,
     },
   );

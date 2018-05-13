@@ -76,10 +76,10 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
  * Very basic information about a specification.
  * For use in lists, grids, etc.
  */
-
 export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
     this.props.onPanelChange(this.props.spec, expanded);
+
   public render() {
     const { spec, expanded, plans = [] } = this.props;
     return (

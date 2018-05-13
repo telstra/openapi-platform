@@ -5,6 +5,7 @@ import { Profile } from 'model/Profile';
 export interface ProfileState {
   me: HasId<Profile>;
 }
+
 export class BasicProfileState {
   @observable
   public me: HasId<Profile> = {

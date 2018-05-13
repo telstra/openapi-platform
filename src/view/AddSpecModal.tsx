@@ -11,9 +11,6 @@ import { state as specState, AddedSpec } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
-  modalPaper: {
-    maxWidth: theme.spacing.unit * 64,
-  },
   errorModalPaper: {
     maxWidth: theme.spacing.unit * 48,
   },
@@ -27,9 +24,6 @@ const Styled: any = createStyled(theme => ({
     justifyContent: 'flex-end',
     alignItems: 'center',
     padding: theme.spacing.unit,
-  },
-  progressIndicator: {
-    margin: `0 ${theme.spacing.unit * 4}px`,
   },
 }));
 

@@ -128,6 +128,7 @@
     "sequelize": "4.37.6",
     "source-map-support": "^0.5.5",
     "typeface-roboto": "0.0.54",
+    "typeface-roboto-mono": "0.0.54",
     "valid-url": "1.0.9"
   },
   "contributors": [

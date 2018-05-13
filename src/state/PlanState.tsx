@@ -2,6 +2,7 @@ import { client } from 'client/BackendClient';
 import { observable, computed } from 'mobx';
 import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
+
 class PlanState {
   @observable public readonly plans: Map<Id, HasId<Plan>> = new Map();
   @computed
@@ -17,6 +18,13 @@ class PlanState {
     return specPlans;
   }
 }
+
+export interface AddedPlan {
+  target: string;
+  version?: string;
+  options?: any;
+}
+
 export const state: PlanState = new PlanState();
 client
   .service('plans')

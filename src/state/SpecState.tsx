@@ -2,6 +2,7 @@ import { client } from 'client/BackendClient';
 import { observable, computed, action } from 'mobx';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
+
 export interface SpecState {
   specs: Map<number, HasId<Spec>>;
   specList: Array<HasId<Spec>>;
@@ -14,6 +15,7 @@ export interface AddedSpec {
   title?: string;
   description?: string;
 }
+
 export class BasicSpecState implements SpecState {
   @observable public readonly specs: Map<number, HasId<Spec>> = new Map();
   @computed

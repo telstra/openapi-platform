@@ -7,6 +7,8 @@ import {
   FormHelperText,
   Input,
   InputLabel,
+  MenuItem,
+  Select,
   Typography,
 } from 'material-ui';
 import { ButtonProps } from 'material-ui/Button';
@@ -15,9 +17,9 @@ import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
+import { PLAN_TARGETS } from 'model/Plan';
 import { Category } from 'model/Storybook';
-import { AddedSpec } from 'state/SpecState';
-import { isWebUri } from 'valid-url';
+import { AddedPlan } from 'state/PlanState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -28,6 +30,9 @@ const Styled: any = createStyled(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing.unit * 3,
+  },
+  optionsText: {
+    fontFamily: 'Roboto Mono',
   },
   buttonRow: {
     display: 'flex',
@@ -41,21 +46,21 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export interface FormText {
-  title: string;
-  url: string;
-  description: string;
+  target: string;
+  version: string;
+  options: string;
 }
 
 export interface FormError {
-  title?: string;
-  url?: string;
+  target?: string;
+  options?: string;
 }
 
 export type OnCloseModal = () => void;
-export type OnSubmitSpec = (spec: AddedSpec) => void;
-export interface SpecModalProps {
+export type OnSubmitPlan = (plan: AddedPlan) => void;
+export interface PlanModalProps {
   readonly onCloseModal: OnCloseModal;
-  readonly onSubmitSpec: OnSubmitSpec;
+  readonly onSubmitPlan: OnSubmitPlan;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -63,18 +68,18 @@ export interface SpecModalProps {
 }
 
 /**
- * A modal window that allows the user to add a Spec to the dashboard.
+ * A modal window that allows the user to add a specification to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecModal extends Component<SpecModalProps> {
+export class PlanModal extends Component<PlanModalProps> {
   /**
    * Currently entered form data
    */
   @observable
   private readonly formText: FormText = {
-    title: '',
-    url: '',
-    description: '',
+    target: '',
+    version: '',
+    options: '{}',
   };
 
   /**
@@ -82,71 +87,70 @@ export class SpecModal extends Component<SpecModalProps> {
    */
   @observable
   private readonly error: FormError = {
-    title: undefined,
-    url: undefined,
+    target: undefined,
+    options: undefined,
   };
 
   /**
-   * @returns An error message if the title is invalid in some way
+   * @returns An error message if the target is invalid in some way
    */
   @computed
-  get titleError(): string | undefined {
-    const title = this.formText.title;
-    return !title ? 'Error: Missing title' : undefined;
+  get targetError(): string | undefined {
+    const title = this.formText.target;
+    return !title ? 'Error: Missing target' : undefined;
   }
 
   /**
-   * @returns An error message if the url is invalid in some way
+   * @returns An error message if the options are invalid in some way
    */
   @computed
-  get urlError(): string | undefined {
-    const url = this.formText.url;
-    if (!url) {
-      return 'Error: URL cannot be empty';
-    } else if (!isWebUri(url)) {
-      return 'Error: Invalid URL';
-    } else {
+  get optionsError(): string | undefined {
+    const optionsStr = this.formText.options;
+    try {
+      JSON.parse(optionsStr);
       return undefined;
+    } catch (e) {
+      return 'Error: invalid JSON';
     }
   }
 
   /**
-   * Checks whether the Spec's URL input is valid
+   * Checks whether the plan's target input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  private validateUrl = (showErrorMesssage: boolean = true): boolean => {
+  private validateTarget(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (this.urlError) {
+    if (this.targetError) {
       if (showErrorMesssage) {
-        this.error.url = this.urlError;
+        this.error.target = this.targetError;
       }
       valid = false;
     } else {
-      this.error.url = undefined;
+      this.error.target = undefined;
       valid = true;
     }
     return valid;
-  };
+  }
 
   /**
-   * Checks whether the Spec's title input is valid
+   * Checks whether the plan's options input is valid
    * @param showErrorMesssage If false, clear the error message
    */
   @action
-  private validateTitle = (showErrorMesssage: boolean = true): boolean => {
+  private validateOptions(showErrorMesssage: boolean = true): boolean {
     let valid: boolean;
-    if (this.titleError) {
+    if (this.optionsError) {
       if (showErrorMesssage) {
-        this.error.title = this.titleError;
+        this.error.options = this.optionsError;
       }
       valid = false;
     } else {
-      this.error.title = undefined;
+      this.error.options = undefined;
       valid = true;
     }
     return valid;
-  };
+  }
 
   /**
    * @param showErrorMessages If false, only clears validation errors rather than adding them.
@@ -154,47 +158,49 @@ export class SpecModal extends Component<SpecModalProps> {
    */
   @action
   private validateAllInputs(showErrorMessages: boolean = true) {
-    const titleValid = this.validateTitle(showErrorMessages);
-    const urlValid = this.validateUrl(showErrorMessages);
-    return titleValid && urlValid;
+    const targetValid = this.validateTarget(showErrorMessages);
+    const optionsValid = this.validateOptions(showErrorMessages);
+    return targetValid && optionsValid;
   }
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitSpec() {
+  private onSubmitPlan() {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
     }
 
     // Send the request to the backend
-    const title = this.formText.title;
-    const path = isWebUri(this.formText.url);
-    const description = this.formText.description;
-    this.props.onSubmitSpec({ title, path, description });
+    const target = this.formText.target;
+    const version = this.formText.version;
+    const options = JSON.parse(this.formText.options);
+    this.props.onSubmitPlan({ target, version, options });
   }
 
-  private onTitleChange = event => {
-    this.formText.title = event.target.value;
-    this.validateTitle(false);
+  private onTargetChange = event => {
+    this.formText.target = event.target.value;
+    this.validateTarget(false);
   };
 
-  private forceValidateTitle = () => this.validateTitle();
+  private forceValidateTarget = () => this.validateTarget();
 
-  private onUrlChange = event => {
-    this.formText.url = event.target.value;
-    this.validateUrl(false);
+  private onVersionChange = event => {
+    this.formText.version = event.target.value;
   };
 
-  private forceValidateUrl = () => this.validateUrl();
+  private onOptionsChange = event => {
+    this.formText.options = event.target.value;
+    this.validateOptions(false);
+  };
 
-  private onFormTextChange = event => (this.formText.description = event.target.value);
+  private forceValidateOptions = () => this.validateOptions();
 
   private onAddButtonClick = event => {
     event.preventDefault();
-    this.onSubmitSpec();
+    this.onSubmitPlan();
   };
 
   public render() {
@@ -221,42 +227,51 @@ export class SpecModal extends Component<SpecModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add Swagger Spec
+                      Add Plan
                     </Typography>
-                    <FormControl error={this.error.title !== undefined} margin="normal">
-                      <InputLabel htmlFor="title">Title</InputLabel>
-                      <Input
-                        id="title"
-                        onChange={this.onTitleChange}
-                        onBlur={this.forceValidateTitle}
-                        value={this.formText.title}
-                      />
-                      <FormHelperText>
-                        {this.error.title || 'E.g. Petstore'}
-                      </FormHelperText>
-                    </FormControl>
-                    <FormControl error={this.error.url !== undefined} margin="dense">
-                      <InputLabel htmlFor="url">URL</InputLabel>
-                      <Input
-                        id="url"
-                        onChange={this.onUrlChange}
-                        onBlur={this.forceValidateUrl}
-                        value={this.formText.url}
-                      />
-                      <FormHelperText>
-                        {this.error.url ||
-                          'E.g. http://petstore.swagger.io/v2/swagger.json'}
-                      </FormHelperText>
+                    <FormControl error={this.error.target !== undefined} margin="dense">
+                      <InputLabel htmlFor="target">Target</InputLabel>
+                      <Select
+                        onChange={this.onTargetChange}
+                        onBlur={this.forceValidateTarget}
+                        value={this.formText.target}
+                        inputProps={{
+                          id: 'target',
+                        }}
+                      >
+                        {PLAN_TARGETS.map(target => (
+                          <MenuItem key={target} value={target}>
+                            {target}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <FormHelperText>{this.error.target}</FormHelperText>
                     </FormControl>
                     <FormControl margin="dense">
-                      <InputLabel htmlFor="description">Description</InputLabel>
+                      <InputLabel htmlFor="version">Version</InputLabel>
                       <Input
-                        id="description"
-                        onChange={this.onFormTextChange}
-                        value={this.formText.description}
-                        multiline
-                        rowsMax={3}
+                        id="version"
+                        onChange={this.onVersionChange}
+                        value={this.formText.version}
                       />
+                      <FormHelperText>E.g. 1.2.34</FormHelperText>
+                    </FormControl>
+                    <FormControl error={this.error.options !== undefined} margin="dense">
+                      <InputLabel htmlFor="options">Options</InputLabel>
+                      <Input
+                        id="options"
+                        className={classes.optionsText}
+                        onChange={this.onOptionsChange}
+                        onBlur={this.forceValidateOptions}
+                        value={this.formText.options}
+                        multiline
+                        rows={5}
+                        rowsMax={10}
+                      />
+                      <FormHelperText>
+                        {this.error.options ||
+                          'Target-specific options to pass to Swagger Codegen in JSON'}
+                      </FormHelperText>
                     </FormControl>
                   </div>
 
@@ -290,12 +305,12 @@ export class SpecModal extends Component<SpecModalProps> {
   }
 }
 
-export const storybook: Category<SpecModalProps> = {
-  Component: SpecModal,
+export const storybook: Category<PlanModalProps> = {
+  Component: PlanModal,
   stories: {
     Submit: {
       onCloseModal: () => {},
-      onSubmitSpec: () => {},
+      onSubmitPlan: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
         children: 'Submit',
