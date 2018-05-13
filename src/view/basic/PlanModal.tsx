@@ -198,7 +198,10 @@ export class PlanModal extends Component<PlanModalProps> {
 
   private forceValidateOptions = () => this.validateOptions();
 
-  private onAddButtonClick = () => this.onSubmitPlan();
+  private onAddButtonClick = event => {
+    event.preventDefault();
+    this.onSubmitPlan();
+  };
 
   public render() {
     const {

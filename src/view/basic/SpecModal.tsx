@@ -192,7 +192,10 @@ export class SpecModal extends Component<SpecModalProps> {
 
   private onFormTextChange = event => (this.formText.description = event.target.value);
 
-  private onAddButtonClick = () => this.onSubmitSpec();
+  private onAddButtonClick = event => {
+    event.preventDefault();
+    this.onSubmitSpec();
+  };
 
   public render() {
     const {
