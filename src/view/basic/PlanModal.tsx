@@ -101,6 +101,20 @@ export class PlanModal extends Component<PlanModalProps> {
   }
 
   /**
+   * @returns An error message if the options are invalid in some way
+   */
+  @computed
+  get optionsError(): string | undefined {
+    const optionsStr = this.formText.options;
+    try {
+      JSON.parse(optionsStr);
+      return undefined;
+    } catch (e) {
+      return 'Error: invalid JSON';
+    }
+  }
+
+  /**
    * Checks whether the plan's target input is valid
    * @param showErrorMesssage If false, clear the error message
    */
@@ -117,20 +131,6 @@ export class PlanModal extends Component<PlanModalProps> {
       valid = true;
     }
     return valid;
-  }
-
-  /**
-   * @returns An error message if the options are invalid in some way
-   */
-  @computed
-  get optionsError(): string | undefined {
-    const optionsStr = this.formText.options;
-    try {
-      JSON.parse(optionsStr);
-      return undefined;
-    } catch (e) {
-      return 'Error: invalid JSON';
-    }
   }
 
   /**
