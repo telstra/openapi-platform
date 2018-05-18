@@ -1,15 +1,22 @@
+import 'source-map-support/register';
+
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
-import { initDummyData } from 'backend/initDummyData';
-import { generateSdk } from 'client/sdkGeneration';
-import { config } from 'config';
 import cors from 'cors';
 import memory from 'feathers-memory';
 import swagger from 'feathers-swagger';
+import morgan from 'morgan';
+
+import { initDummyData } from 'backend/initDummyData';
+import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
+import { generateSdk } from 'client/sdkGeneration';
+import { config } from 'config';
 import { BuildStatus } from 'model/Plan';
-import 'source-map-support/register';
+overrideConsoleLogger();
+overrideUtilInspectStyle();
 async function run(port: number) {
+  logger.info('Starting Swagger Platform server...');
   const specs = memory();
   specs.docs = {
     description: 'Swagger/OpenAPI specs',
@@ -70,6 +77,11 @@ async function run(port: number) {
     description: 'Open sourced service overlay for SDK management using swagger-codegen',
   };
   app
+    .use(
+      morgan('dev', {
+        stream: logger.stream,
+      }),
+    )
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .configure(express.rest())
@@ -115,7 +127,7 @@ async function run(port: number) {
       async create(context) {
         const plan = await plans.get(context.data.planId);
         const spec = await specs.get(plan.specId);
-        const generationResponse = await generateSdk(spec, plan);
+        const generationResponse = await generateSdk(logger, spec, plan);
         /*
         TODO: The linkside of the info object is probably temporary.
         Might need to consider downloading the object from 
@@ -131,7 +143,9 @@ async function run(port: number) {
   if (config.backend.useCors) {
     app.use(cors());
   }
-  app.listen(port);
+  app.listen(port, (er, err) => {
+    logger.info(`Now listening on port ${port}`);
+  });
 }
 
 const envPort: string | undefined = process.env.PORT;
