@@ -71,7 +71,7 @@ export { logger };
 
 /**
  * Replaces the console.log type methods with our own logger methods.
- * It's not recommended to using console methods to print. Use the logger variable itself to log messages.
+ * It's not recommended to use console methods to print. Use the logger variable itself to log messages.
  * However, this method is useful when external packages have console.log(...) calls inside of them.
  */
 export function overrideConsoleLogger() {
