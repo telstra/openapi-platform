@@ -5,4 +5,6 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': './backend.transform.js',
   },
+  resetModules: true,
+  resetMocks: true,
 };

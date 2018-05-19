@@ -20,10 +20,9 @@ const swaggerPlatformAlign = format(info => {
 // Colorizes/formats javascript objects and timestamps
 const swaggerPlatformFormatter = format((info, options) => {
   info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
-  info.message =
-    info.message instanceof Object
-      ? util.inspect(info.message, { colors: options.colors })
-      : info.message;
+  if (info.message instanceof Object || Array.isArray(info.message)) {
+    info.message = util.inspect(info.message, { colors: options.colors });
+  }
   return info;
 });
 
@@ -74,14 +73,14 @@ export { logger };
  * It's not recommended to use console methods to print. Use the logger variable itself to log messages.
  * However, this method is useful when external packages have console.log(...) calls inside of them.
  */
-export function overrideConsoleLogger() {
+export function overrideConsoleLogger(aLogger) {
   // Since we're using splat we have to create placeholders for the arguments to go into
   // TODO: Note that string interpolation with console.log won't work (E.g. console.log("%s", "test") will print "%stest")
   const createPlaceholders = args => new Array(args.length).fill('%s').join(' ');
-  Object.keys(logger.levels).forEach(method => {
-    console[method] = (...args) => logger[method](createPlaceholders(args), ...args);
+  Object.keys(aLogger.levels).forEach(level => {
+    console[level] = (...args) => aLogger[level](createPlaceholders(args), ...args);
   });
-  console.log = (...args) => logger.verbose(createPlaceholders(args), ...args);
+  console.log = (...args) => aLogger.verbose(createPlaceholders(args), ...args);
 }
 
 /**

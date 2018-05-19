@@ -13,7 +13,7 @@ import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
 import { BuildStatus } from 'model/Plan';
-overrideConsoleLogger();
+overrideConsoleLogger(logger);
 overrideUtilInspectStyle();
 async function run(port: number) {
   logger.info('Starting Swagger Platform server...');
