@@ -20,7 +20,10 @@ const swaggerPlatformAlign = format(info => {
 // Colorizes/formats javascript objects and timestamps
 const swaggerPlatformFormatter = format((info, options) => {
   info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
-  if (info.message instanceof Object || Array.isArray(info.message)) {
+  if (
+    !(info.message instanceof Error) &&
+    (info.message instanceof Object || Array.isArray(info.message))
+  ) {
     info.message = util.inspect(info.message, { colors: options.colors });
   }
   return info;
