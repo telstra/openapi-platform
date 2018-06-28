@@ -25,14 +25,14 @@ function testConsoleInput(...input) {
     it(`console.log`, () => {
       overrideConsoleLogger(mockLogger);
       // tslint:disable-next-line:no-console
-      console.log(input);
+      console.log(...input);
       testLoggerCallCounts({ verbose: 1 });
     });
     const loggingMethods = ['error', 'debug', 'info'];
     loggingMethods.forEach(loggingMethodName => {
       it(`console.${loggingMethodName}`, () => {
         overrideConsoleLogger(mockLogger);
-        console[loggingMethodName](input);
+        console[loggingMethodName](...input);
         testLoggerCallCounts({ [loggingMethodName]: 1 });
       });
     });
@@ -50,4 +50,5 @@ describe('console logs to custom logger', () => {
   testConsoleInput(0);
   testConsoleInput(() => {});
   testConsoleInput(/reaewr/g);
+  testConsoleInput(new Error('message goes here'));
 });

@@ -13,7 +13,8 @@ const swaggerPlatformTimestamp = format(info => {
 
 // Aligns all the information before the message section of the log
 const swaggerPlatformAlign = format(info => {
-  info.levelPadding = ' '.repeat(9 - info.level.length);
+  const messageIndentation = 9;
+  info.levelPadding = ' '.repeat(messageIndentation - info.level.length);
   return info;
 });
 
