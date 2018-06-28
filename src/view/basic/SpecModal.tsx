@@ -192,6 +192,11 @@ export class SpecModal extends Component<SpecModalProps> {
 
   private onFormTextChange = event => (this.formText.description = event.target.value);
 
+  private onAddButtonClick = event => {
+    event.preventDefault();
+    this.onSubmitSpec();
+  };
+
   public render() {
     const {
       onCloseModal,
@@ -270,7 +275,7 @@ export class SpecModal extends Component<SpecModalProps> {
                       <Button
                         color="primary"
                         type="submit"
-                        onClick={this.onSubmitSpec}
+                        onClick={this.onAddButtonClick}
                         {...submitButtonProps}
                       />
                     )}
