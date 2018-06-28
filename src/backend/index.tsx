@@ -1,24 +1,31 @@
+import 'source-map-support/register';
+
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
-import { initDummyData } from 'backend/initDummyData';
-import { generateSdk } from 'client/sdkGeneration';
-import { config } from 'config';
 import cors from 'cors';
 import memory from 'feathers-memory';
 import swagger from 'feathers-swagger';
+import morgan from 'morgan';
+
+import { initDummyData } from 'backend/initDummyData';
+import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
+import { generateSdk } from 'client/sdkGeneration';
+import { config } from 'config';
 import { BuildStatus } from 'model/Plan';
-import 'source-map-support/register';
+overrideConsoleLogger(logger);
+overrideUtilInspectStyle();
 async function run(port: number) {
+  logger.info('Starting Swagger Platform server...');
   const specs = memory();
   specs.docs = {
     description: 'Swagger/OpenAPI specs',
     definitions: {
-      specs: {
+      specifications: {
         type: 'object',
         additionalProperties: true,
       },
-      'specs list': {
+      'specifications list': {
         type: 'array',
       },
     },
@@ -65,7 +72,16 @@ async function run(port: number) {
     },
   };
   const app: express.Express = express(feathers());
+  const swaggerInfo = {
+    title: 'Swagger Platform',
+    description: 'Open sourced service overlay for SDK management using swagger-codegen',
+  };
   app
+    .use(
+      morgan('dev', {
+        stream: logger.stream,
+      }),
+    )
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .configure(express.rest())
@@ -74,10 +90,18 @@ async function run(port: number) {
       swagger({
         docsPath: '/docs',
         uiIndex: true,
-        info: {
-          title: 'Swagger Platform',
-          description: 'TODO: Someone describe swagger-platform :)',
-        },
+        info: swaggerInfo,
+      }),
+    )
+    /* 
+      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI, 
+      once for exposing the swagger JSON schema.
+    */
+    .configure(
+      swagger({
+        docsPath: '/swagger.json',
+        uiIndex: false,
+        info: swaggerInfo,
       }),
     )
     .get('/', (req, res) => res.redirect('/docs'))
@@ -101,15 +125,16 @@ async function run(port: number) {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const plan = await specs.get(context.data.planId);
+        const plan = await plans.get(context.data.planId);
         const spec = await specs.get(plan.specId);
-        const generationResponse = await generateSdk(spec);
+        const generationResponse = await generateSdk(logger, spec, plan);
         /*
         TODO: The linkside of the info object is probably temporary.
         Might need to consider downloading the object from 
         wherever the Swagger gen API stores it.
         */
         context.data.info = generationResponse;
+
         return context;
       },
     },
@@ -118,7 +143,9 @@ async function run(port: number) {
   if (config.backend.useCors) {
     app.use(cors());
   }
-  app.listen(port);
+  app.listen(port, (er, err) => {
+    logger.info(`Now listening on port ${port}`);
+  });
 }
 
 const envPort: string | undefined = process.env.PORT;

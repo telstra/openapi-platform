@@ -153,17 +153,17 @@ export class SpecModal extends Component<SpecModalProps> {
    * @returns true if the input was valid, false otherwise.
    */
   @action
-  private validateAllInputs(showErrorMessages: boolean = true) {
+  private validateAllInputs = (showErrorMessages: boolean = true) => {
     const titleValid = this.validateTitle(showErrorMessages);
     const urlValid = this.validateUrl(showErrorMessages);
     return titleValid && urlValid;
-  }
+  };
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitSpec() {
+  private onSubmitSpec = () => {
     // Validate input
     if (!this.validateAllInputs()) {
       return;
@@ -174,7 +174,7 @@ export class SpecModal extends Component<SpecModalProps> {
     const path = isWebUri(this.formText.url);
     const description = this.formText.description;
     this.props.onSubmitSpec({ title, path, description });
-  }
+  };
 
   private onTitleChange = event => {
     this.formText.title = event.target.value;

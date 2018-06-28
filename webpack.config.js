@@ -41,6 +41,24 @@ module.exports = (env, argv) => {
           options: {
             presets: createBabelPresets(envSettings),
             plugins: [
+              [
+                'module-resolver',
+                {
+                  root: ['.'],
+                  alias: {
+                    src: paths.src,
+                    test: paths.test,
+                    config: paths.config,
+                    view: paths.view,
+                    model: paths.model,
+                    basic: paths.basic,
+                    state: paths.state,
+                    client: paths.client,
+                    backend: paths.backend,
+                    frontend: paths.frontend,
+                  },
+                },
+              ],
               ['@babel/plugin-proposal-decorators', { legacy: true }],
               ['@babel/plugin-proposal-class-properties', { loose: true }],
               [
@@ -58,18 +76,6 @@ module.exports = (env, argv) => {
     devtool: 'cheap-module-source-map',
     resolve: {
       extensions: ['.tsx', '.js', '.jsx', '.ts', '.tsx'],
-      alias: {
-        src: paths.src,
-        test: paths.test,
-        config: paths.config,
-        view: paths.view,
-        model: paths.model,
-        basic: paths.basic,
-        state: paths.state,
-        client: paths.client,
-        backend: paths.backend,
-        frontend: paths.frontend,
-      },
     },
     stats,
   });
