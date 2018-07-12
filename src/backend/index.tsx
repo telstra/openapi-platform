@@ -71,7 +71,7 @@ async function run(port: number) {
       },
     },
   };
-  const app: express.Express = express(feathers());
+  const app = express(feathers());
   const swaggerInfo = {
     title: 'Swagger Platform',
     description: 'Open sourced service overlay for SDK management using swagger-codegen',

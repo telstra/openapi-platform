@@ -1,5 +1,5 @@
+import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
-import IconButton from 'material-ui/IconButton';
 import { observer } from 'mobx-react';
 import React, { SFC } from 'react';
 

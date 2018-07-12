@@ -1,8 +1,8 @@
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
-import { List, ListItem, ListItemIcon, ListItemText } from 'material-ui';
-import Divider from 'material-ui/Divider';
-import Drawer from 'material-ui/Drawer';
 import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 import React, { Component } from 'react';

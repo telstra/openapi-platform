@@ -1,4 +1,4 @@
-import { PaletteType } from 'material-ui';
+import { PaletteType } from '@material-ui/core';
 import { observable } from 'mobx';
 
 class SettingsState {
