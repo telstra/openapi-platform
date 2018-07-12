@@ -69,7 +69,6 @@ module.exports = (env, argv) => {
                   regenerator: true,
                 },
               ],
-              ['@babel/plugin-proposal-export-default-from'],
             ],
           },
         },
