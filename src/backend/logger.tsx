@@ -21,10 +21,11 @@ const swaggerPlatformAlign = format(info => {
 // Colorizes/formats javascript objects and timestamps
 const swaggerPlatformFormatter = format((info, options) => {
   info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
-  // TODO: Remove these casts to any once the type definitions for Winston are fixed
+  // TODO: Remove this cast to any once the type definitions for Winston are fixed
+  const message: any = info.message;
   if (
-    !((info.message as any) instanceof Error) &&
-    ((info.message as any) instanceof Object || Array.isArray(info.message))
+    !(message instanceof Error) &&
+    (message instanceof Object || Array.isArray(message))
   ) {
     info.message = util.inspect(info.message, { colors: options.colors });
   }
