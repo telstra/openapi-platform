@@ -1,5 +1,5 @@
+import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
-import IconButton from 'material-ui/IconButton';
 import { Observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
