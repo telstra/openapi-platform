@@ -30,14 +30,14 @@ async function run(port: number) {
       dialect: 'postgres',
       host: config.backend.databaseHost,
       port: config.backend.databasePort,
-      logging: console.log,
+      logging: logger.info,
     },
   );
   try {
     await dbConnection.authenticate();
-    console.info('Successfully connected to database');
+    logger.info('Successfully connected to database');
   } catch (err) {
-    console.error('Unable to connect to database: ', err);
+    logger.error('Unable to connect to database: %s', err);
     return;
   }
 
