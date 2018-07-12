@@ -45,6 +45,7 @@ module.exports = (env, argv) => {
                 'module-resolver',
                 {
                   root: ['.'],
+                  extensions: ['.js', '.jsx', '.ts', '.tsx'],
                   alias: {
                     src: paths.src,
                     test: paths.test,
@@ -75,7 +76,7 @@ module.exports = (env, argv) => {
     },
     devtool: 'cheap-module-source-map',
     resolve: {
-      extensions: ['.tsx', '.js', '.jsx', '.ts', '.tsx'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     stats,
   });
