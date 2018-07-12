@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
@@ -9,16 +7,14 @@ import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 
 import { initDummyData } from 'backend/initDummyData';
-import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
+import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
 import { BuildStatus } from 'model/Plan';
-overrideConsoleLogger(logger);
-overrideUtilInspectStyle();
-import 'source-map-support/register';
 
 export async function createServer(): express.Express {
   logger.info('Creating Swagger Platform server...');
+  // Set up specs service as in memory storage.
   const specs = memory();
   specs.docs = {
     description: 'Swagger/OpenAPI specs',
@@ -109,7 +105,7 @@ export async function createServer(): express.Express {
       }),
     )
     .get('/', (req, res) => res.redirect('/docs'))
-    // Sets up Feathers services.
+    // Register Feathers services.
     .use('/specifications', specs)
     .use('/plans', plans)
     .use('/sdks', sdks)
@@ -151,3 +147,5 @@ export async function createServer(): express.Express {
   }
   return app;
 }
+
+// export const backendServer = createBackendClient();
