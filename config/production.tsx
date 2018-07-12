@@ -5,5 +5,10 @@ export const productionConfig = {
   backend: {
     port: 80,
     useCors: false,
+    databaseName: '',
+    databaseHostname: '',
+    databasePort: 5432,
+    databaseUsername: '',
+    databasePassword: '',
   },
 };
