@@ -6,7 +6,7 @@ export const developmentConfig = {
     port: 8080,
     useCors: true,
     databaseName: '',
-    databaseHostname: '',
+    databaseHost: '',
     databasePort: 5432,
     databaseUsername: '',
     databasePassword: '',

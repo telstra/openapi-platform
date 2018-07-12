@@ -34,7 +34,7 @@ interface Configuration {
     /**
      * The hostname of the PostgreSQL database to connect to.
      */
-    readonly databaseHostname: string;
+    readonly databaseHost: string;
 
     /**
      * The port of the PostgreSQL database to connect to.

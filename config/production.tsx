@@ -6,7 +6,7 @@ export const productionConfig = {
     port: 80,
     useCors: false,
     databaseName: '',
-    databaseHostname: '',
+    databaseHost: '',
     databasePort: 5432,
     databaseUsername: '',
     databasePassword: '',
