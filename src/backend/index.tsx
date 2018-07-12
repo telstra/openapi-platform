@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 
-import express, { Application } from '@feathersjs/express';
+import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
 import cors from 'cors';
@@ -169,9 +169,7 @@ async function run(port: number) {
       },
     },
   };
-
-  // Initialise Express
-  const app: Application<object> = express(feathers());
+  const app = express(feathers());
   const swaggerInfo = {
     title: 'Swagger Platform',
     description: 'Open sourced service overlay for SDK management using swagger-codegen',

@@ -1,4 +1,4 @@
-import { createMuiTheme, MuiThemeProvider } from 'material-ui';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { observer } from 'mobx-react';
 import React, { SFC } from 'react';
 

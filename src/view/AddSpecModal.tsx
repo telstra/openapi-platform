@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Button, Typography } from 'material-ui';
+import { Button, Typography } from '@material-ui/core';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';

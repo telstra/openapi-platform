@@ -1,7 +1,7 @@
 import React, { SFC } from 'react';
 
+import { TextField, Toolbar, Typography } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { TextField, Toolbar, Typography } from 'material-ui';
 
 import { Category } from 'model/Storybook';
 import { createStyled } from 'view/createStyled';

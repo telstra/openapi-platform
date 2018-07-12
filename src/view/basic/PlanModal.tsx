@@ -10,9 +10,9 @@ import {
   MenuItem,
   Select,
   Typography,
-} from 'material-ui';
-import { ButtonProps } from 'material-ui/Button';
-import { ModalProps } from 'material-ui/Modal';
+} from '@material-ui/core';
+import { ButtonProps } from '@material-ui/core/Button';
+import { ModalProps } from '@material-ui/core/Modal';
 import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 

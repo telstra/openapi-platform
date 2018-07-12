@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import * as Icons from '@material-ui/icons';
 import {
   Button,
   IconButton,
@@ -12,7 +11,8 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
-} from 'material-ui';
+} from '@material-ui/core';
+import * as Icons from '@material-ui/icons';
 
 import { PlanItem } from 'basic/PlanItem';
 import { HasId } from 'model/Entity';

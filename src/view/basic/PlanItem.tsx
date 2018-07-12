@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
+import { Button, Typography, IconButton } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { Button, Typography, IconButton } from 'material-ui';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
