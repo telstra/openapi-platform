@@ -179,7 +179,9 @@ async function run(port: number) {
   app
     .use(
       morgan('dev', {
-        stream: logger.stream,
+        stream: {
+          write: message => logger.info(message),
+        },
       }),
     )
     .use(express.json())
