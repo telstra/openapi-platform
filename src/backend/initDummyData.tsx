@@ -18,17 +18,17 @@ export async function initDummyData(specs, plans): Promise<void> {
     {
       target: 'java',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'python',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'go',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
   );
 
@@ -42,17 +42,17 @@ export async function initDummyData(specs, plans): Promise<void> {
     {
       target: 'java',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'python',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'go',
       version: 'v1.0.0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
   );
   const spec1 = await specs.create({
@@ -65,17 +65,17 @@ export async function initDummyData(specs, plans): Promise<void> {
     {
       target: 'java',
       version: 'v1.0.34',
-      buildStatus: BuildStatus.SUCCESS,
+      buildStatus: BuildStatus.Success,
     },
     {
       target: 'javascript',
       version: 'v1.0.35',
-      buildStatus: BuildStatus.RUNNING,
+      buildStatus: BuildStatus.Running,
     },
     {
       target: 'haskell-http-client',
       version: 'v0',
-      buildStatus: BuildStatus.NOTRUN,
+      buildStatus: BuildStatus.NotRun,
     },
   );
   const spec2 = await specs.create({
@@ -87,7 +87,7 @@ export async function initDummyData(specs, plans): Promise<void> {
   await addToSpec(spec2, {
     target: 'go',
     version: 'alpha',
-    buildStatus: BuildStatus.FAIL,
+    buildStatus: BuildStatus.Fail,
   });
   const spec3 = await specs.create({
     title: 'Swagger API Example Uber',
@@ -100,12 +100,12 @@ export async function initDummyData(specs, plans): Promise<void> {
     {
       target: 'python',
       version: 'alpha',
-      buildStatus: BuildStatus.SUCCESS,
+      buildStatus: BuildStatus.Success,
     },
     {
       target: 'java',
       version: 'alpha',
-      buildStatus: BuildStatus.SUCCESS,
+      buildStatus: BuildStatus.Success,
     },
   );
 }

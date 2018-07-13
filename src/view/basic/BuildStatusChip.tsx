@@ -8,25 +8,25 @@ import { createStyled } from 'view/createStyled';
 // TODO: Should probably only have to have 1 switch case
 const buildStatusToLabel = ({ buildStatus }) => {
   switch (buildStatus) {
-    case BuildStatus.NOTRUN:
+    case BuildStatus.NotRun:
       return 'Never run';
-    case BuildStatus.RUNNING:
+    case BuildStatus.Running:
       return 'Running';
-    case BuildStatus.SUCCESS:
+    case BuildStatus.Success:
       return 'Success';
-    case BuildStatus.FAIL:
+    case BuildStatus.Fail:
       return 'Failed';
   }
 };
 const buildStatusToColor = ({ buildStatus }) => {
   switch (buildStatus) {
-    case BuildStatus.NOTRUN:
+    case BuildStatus.NotRun:
       return grey[300];
-    case BuildStatus.RUNNING:
+    case BuildStatus.Running:
       return amber[500];
-    case BuildStatus.SUCCESS:
+    case BuildStatus.Success:
       return green[600];
-    case BuildStatus.FAIL:
+    case BuildStatus.Fail:
       return red[900];
   }
 };
