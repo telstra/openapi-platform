@@ -11,6 +11,10 @@ export const createPlanModel = (dbConnection: Sequelize.Sequelize) =>
   dbConnection.define(
     'plans',
     {
+      specId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       target: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -24,12 +28,8 @@ export const createPlanModel = (dbConnection: Sequelize.Sequelize) =>
         allowNull: true,
       },
       buildStatus: {
-        type: Sequelize.JSON,
-        allowNull: true,
-      },
-      specId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+        type: Sequelize.STRING,
+        allowNull: false,
       },
     },
     {

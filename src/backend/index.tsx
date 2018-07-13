@@ -101,7 +101,7 @@ async function run(port: number) {
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
-        context.data.buildStatus = BuildStatus.NOTRUN;
+        context.data.buildStatus = BuildStatus.NotRun;
         // TODO: Will need to change this at some point
         context.data.latestVersion = 'TODO';
         return context;

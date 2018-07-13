@@ -5,12 +5,12 @@ import { Id } from 'model/Entity';
  */
 export interface Sdk {
   /**
-   * A URL to a download link for the SDK.
-   */
-  path: string;
-
-  /**
    * The ID of the plan the SDK was built for.
    */
   planId: Id;
+
+  /**
+   * A URL to a download link for the SDK.
+   */
+  path: string;
 }

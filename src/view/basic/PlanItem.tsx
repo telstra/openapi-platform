@@ -46,7 +46,7 @@ export class PlanItem extends Component<PlanItemProps> {
       .service('sdks')
       .create({ planId: this.props.plan.id });
     // TODO: Need to get this from the actual backend
-    this.props.plan.buildStatus = BuildStatus.SUCCESS;
+    this.props.plan.buildStatus = BuildStatus.Success;
     this.latestSdkUrl = sdk.path;
   };
 
@@ -72,10 +72,10 @@ export class PlanItem extends Component<PlanItemProps> {
                     </IconButton>
                   ) : null}
                   <Button
-                    disabled={plan.buildStatus === BuildStatus.RUNNING}
+                    disabled={plan.buildStatus === BuildStatus.Running}
                     onClick={this.createSdk}
                   >
-                    {plan.buildStatus === BuildStatus.RUNNING ? 'Running...' : 'Run'}
+                    {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
                   </Button>
                 </div>
               </div>

@@ -5,6 +5,11 @@ import { Id } from 'model/Entity';
  */
 export interface Plan {
   /**
+   * The ID of the Spec this Plan is for.
+   */
+  specId: Id;
+
+  /**
    * The target language of the SDK to build. Must be one of the values in PLAN_TARGETS.
    */
   target: string;
@@ -26,21 +31,16 @@ export interface Plan {
    * The current build status of the SDK.
    */
   buildStatus: BuildStatus;
-
-  /**
-   * The ID of the Spec this Plan is for.
-   */
-  specId: Id;
 }
 
 /**
  * Represents the different possible build statuses of a plan.
  */
 export enum BuildStatus {
-  NOTRUN,
-  RUNNING,
-  SUCCESS,
-  FAIL,
+  NotRun = 'NOT_RUN',
+  Running = 'RUNNING',
+  Success = 'SUCCESS',
+  Fail = 'FAIL',
 }
 
 /**
