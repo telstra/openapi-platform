@@ -7,6 +7,7 @@ import { createStyled } from 'view/createStyled';
 
 const Styled = createStyled(theme => ({
   modalRoot: {
+    display: 'flex',
     justifyContent: 'center',
   },
   modalPaper: {
