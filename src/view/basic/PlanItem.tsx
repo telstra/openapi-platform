@@ -9,6 +9,7 @@ import { BuildStatusChip } from 'basic/BuildStatusChip';
 import { client } from 'client/BackendClient';
 import { HasId } from 'model/Entity';
 import { Plan, BuildStatus } from 'model/Plan';
+import { Sdk } from 'model/Sdk';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -41,10 +42,12 @@ export class PlanItem extends Component<PlanItemProps> {
 
   @action
   public createSdk = async () => {
-    const sdk = await client.service('sdks').create({ planId: this.props.plan.id });
+    const sdk: HasId<Sdk> = await client
+      .service('sdks')
+      .create({ planId: this.props.plan.id });
     // TODO: Need to get this from the actual backend
     this.props.plan.buildStatus = BuildStatus.SUCCESS;
-    this.latestSdkUrl = sdk.info.link;
+    this.latestSdkUrl = sdk.path;
   };
 
   public render() {

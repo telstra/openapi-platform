@@ -1,13 +1,41 @@
 import { Id } from 'model/Entity';
 
+/**
+ * Represents a plan, used to define how an SDK should be built for a specification.
+ */
 export interface Plan {
+  /**
+   * The target language of the SDK to build. Must be one of the values in PLAN_TARGETS.
+   */
   target: string;
+
+  /**
+   * The version of the SDK to build.
+   */
   version?: string;
+
+  /**
+   * A JSON-like object defining any additional options that should be used to build the SDK.
+   *
+   * A full list of options for a given target language can be obtained from:
+   * https://generator.swagger.io/api/gen/clients/<TARGET_LANGUAGE>
+   */
   options?: any;
+
+  /**
+   * The current build status of the SDK.
+   */
   buildStatus: BuildStatus;
+
+  /**
+   * The ID of the Spec this Plan is for.
+   */
   specId: Id;
 }
 
+/**
+ * Represents the different possible build statuses of a plan.
+ */
 export enum BuildStatus {
   NOTRUN,
   RUNNING,
@@ -15,6 +43,9 @@ export enum BuildStatus {
   FAIL,
 }
 
+/**
+ * An array of supported plan target languages.
+ */
 export const PLAN_TARGETS = [
   'ada',
   'akka-scala',
