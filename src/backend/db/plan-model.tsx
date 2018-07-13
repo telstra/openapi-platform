@@ -7,8 +7,8 @@ import Sequelize from 'sequelize';
  * @param dbConnection The Sequelize connection to create the model for.
  * @returns The created Sequelize model.
  */
-export const createPlanModel = (dbConnection: Sequelize.Sequelize) =>
-  dbConnection.define(
+export function createPlanModel(dbConnection: Sequelize.Sequelize) {
+  return dbConnection.define(
     'plans',
     {
       specId: {
@@ -36,6 +36,7 @@ export const createPlanModel = (dbConnection: Sequelize.Sequelize) =>
       freezeTableName: true,
     },
   );
+}
 
 /**
  * Creates a Feathers service to access plans, using the given database model.
@@ -43,7 +44,7 @@ export const createPlanModel = (dbConnection: Sequelize.Sequelize) =>
  * @param planModel The database model representing a plan.
  * @returns The created Feathers service.
  */
-export const createPlanService = planModel => {
+export function createPlanService(planModel) {
   const service = sequelize({
     Model: planModel,
   });
@@ -67,4 +68,4 @@ export const createPlanService = planModel => {
     },
   };
   return service;
-};
+}

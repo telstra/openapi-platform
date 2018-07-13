@@ -8,9 +8,9 @@ import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
-import { createPlanModel, createPlanService } from 'backend/db/planModel';
-import { createSdkModel, createSdkService } from 'backend/db/sdkModel';
-import { createSpecModel, createSpecService } from 'backend/db/specModel';
+import { createPlanModel, createPlanService } from 'backend/db/plan-model';
+import { createSdkModel, createSdkService } from 'backend/db/sdk-model';
+import { createSpecModel, createSpecService } from 'backend/db/spec-model';
 import { initDummyData } from 'backend/initDummyData';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';

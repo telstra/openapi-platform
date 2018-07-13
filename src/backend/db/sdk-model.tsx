@@ -7,8 +7,8 @@ import Sequelize from 'sequelize';
  * @param dbConnection The Sequelize connection to create the model for.
  * @returns The created Sequelize model.
  */
-export const createSdkModel = (dbConnection: Sequelize.Sequelize) =>
-  dbConnection.define(
+export function createSdkModel(dbConnection: Sequelize.Sequelize) {
+  return dbConnection.define(
     'sdks',
     {
       planId: {
@@ -24,6 +24,7 @@ export const createSdkModel = (dbConnection: Sequelize.Sequelize) =>
       freezeTableName: true,
     },
   );
+}
 
 /**
  * Creates a Feathers service to access SDKs, using the given database model.
@@ -31,7 +32,7 @@ export const createSdkModel = (dbConnection: Sequelize.Sequelize) =>
  * @param sdkModel The database model representing an SDK.
  * @returns The created Feathers service.
  */
-export const createSdkService = sdkModel => {
+export function createSdkService(sdkModel) {
   const service = sequelize({
     Model: sdkModel,
   });
@@ -55,4 +56,4 @@ export const createSdkService = sdkModel => {
     },
   };
   return service;
-};
+}
