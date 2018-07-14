@@ -18,8 +18,10 @@ import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
 import { PLAN_TARGETS } from 'model/Plan';
+import { BuildStatus } from 'model/Plan';
 import { Category } from 'model/Storybook';
 import { AddedPlan } from 'state/PlanState';
+import { state as specificationsState } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -68,7 +70,7 @@ export interface PlanModalProps {
 }
 
 /**
- * A modal window that allows the user to add a specification to the dashboard.
+ * A modal window that allows the user to add a SDK generation Plan to the dashboard.
  * Currently only supports specifying a name and URL.
  */
 export class PlanModal extends Component<PlanModalProps> {
@@ -177,7 +179,10 @@ export class PlanModal extends Component<PlanModalProps> {
     const target = this.formText.target;
     const version = this.formText.version;
     const options = JSON.parse(this.formText.options);
-    this.props.onSubmitPlan({ target, version, options });
+    const specId = specificationsState.expandedSpecId;
+    const buildStatus = BuildStatus.NotRun;
+    // TODO: submittedPlan.pushPath = "";
+    this.props.onSubmitPlan({ target, version, options, specId, buildStatus });
   }
 
   private onTargetChange = event => {
@@ -211,7 +216,6 @@ export class PlanModal extends Component<PlanModalProps> {
       showSubmitProgress,
       submitButtonProps,
     } = this.props;
-
     return (
       <Styled>
         {({ classes }) => (
@@ -227,7 +231,7 @@ export class PlanModal extends Component<PlanModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add Plan
+                      Add SDK Generation Plan
                     </Typography>
                     <FormControl error={this.error.target !== undefined} margin="dense">
                       <InputLabel htmlFor="target">Target</InputLabel>

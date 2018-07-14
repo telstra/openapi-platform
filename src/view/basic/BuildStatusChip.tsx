@@ -28,6 +28,8 @@ const buildStatusToColor = ({ buildStatus }) => {
       return green[600];
     case BuildStatus.Fail:
       return red[900];
+    default:
+      return red[900];
   }
 };
 const Styled: any = createStyled(theme => ({

@@ -11,6 +11,7 @@ export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   expandedSpecId: number | null;
   onSpecExpanded: (id: number | null) => void;
   onSpecSelected: (Spec: Spec) => void;
+  onAddSdkPlan: () => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -49,6 +50,7 @@ export class SpecList extends Component<SpecListProps, {}> {
                       expanded={expandedSpecId === spec.id}
                       onPanelChange={this.panelExpand}
                       onSpecOpen={onSpecSelected}
+                      onAddSdkPlan={this.props.onAddSdkPlan}
                     />
                   ))}
                 </div>

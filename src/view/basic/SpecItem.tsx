@@ -69,6 +69,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onSpecOpen: (spec: Spec) => void;
+  onAddSdkPlan: (event: any) => void | undefined;
   plans?: Array<HasId<Plan>>;
 }
 
@@ -81,7 +82,7 @@ export class SpecItem extends Component<SpecItemProps> {
     this.props.onPanelChange(this.props.spec, expanded);
 
   public render() {
-    const { spec, expanded, plans = [] } = this.props;
+    const { spec, expanded, onAddSdkPlan, plans = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -135,6 +136,15 @@ export class SpecItem extends Component<SpecItemProps> {
                       <PlanItem plan={plan} />
                     </ListItem>
                   ))}
+                </List>
+                <List>
+                  <ListItem className={classes.sdkHeaderActions}>
+                    <ListItemSecondaryAction>
+                      <Button variant="flat" color="primary" onClick={onAddSdkPlan}>
+                        Add SDK
+                      </Button>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 </List>
               </div>
             </ExpansionPanelDetails>

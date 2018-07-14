@@ -9,6 +9,7 @@ import { ContentContainer } from 'basic/ContentContainer';
 import { SimpleToolbar } from 'basic/SimpleToolbar';
 import { SpecList } from 'basic/SpecList';
 import { state } from 'state/SpecState';
+import { AddPlanModal } from 'view/AddPlanModal';
 import { AddSpecModal } from 'view/AddSpecModal';
 
 /**
@@ -18,7 +19,9 @@ import { AddSpecModal } from 'view/AddSpecModal';
 export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private onSearch = event => {};
   private addSpec = () => this.props.history.push(`${this.props.match.url}/add`);
+  private addSdkPlan = () => this.props.history.push(`${this.props.match.url}/plan/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
+  // Don't think this works.
   private expandSpec = id => (state.expandedSpecId = id);
 
   public render() {
@@ -44,8 +47,15 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               onSpecExpanded={this.expandSpec}
               // Go to the Spec viewing route when you select a Spec
               onSpecSelected={this.goToSpec}
+              //
+              onAddSdkPlan={this.addSdkPlan}
             />
             <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
+            <Route
+              exact
+              path={`${this.props.match.url}/plan/add`}
+              component={AddPlanModal}
+            />
           </ContentContainer>,
         ]}
       </Observer>
