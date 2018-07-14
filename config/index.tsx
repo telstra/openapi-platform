@@ -1,6 +1,6 @@
 import { developmentConfig } from './development';
 import { productionConfig } from './production';
-import { testConfig } from './testCofing';
+import { testConfig } from './testConfing';
 
 interface Configuration {
   /**

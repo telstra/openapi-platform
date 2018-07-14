@@ -1,8 +1,7 @@
-import assert from 'assert';
-import { createServer } from '../../src/backend/server';
-import * as dependencyToMock from '../../src/client/sdkGeneration';
-import { Plan, BuildStatus } from '../../src/model/Plan';
-import { Spec } from '../../src/model/Spec';
+import { createServer } from 'backend/server';
+import * as sdkGeneration from 'client/sdkGeneration';
+import { Plan, BuildStatus } from 'model/Plan';
+import { Spec } from 'model/Spec';
 
 /*
  * Test services are registered and any hooks.
@@ -17,15 +16,27 @@ describe('test server', () => {
   describe('test specification service', () => {
     test('specification service registered', () => {
       const s = app.service('specifications');
-      assert.ok(s, 'Registered the service');
+      expect(s).toEqual(expect.anything())
     });
   });
 
   describe('test plans service', () => {
     let planData: Plan;
+    const specData: Spec = {
+      title: "title",
+      description: "desc",
+      path: "path"
+    }
+    let createdSpecId: number;
+    beforeAll( async () => {
+      // Need a spec to add plans to.
+      const createdSpec = await app.service('specifications').create(specData);
+      createdSpecId = createdSpec.id;
+    });
+
     beforeEach(() => {
       planData = {
-        specId: 1,
+        specId: createdSpecId,
         target: 'java is ew',
         version: 'v1.0.0',
         options: 'my options here',
@@ -35,14 +46,14 @@ describe('test server', () => {
 
     test('plans service registered', () => {
       const s = app.service('plans');
-      assert.ok(s, 'Registered the service');
+      expect(s).toEqual(expect.anything())
     });
 
     test('plan created', async () => {
-      const createdPlan = await app.service('plans').create(planData); // HTTP Create/
+      const createdPlan = await app.service('plans').create(planData); 
       expect(
-        await app.service('plans').get(createdPlan.id), // HTTP Get.
-      ).toEqual(createdPlan);
+        app.service('plans').get(createdPlan.id)
+      ).resolves.toEqual(createdPlan) 
     });
 
     test('plan created hook sets buildStatus to BuildStatus.NOTRUN', async () => {
@@ -50,15 +61,14 @@ describe('test server', () => {
       planDataWithBuildStatus.buildStatus = BuildStatus.SUCCESS; // This changes to NOTRUN.
       const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
       expect((await app.service('plans').get(createdPlan.id)).buildStatus).toEqual(
-        BuildStatus.NOTRUN,
-      );
+        BuildStatus.NOTRUN);
     });
   });
 
   describe('test sdks service', () => {
     test('sdks service registered', () => {
       const s = app.service('sdks');
-      assert.ok(s, 'Registered the service');
+      expect(s).toEqual(expect.anything())
     });
 
     describe('test creating/generating sdks', () => {
@@ -94,7 +104,7 @@ describe('test server', () => {
         };
 
         // Mock the response of generateSdk to be successful.
-        const spy = jest.spyOn(dependencyToMock, 'generateSdk').mockImplementation(() => {
+        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
           return expectedGenerationResponse;
         });
 
@@ -105,7 +115,7 @@ describe('test server', () => {
         // SDK created for the right plan.
         expect(createdSdk.planId).toBe(createdPlan.id);
         // SDK created & stored in memory.
-        expect(createdSdk).toEqual(await app.service('sdks').get(createdSdk.id));
+        expect(app.service('sdks').get(createdSdk.id)).resolves.toEqual(createdSdk);
         // Check return info.
         expect(createdSdk.info).toEqual(expectedGenerationResponse);
       });
@@ -131,7 +141,7 @@ describe('test server', () => {
 
         const sdkData = { planId: createdPlan.id };
 
-        const spy = jest.spyOn(dependencyToMock, 'generateSdk').mockImplementation(() => {
+        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
           const swaggerCodegenMalformedOptionsResponse = {
             code: 500,
             type: 'unknown',
@@ -140,20 +150,11 @@ describe('test server', () => {
           throw new Error(swaggerCodegenMalformedOptionsResponse.message);
         });
 
-        let createdSdk;
-        let errorMessage;
-        try {
-          createdSdk = await app.service('sdks').create(sdkData);
-        } catch (err) {
-          errorMessage = err.toString();
-        }
-
-        // generateSdk() called once.
-        expect(spy).toHaveBeenCalledTimes(1);
-        // SDK not created.
-        expect(createdSdk).toBe(undefined);
-        // Error throw with right message.
-        expect(errorMessage).toEqual('Error: something bad happened');
+        // Errors.
+        expect(
+          app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error))
+        // generateSdk() not called because it threw an error.
+        expect(spy).toHaveBeenCalledTimes(0);
       });
 
       test('create a sdk error, invalid path', async () => {
@@ -174,7 +175,7 @@ describe('test server', () => {
         const createdPlan = await app.service('plans').create(planData);
 
         const sdkData = { planId: createdPlan.id };
-        const spy = jest.spyOn(dependencyToMock, 'generateSdk').mockImplementation(() => {
+        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
           const swaggerCodegenInvalidSpecificationResponse = {
             code: 1,
             type: 'error',
@@ -183,22 +184,11 @@ describe('test server', () => {
           throw new Error(swaggerCodegenInvalidSpecificationResponse.message);
         });
 
-        let createdSdk;
-        let errorMessage;
-        try {
-          createdSdk = await app.service('sdks').create(sdkData);
-        } catch (err) {
-          errorMessage = err.toString();
-        }
-
-        // generateSdk() called once.
-        expect(spy).toHaveBeenCalledTimes(1);
-        // SDK not created.
-        expect(createdSdk).toBe(undefined);
-        // Error throw with right message.
-        expect(errorMessage).toEqual(
-          'Error: The swagger specification supplied was not valid',
-        );
+        // Errors.
+        expect(
+          app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error))
+        // generateSdk() not called because it threw an error.
+        expect(spy).toHaveBeenCalledTimes(0);
       });
     });
   });

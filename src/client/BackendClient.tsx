@@ -17,7 +17,6 @@ export function createBackendClient(): BackendClient {
   feathersClient.configure(feathers.socketio(socket));
   // TODO: Actually wrap client rather than just returning client
   return feathersClient;
-  // @Patrick: does this create another client? o.o
 }
 
 export const client = createBackendClient();

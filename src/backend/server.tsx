@@ -28,7 +28,7 @@ export async function createServer(): express.Express {
       },
     },
   };
-  const plans = memory(); // Can be seen as it's own microservice?
+  const plans = memory();
   plans.docs = {
     description: 'The plans used for generating SDKs according to a given specification',
     definitions: {
@@ -111,7 +111,7 @@ export async function createServer(): express.Express {
     .use('/sdks', sdks)
     .use(express.errorHandler());
 
-  await initDummyData(app.service('specifications'), app.service('plans'));
+  // await initDummyData(app.service('specifications'), app.service('plans'));
   // Set up Feathers hooks.
   app.service('plans').hooks({
     before: {
