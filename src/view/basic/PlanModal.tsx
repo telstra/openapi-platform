@@ -18,7 +18,6 @@ import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
 import { PLAN_TARGETS } from 'model/Plan';
-import { BuildStatus } from 'model/Plan';
 import { Category } from 'model/Storybook';
 import { AddedPlan } from 'state/PlanState';
 import { state as specificationsState } from 'state/SpecState';
@@ -175,14 +174,13 @@ export class PlanModal extends Component<PlanModalProps> {
       return;
     }
 
-    // Send the request to the backend
+    // Send the request to the backend.
     const target = this.formText.target;
     const version = this.formText.version;
     const options = JSON.parse(this.formText.options);
     const specId = specificationsState.expandedSpecId;
-    const buildStatus = BuildStatus.NotRun;
     // TODO: submittedPlan.pushPath = "";
-    this.props.onSubmitPlan({ target, version, options, specId, buildStatus });
+    this.props.onSubmitPlan({ target, version, options, specId });
   }
 
   private onTargetChange = event => {

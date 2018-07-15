@@ -15,6 +15,7 @@ import { initDummyData } from 'backend/initDummyData';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
+import { BuildStatus, hasValidBuildStatus } from 'model/Plan';
 
 overrideConsoleLogger(logger);
 overrideUtilInspectStyle();
@@ -100,6 +101,9 @@ async function run(port: number) {
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
+        if (!hasValidBuildStatus(context.data.buildStatus)) {
+          context.data.buildStatus = BuildStatus.NotRun;
+        }
         return context;
       },
     },

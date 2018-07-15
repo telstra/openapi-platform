@@ -43,6 +43,21 @@ export enum BuildStatus {
   Fail = 'FAIL',
 }
 
+export const hasValidBuildStatus = buildStatus => {
+  switch (buildStatus) {
+    case BuildStatus.NotRun:
+      return true;
+    case BuildStatus.Running:
+      return true;
+    case BuildStatus.Success:
+      return true;
+    case BuildStatus.Fail:
+      return true;
+    default:
+      return false;
+  }
+};
+
 /**
  * An array of supported plan target languages.
  */

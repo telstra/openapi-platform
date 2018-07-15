@@ -2,7 +2,6 @@ import { client } from 'client/BackendClient';
 import { observable, computed, action } from 'mobx';
 import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
-import { BuildStatus } from 'model/Plan';
 
 class PlanState {
   @observable public readonly plans: Map<Id, HasId<Plan>> = new Map();
@@ -31,7 +30,6 @@ export interface AddedPlan {
   target: string;
   version?: string;
   options?: any;
-  buildStatus: BuildStatus;
 }
 
 export const state: PlanState = new PlanState();
