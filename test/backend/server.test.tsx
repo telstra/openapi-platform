@@ -16,19 +16,19 @@ describe('test server', () => {
   describe('test specification service', () => {
     test('specification service registered', () => {
       const s = app.service('specifications');
-      expect(s).toEqual(expect.anything())
+      expect(s).toEqual(expect.anything());
     });
   });
 
   describe('test plans service', () => {
     let planData: Plan;
     const specData: Spec = {
-      title: "title",
-      description: "desc",
-      path: "path"
-    }
+      title: 'title',
+      description: 'desc',
+      path: 'path',
+    };
     let createdSpecId: number;
-    beforeAll( async () => {
+    beforeAll(async () => {
       // Need a spec to add plans to.
       const createdSpec = await app.service('specifications').create(specData);
       createdSpecId = createdSpec.id;
@@ -40,35 +40,34 @@ describe('test server', () => {
         target: 'java is ew',
         version: 'v1.0.0',
         options: 'my options here',
-        buildStatus: BuildStatus.NOTRUN,
+        buildStatus: BuildStatus.NotRun,
       };
     });
 
     test('plans service registered', () => {
       const s = app.service('plans');
-      expect(s).toEqual(expect.anything())
+      expect(s).toEqual(expect.anything());
     });
 
     test('plan created', async () => {
-      const createdPlan = await app.service('plans').create(planData); 
-      expect(
-        app.service('plans').get(createdPlan.id)
-      ).resolves.toEqual(createdPlan) 
+      const createdPlan = await app.service('plans').create(planData);
+      expect(app.service('plans').get(createdPlan.id)).resolves.toEqual(createdPlan);
     });
 
-    test('plan created hook sets buildStatus to BuildStatus.NOTRUN', async () => {
+    test('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
       const planDataWithBuildStatus = planData;
-      planDataWithBuildStatus.buildStatus = BuildStatus.SUCCESS; // This changes to NOTRUN.
+      planDataWithBuildStatus.buildStatus = BuildStatus.Success; // This changes to NotRun.
       const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
       expect((await app.service('plans').get(createdPlan.id)).buildStatus).toEqual(
-        BuildStatus.NOTRUN);
+        BuildStatus.NotRun,
+      );
     });
   });
 
   describe('test sdks service', () => {
     test('sdks service registered', () => {
       const s = app.service('sdks');
-      expect(s).toEqual(expect.anything())
+      expect(s).toEqual(expect.anything());
     });
 
     describe('test creating/generating sdks', () => {
@@ -88,7 +87,7 @@ describe('test server', () => {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
-          buildStatus: BuildStatus.NOTRUN,
+          buildStatus: BuildStatus.NotRun,
           options: {
             additionalProp1: 'string',
             additionalProp2: 'string',
@@ -134,7 +133,7 @@ describe('test server', () => {
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           options: 'options should be an object and not a string',
-          buildStatus: BuildStatus.NOTRUN,
+          buildStatus: BuildStatus.NotRun,
         };
 
         const createdPlan = await app.service('plans').create(planData);
@@ -151,8 +150,7 @@ describe('test server', () => {
         });
 
         // Errors.
-        expect(
-          app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error))
+        expect(app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error));
         // generateSdk() not called because it threw an error.
         expect(spy).toHaveBeenCalledTimes(0);
       });
@@ -169,7 +167,7 @@ describe('test server', () => {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
-          buildStatus: BuildStatus.NOTRUN,
+          buildStatus: BuildStatus.NotRun,
         };
 
         const createdPlan = await app.service('plans').create(planData);
@@ -185,8 +183,7 @@ describe('test server', () => {
         });
 
         // Errors.
-        expect(
-          app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error))
+        expect(app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error));
         // generateSdk() not called because it threw an error.
         expect(spy).toHaveBeenCalledTimes(0);
       });

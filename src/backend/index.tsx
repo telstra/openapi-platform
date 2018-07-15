@@ -1,8 +1,8 @@
 import 'source-map-support/register';
 
-import { createServer } from 'backend/server';
-import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { initDummyData } from 'backend/initDummyData';
+import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
+import { createServer } from 'backend/server';
 import { config } from 'config';
 
 import 'source-map-support/register';
