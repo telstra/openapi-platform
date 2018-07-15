@@ -4,8 +4,6 @@ import { createServer } from 'backend/server';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { initDummyData } from 'backend/initDummyData';
 import { config } from 'config';
-overrideConsoleLogger(logger);
-overrideUtilInspectStyle();
 
 import 'source-map-support/register';
 

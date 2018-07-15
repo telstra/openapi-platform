@@ -26,6 +26,31 @@ interface Configuration {
      * Whether or not CORS requests should be allowed.
      */
     readonly useCors: boolean;
+
+    /**
+     * The name of the PostgreSQL database to connect to.
+     */
+    readonly databaseName: string;
+
+    /**
+     * The hostname of the PostgreSQL database to connect to.
+     */
+    readonly databaseHost: string;
+
+    /**
+     * The port of the PostgreSQL database to connect to.
+     */
+    readonly databasePort: number;
+
+    /**
+     * The username of the PostgreSQL database to connect to.
+     */
+    readonly databaseUsername: string;
+
+    /**
+     * The password of the PostgreSQL database to connect to.
+     */
+    readonly databasePassword: string;
   };
 }
 

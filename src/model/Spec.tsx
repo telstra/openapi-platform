@@ -1,9 +1,19 @@
-import { Plan } from 'model/Plan';
+/**
+ * Represents a Swagger specification.
+ */
 export interface Spec {
-  readonly title: string; // Just an example field. Not necessarily part of Spec
+  /**
+   * The name of the specification.
+   */
+  readonly title: string;
+
+  /**
+   * A description of the specification.
+   */
   readonly description?: string;
+
+  /**
+   * A URL to the Swagger specification.
+   */
   readonly path: string;
-}
-export interface OldSpec extends Spec {
-  readonly plans: Plan[];
 }

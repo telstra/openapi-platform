@@ -21,9 +21,11 @@ const swaggerPlatformAlign = format(info => {
 // Colorizes/formats javascript objects and timestamps
 const swaggerPlatformFormatter = format((info, options) => {
   info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
+  // TODO: Remove this cast to any once the type definitions for Winston are fixed
+  const message: any = info.message;
   if (
-    !(info.message instanceof Error) &&
-    (info.message instanceof Object || Array.isArray(info.message))
+    !(message instanceof Error) &&
+    (message instanceof Object || Array.isArray(message))
   ) {
     info.message = util.inspect(info.message, { colors: options.colors });
   }
@@ -31,7 +33,7 @@ const swaggerPlatformFormatter = format((info, options) => {
 });
 
 // Specifies the order in which all the information is printed out
-const swaggerPlatformPrinter = format.printf((info, options) => {
+const swaggerPlatformPrinter = format.printf(info => {
   return `${info.timestamp} ${info.level}${info.levelPadding ? info.levelPadding : ' '}${
     info.message
   }`;
@@ -66,10 +68,6 @@ const logger = createLogger({
   ],
 });
 
-// This is for use with Morgan
-logger.stream = {
-  write: (message, encoding) => logger.info(message),
-};
 export { logger };
 
 /**
