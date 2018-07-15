@@ -8,15 +8,16 @@ export interface BackendClient {
 
 /**
  * A pure feathers client used to communicate to the server via websockets.
+ * It's intended that the frontend uses this to communicate to the backend.
  */
 export function createBackendClient(): BackendClient {
   const socket = io('http://localhost:8080', {
     transports: ['websocket'],
   });
-  const feathersClient = feathers();
-  feathersClient.configure(feathers.socketio(socket));
+  const app = feathers();
+  app.configure(feathers.socketio(socket));
   // TODO: Actually wrap client rather than just returning client
-  return feathersClient;
+  return app;
 }
 
 export const client = createBackendClient();
