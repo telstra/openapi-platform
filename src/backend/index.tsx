@@ -11,6 +11,7 @@ import Sequelize from 'sequelize';
 import { createPlanModel, createPlanService } from 'backend/db/plan-model';
 import { createSdkModel, createSdkService } from 'backend/db/sdk-model';
 import { createSpecModel, createSpecService } from 'backend/db/spec-model';
+import { updateRepoWithNewSdk } from 'backend/git';
 import { initDummyData } from 'backend/initDummyData';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
@@ -116,6 +117,9 @@ async function run(port: number) {
         wherever the Swagger gen API stores it.
         */
         context.data.path = sdk.path;
+        if (plan.gitInfo) {
+          await updateRepoWithNewSdk(plan.gitInfo, sdk.path);
+        }
         context.data.planId = sdk.planId;
 
         return context;
