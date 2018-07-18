@@ -1,6 +1,7 @@
 import oldFs from 'fs';
 import { join } from 'path';
 
+import { move } from 'fs-extra';
 import git from 'isomorphic-git';
 
 import { downloadToDir, deletePaths, makeTempDir } from 'backend/file/index';
@@ -16,7 +17,9 @@ async function makeTempSdkDir() {
   return await makeTempDir('sdk');
 }
 
-async function moveFilesIntoLocalRepo(repoDir, sdkDir) {}
+async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
+  await move(repoDir, sdkDir, { overwrite: true });
+}
 
 async function deleteAllFilesInLocalRepo(dir) {
   const filePaths = await git.listFiles({ fs: oldFs, dir });
@@ -30,6 +33,7 @@ export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkPath: string) {
   const sdkDir = await makeTempSdkDir();
   await downloadToDir(sdkDir, remoteSdkPath);
   await moveFilesIntoLocalRepo(repoDir, sdkDir);
+  // TODO: Should be in a finally block
   await deletePaths([sdkDir]);
 }
 
@@ -71,5 +75,6 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, localSdkPath: strin
     dir: repoDir,
     ...gitInfo.auth,
   });
+  // TODO: Should be in a finally block
   await deletePaths([repoDir]);
 }
