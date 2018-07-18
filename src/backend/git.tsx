@@ -28,53 +28,61 @@ async function deleteAllFilesInLocalRepo(dir) {
 }
 
 export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkPath: string) {
-  // TODO: Maybe we should allow pushing to a specific folder?
   await deleteAllFilesInLocalRepo(repoDir);
   const sdkDir = await makeTempSdkDir();
-  await downloadToDir(sdkDir, remoteSdkPath);
-  await moveFilesIntoLocalRepo(repoDir, sdkDir);
-  // TODO: Should be in a finally block
-  await deletePaths([sdkDir]);
+  try {
+    // TODO: Maybe we should allow pushing to a specific folder?
+    await downloadToDir(sdkDir, remoteSdkPath);
+    await moveFilesIntoLocalRepo(repoDir, sdkDir);
+  } catch (err) {
+    throw err;
+  } finally {
+    await deletePaths([sdkDir]);
+  }
 }
 
 export async function updateRepoWithNewSdk(gitInfo: GitInfo, localSdkPath: string) {
   const repoDir = await makeTempRepoDir();
-  /*
-    TODO: This isn't great. We clone the repo everytime we generate an SDK.
-    Preferably, we'd only do it once or have some kind of cache for repos we've already cloned.
-    Would have to probably git reset --hard HEAD~ before adding the SDK to the cloned repo.
-  */
-  // TODO: Should also be able to configure which branch to checkout, maybe?
-  await git.clone({
-    dir: repoDir,
-    // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
-    fs: oldFs,
-    url: gitInfo.repoUrl,
-    singleBranch: true,
-    depth: 1,
-    ...gitInfo.auth,
-  });
-  await migrateSdkIntoLocalRepo(repoDir, localSdkPath);
-  // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
-  await git.add({
-    fs: oldFs,
-    dir: repoDir,
-    filepath: '*',
-  });
-  await git.commit({
-    fs: oldFs,
-    dir: repoDir,
-    // TODO: This should be configurable
-    author: {
-      name: 'Swagger Platform',
-    },
-    message: 'TODO: Variable message',
-  });
-  await git.push({
-    fs: oldFs,
-    dir: repoDir,
-    ...gitInfo.auth,
-  });
-  // TODO: Should be in a finally block
-  await deletePaths([repoDir]);
+  try {
+    /*
+      TODO: This isn't great. We clone the repo everytime we generate an SDK.
+      Preferably, we'd only do it once or have some kind of cache for repos we've already cloned.
+      Would have to probably git reset --hard HEAD~ before adding the SDK to the cloned repo.
+    */
+    // TODO: Should also be able to configure which branch to checkout, maybe?
+    await git.clone({
+      dir: repoDir,
+      // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
+      fs: oldFs,
+      url: gitInfo.repoUrl,
+      singleBranch: true,
+      depth: 1,
+      ...gitInfo.auth,
+    });
+    await migrateSdkIntoLocalRepo(repoDir, localSdkPath);
+    // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
+    await git.add({
+      fs: oldFs,
+      dir: repoDir,
+      filepath: '*',
+    });
+    await git.commit({
+      fs: oldFs,
+      dir: repoDir,
+      // TODO: This should be configurable
+      author: {
+        name: 'Swagger Platform',
+      },
+      message: 'TODO: Variable message',
+    });
+    await git.push({
+      fs: oldFs,
+      dir: repoDir,
+      ...gitInfo.auth,
+    });
+  } catch (err) {
+    throw err;
+  } finally {
+    await deletePaths([repoDir]);
+  }
 }
