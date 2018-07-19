@@ -13,6 +13,7 @@ describe('test server', () => {
   beforeAll(async () => {
     // TODO: Might need to change to beforeEach if data is stored and queried.
 
+    // Mock out the database connection.
     const dbConnection = new Sequelize('database', 'username', 'password', {
       host: 'localhost',
       dialect: 'sqlite',
