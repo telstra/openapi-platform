@@ -12,12 +12,11 @@ describe('test server', () => {
   let app;
   beforeAll(async () => {
     // TODO: Might need to change to beforeEach if data is stored and queried.
-    // const dbConnectionMock = new SequelizeMock();
 
     const dbConnection = new Sequelize('database', 'username', 'password', {
       host: 'localhost',
       dialect: 'sqlite',
-      logging: () => {},
+      logging: () => {}, // Don't log what happens to the db.
     });
 
     app = await createServer(dbConnection);
