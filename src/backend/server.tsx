@@ -13,28 +13,9 @@ import { initDummyData } from 'backend/initDummyData';
 import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
+import { BuildStatus } from 'model/Plan';
 
-export async function createServer() {
-  // Initialise database connection
-  const dbConnection = new Sequelize(
-    config.backend.databaseName,
-    config.backend.databaseUsername,
-    config.backend.databasePassword,
-    {
-      dialect: 'postgres',
-      host: config.backend.databaseHost,
-      port: config.backend.databasePort,
-      logging: logger.info,
-    },
-  );
-  try {
-    await dbConnection.authenticate();
-    logger.info('Successfully connected to database');
-  } catch (err) {
-    logger.error('Unable to connect to database: %s', err);
-    return;
-  }
-
+export async function createServer(dbConnection: Sequelize.Sequelize) {
   // Define database model for specifications
   const specModel = createSpecModel(dbConnection);
   const specService = createSpecService(specModel);
@@ -93,6 +74,7 @@ export async function createServer() {
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
+        context.data.buildStatus = BuildStatus.NotRun;
         return context;
       },
     },
@@ -109,8 +91,7 @@ export async function createServer() {
         wherever the Swagger gen API stores it.
         */
         context.data.path = sdk.path;
-        context.data.planId = sdk.planId;
-
+        context.data.planId = plan.id;
         return context;
       },
     },
@@ -125,9 +106,11 @@ export async function createServer() {
   await specModel.sync();
   await planModel.sync();
   await sdkModel.sync();
+
   if ((await specModel.count()) === 0) {
     // Initialise dummy data if there are no specifications
     await initDummyData(app.service('specifications'), app.service('plans'));
   }
+
   return app;
 }

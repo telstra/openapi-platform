@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import { createServer } from 'backend/server';
 import * as sdkGeneration from 'client/sdkGeneration';
 import { Plan, BuildStatus } from 'model/Plan';
@@ -10,7 +12,15 @@ describe('test server', () => {
   let app;
   beforeAll(async () => {
     // TODO: Might need to change to beforeEach if data is stored and queried.
-    app = await createServer();
+    // const dbConnectionMock = new SequelizeMock();
+
+    const dbConnection = new Sequelize('database', 'username', 'password', {
+      host: 'localhost',
+      dialect: 'sqlite',
+      logging: () => {},
+    });
+
+    app = await createServer(dbConnection);
   });
 
   describe('test specification service', () => {
@@ -39,7 +49,7 @@ describe('test server', () => {
         specId: createdSpecId,
         target: 'java is ew',
         version: 'v1.0.0',
-        options: 'my options here',
+        options: { 'a choice': 'my options here' },
         buildStatus: BuildStatus.NotRun,
       };
     });
@@ -51,16 +61,23 @@ describe('test server', () => {
 
     test('plan created', async () => {
       const createdPlan = await app.service('plans').create(planData);
-      expect(app.service('plans').get(createdPlan.id)).resolves.toEqual(createdPlan);
+      const retrievedPlan = await app.service('plans').get(createdPlan.id);
+      const basicFields = ['specId', 'target', 'version', 'buildStatus'];
+      // Compare the objects, need to do it this way because objects are stored as strings.
+      basicFields.forEach(key => {
+        expect(planData[key]).toEqual(createdPlan[key]);
+        expect(planData[key]).toEqual(retrievedPlan[key]);
+      });
+      expect(planData.options).toEqual(createdPlan.options);
+      expect(JSON.stringify(planData.options)).toEqual(retrievedPlan.options);
     });
 
     test('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
       const planDataWithBuildStatus = planData;
       planDataWithBuildStatus.buildStatus = BuildStatus.Success; // This changes to NotRun.
       const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
-      expect((await app.service('plans').get(createdPlan.id)).buildStatus).toEqual(
-        BuildStatus.NotRun,
-      );
+      const bs = (await app.service('plans').get(createdPlan.id)).buildStatus;
+      expect(bs).toEqual(BuildStatus.NotRun);
     });
   });
 
@@ -98,8 +115,8 @@ describe('test server', () => {
         const sdkData = { planId: createdPlan.id };
 
         const expectedGenerationResponse = {
-          code: 'unique-download-hash-here',
-          link: 'base-url-here/download/unique-download-hash-here',
+          planId: 1,
+          path: 'base-url-here/download/unique-download-hash-here',
         };
 
         // Mock the response of generateSdk to be successful.
@@ -114,9 +131,12 @@ describe('test server', () => {
         // SDK created for the right plan.
         expect(createdSdk.planId).toBe(createdPlan.id);
         // SDK created & stored in memory.
-        expect(app.service('sdks').get(createdSdk.id)).resolves.toEqual(createdSdk);
-        // Check return info.
-        expect(createdSdk.info).toEqual(expectedGenerationResponse);
+        const retrievedSdk = await app.service('sdks').get(createdSdk.id);
+        // Check return link, it is called path in the sdk model.
+        expect(createdSdk.path).toEqual(expectedGenerationResponse.path);
+        expect(createdSdk.path).toEqual(retrievedSdk.path);
+        // Check id.
+        expect(createdSdk.id).toEqual(retrievedSdk.id);
       });
 
       test('create a sdk error, bad options', async () => {
@@ -149,10 +169,20 @@ describe('test server', () => {
           throw new Error(swaggerCodegenMalformedOptionsResponse.message);
         });
 
-        // Errors.
-        expect(app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error));
-        // generateSdk() not called because it threw an error.
-        expect(spy).toHaveBeenCalledTimes(0);
+        let createdSdk;
+        let errorMessage;
+        try {
+          createdSdk = await app.service('sdks').create(sdkData);
+        } catch (err) {
+          errorMessage = err.toString();
+        }
+
+        // generateSdk() called once.
+        expect(spy).toHaveBeenCalledTimes(1);
+        // SDK not created.
+        expect(createdSdk).toBe(undefined);
+        // Error throw with right message.
+        expect(errorMessage).toEqual('Error: something bad happened');
       });
 
       test('create a sdk error, invalid path', async () => {
@@ -182,10 +212,22 @@ describe('test server', () => {
           throw new Error(swaggerCodegenInvalidSpecificationResponse.message);
         });
 
-        // Errors.
-        expect(app.service('sdks').create(sdkData)).rejects.toEqual(expect.any(Error));
-        // generateSdk() not called because it threw an error.
-        expect(spy).toHaveBeenCalledTimes(0);
+        let createdSdk;
+        let errorMessage;
+        try {
+          createdSdk = await app.service('sdks').create(sdkData);
+        } catch (err) {
+          errorMessage = err.toString();
+        }
+
+        // generateSdk() called once.
+        expect(spy).toHaveBeenCalledTimes(1);
+        // SDK not created.
+        expect(createdSdk).toBe(undefined);
+        // Error throw with right message.
+        expect(errorMessage).toEqual(
+          'Error: The swagger specification supplied was not valid',
+        );
       });
     });
   });
