@@ -1,9 +1,11 @@
-import Sequelize from 'sequelize';
-
-import { createServer } from 'backend/server';
+import { createServer } from 'backend/createServer';
 import * as sdkGeneration from 'client/sdkGeneration';
 import { Plan, BuildStatus } from 'model/Plan';
 import { Spec } from 'model/Spec';
+
+jest.mock('backend/logger');
+jest.mock('sequelize');
+jest.mock('backend/db/connection');
 
 /*
  * Test services are registered and any hooks.
@@ -13,15 +15,12 @@ describe('test server', () => {
   beforeAll(async () => {
     // TODO: Might need to change to beforeEach if data is stored and queried.
 
-    // Mock out the database connection.
-    const dbConnection = new Sequelize('database', 'username', 'password', {
-      host: 'localhost',
-      dialect: 'sqlite',
-      logging: () => {}, // Don't log what happens to the db.
-    });
-
-    app = await createServer(dbConnection);
+    app = await createServer();
   });
+
+  it('app is defined', () => {
+    expect(app).not.toBeUndefined();
+  })
 
   describe('test specification service', () => {
     it('specification service registered', () => {
@@ -62,11 +61,10 @@ describe('test server', () => {
       const basicFields = ['specId', 'target', 'version', 'buildStatus'];
       // Compare the objects, need to do it this way because objects are stored as strings.
       basicFields.forEach(key => {
-        expect(planData[key]).toEqual(createdPlan[key]);
-        expect(planData[key]).toEqual(retrievedPlan[key]);
+        expect(planData[key]).toBe(createdPlan[key]);
+        expect(planData[key]).toBe(retrievedPlan[key]);
       });
       expect(planData.options).toEqual(createdPlan.options);
-      expect(JSON.stringify(planData.options)).toEqual(retrievedPlan.options);
     });
 
     it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
@@ -129,10 +127,10 @@ describe('test server', () => {
         // SDK created & stored in memory.
         const retrievedSdk = await app.service('sdks').get(createdSdk.id);
         // Check return link, it is called path in the sdk model.
-        expect(createdSdk.path).toEqual(expectedGenerationResponse.path);
-        expect(createdSdk.path).toEqual(retrievedSdk.path);
-        // Check id.
-        expect(createdSdk.id).toEqual(retrievedSdk.id);
+        expect(createdSdk.path).toBe(expectedGenerationResponse.path);
+        expect(createdSdk.path).toBe(retrievedSdk.path);
+
+        expect(createdSdk.id).toBe(retrievedSdk.id);
       });
 
       it('create a sdk error, bad options', async () => {
