@@ -1,8 +1,8 @@
 module.exports = (env, argv) => {
   const paths = require('./paths');
   const { join } = require('path');
+  const { spawn } = require('child_process');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
-  const WebpackShellPlugin = require('webpack-shell-plugin');
   const { HotModuleReplacementPlugin } = require('webpack');
   const nodeExternals = require('webpack-node-externals');
   const createBabelPresets = envSettings => [
@@ -83,14 +83,25 @@ module.exports = (env, argv) => {
   const backendPlugins = [];
   if (argv.mode === 'development') {
     const backendIndex = join(paths.buildBackend, 'main.js');
-    backendPlugins.push(
-      new WebpackShellPlugin({
-        onBuildEnd: [
-          'echo "Rebuilding backend...\n',
-          `nodemon ${backendIndex} --quiet --watch ./build/backend`,
-        ],
-      }),
-    );
+    backendPlugins.push({
+      apply: compiler => {
+        let firstBuild = true;
+        compiler.hooks.afterEmit.tap('AfterBuildPlugin', compilation => {
+          console.log('Rebuilding backend...');
+          if (firstBuild) {
+            const nodemon = spawn('nodemon', [
+              backendIndex,
+              '--quiet',
+              '--watch',
+              './build/backend',
+            ]);
+            nodemon.stdout.on('data', data => process.stdout.write(data));
+            nodemon.stderr.on('data', data => process.stderr.write(data));
+            firstBuild = false;
+          }
+        });
+      },
+    });
   }
   const backend = {
     name: 'Backend',
