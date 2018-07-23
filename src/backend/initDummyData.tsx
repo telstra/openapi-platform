@@ -1,5 +1,6 @@
 import { BuildStatus } from 'model/Plan';
 export async function initDummyData(specs, plans): Promise<void> {
+  // TODO: Shouldn't the params be typed?
   const addToSpec = async (spec, ...specPlans) => {
     for (const specPlan of specPlans) {
       await plans.create({
