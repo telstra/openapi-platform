@@ -89,7 +89,8 @@ module.exports = (env, argv) => {
         compiler.hooks.afterEmit.tap('AfterBuildPlugin', compilation => {
           console.log('Rebuilding backend...');
           if (firstBuild) {
-            const nodemon = spawn('nodemon', [
+            const nodemon = spawn('npx', [
+              'nodemon',
               backendIndex,
               '--quiet',
               '--watch',
