@@ -5,11 +5,6 @@ module.exports = (env, argv) => {
   const HtmlWebpackPlugin = require('html-webpack-plugin');
   const { HotModuleReplacementPlugin } = require('webpack');
   const nodeExternals = require('webpack-node-externals');
-  const createBabelPresets = envSettings => [
-    ['@babel/preset-env', envSettings],
-    '@babel/preset-react',
-    '@babel/preset-typescript',
-  ];
   const stats = {
     colors: true,
     reasons: true,
@@ -31,55 +26,25 @@ module.exports = (env, argv) => {
     moduleTrace: false,
     children: false,
   };
-  const createWebpackSettings = envSettings => ({
-    mode: 'development',
-    module: {
-      rules: [
-        {
-          test: /\.tsx$/,
-          loader: 'babel-loader',
-          options: {
-            presets: createBabelPresets(envSettings),
-            plugins: [
-              [
-                'module-resolver',
-                {
-                  root: ['.'],
-                  extensions: ['.js', '.jsx', '.ts', '.tsx'],
-                  alias: {
-                    src: paths.src,
-                    test: paths.test,
-                    config: paths.config,
-                    view: paths.view,
-                    model: paths.model,
-                    basic: paths.basic,
-                    state: paths.state,
-                    client: paths.client,
-                    backend: paths.backend,
-                    frontend: paths.frontend,
-                  },
-                },
-              ],
-              ['@babel/plugin-proposal-decorators', { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              [
-                '@babel/plugin-transform-runtime',
-                {
-                  polyfill: false,
-                  regenerator: true,
-                },
-              ],
-            ],
+  const createWebpackSettings = function() {
+    return {
+      mode: 'development',
+      module: {
+        rules: [
+          {
+            test: /\.tsx$/,
+            loader: 'babel-loader',
           },
-        },
-      ],
-    },
-    devtool: 'cheap-module-source-map',
-    resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    },
-    stats,
-  });
+        ],
+      },
+      devtool: 'cheap-module-source-map',
+      resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+      stats,
+    };
+  };
+
   const backendPlugins = [];
   if (argv.mode === 'development') {
     const backendIndex = join(paths.buildBackend, 'main.js');
@@ -113,28 +78,10 @@ module.exports = (env, argv) => {
     },
     plugins: backendPlugins,
     externals: [nodeExternals()],
-    ...createWebpackSettings({
-      targets: {
-        node: 'current',
-      },
-    }),
+    ...createWebpackSettings(),
   };
-  let frontend = createWebpackSettings({
-    targets: {
-      browsers: ['last 2 versions'],
-    },
-  });
-  frontend.module.rules.push(
-    {
-      test: /\.css$/,
-      use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-    },
-    {
-      test: /\.(svg|tff|woff2?)$/,
-      loader: 'file-loader',
-    },
-  );
-  frontend = {
+  const frontend = {
+    ...createWebpackSettings(),
     name: 'Frontend',
     target: 'web',
     entry: join(paths.src, 'frontend', 'index.tsx'),
@@ -160,7 +107,16 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       stats,
     },
-    ...frontend,
   };
+  frontend.module.rules.push(
+    {
+      test: /\.css$/,
+      use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    },
+    {
+      test: /\.(svg|tff|woff2?)$/,
+      loader: 'file-loader',
+    },
+  );
   return [backend, frontend];
 };
