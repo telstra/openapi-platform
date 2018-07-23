@@ -52,6 +52,9 @@ development:
    TypeScript type checker and Jest tests. Intended for use with continuous
    integration, rather than to be run directly.
 
+### Snapshots
+If you want to update Jest snapshots run `yarn test snapshots -u`.
+
 ## Other Commands
  * `yarn run checker:types` \
    Runs the TypeScript type checker on the codebase, displaying the output.
