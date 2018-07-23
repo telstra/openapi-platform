@@ -40,7 +40,6 @@ function createBabelSettings(options) {
           regenerator: true,
         },
       ],
-      'require-context-hook',
     ],
   };
 }
@@ -60,12 +59,25 @@ const frontendSettings = createBabelSettings({
   },
 });
 
+const storyshotsSettings = createBabelSettings({
+  envSettings: {
+    targets: {
+      node: 'current',
+    },
+  },
+});
+storyshotsSettings.plugins.push('require-context-hook');
+
 module.exports = {
   ...defaultSettings,
   overrides: [
     {
       test: 'src/frontend',
       ...frontendSettings,
+    },
+    {
+      test: ['.storybook', 'test/snapshots/storyshots.test.tsx'],
+      ...storyshotsSettings,
     },
   ],
 };
