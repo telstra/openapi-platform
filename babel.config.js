@@ -68,16 +68,24 @@ const storyshotsSettings = createBabelSettings({
 });
 storyshotsSettings.plugins.push('require-context-hook');
 
-module.exports = {
-  ...defaultSettings,
-  overrides: [
-    {
-      test: 'src/frontend',
-      ...frontendSettings,
-    },
-    {
+module.exports = api => {
+  const env = api.env();
+  const config = {
+    ...defaultSettings,
+    overrides: [
+      {
+        test: 'src/frontend',
+        ...frontendSettings,
+      },
+    ],
+  };
+
+  if (env === 'test') {
+    config.overrides.push({
       test: ['.storybook', 'test/snapshots/storyshots.test.tsx'],
       ...storyshotsSettings,
-    },
-  ],
+    });
+  }
+
+  return config;
 };
