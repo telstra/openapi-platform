@@ -1,7 +1,7 @@
 module.exports = (env, argv) => {
   const paths = require('./paths');
   const { join } = require('path');
-  const { spawn } = require('child_process');
+  const { spawn } = require('cross-spawn');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
   const { HotModuleReplacementPlugin } = require('webpack');
   const nodeExternals = require('webpack-node-externals');
@@ -89,8 +89,7 @@ module.exports = (env, argv) => {
         compiler.hooks.afterEmit.tap('AfterBuildPlugin', compilation => {
           console.log('Rebuilding backend...');
           if (firstBuild) {
-            const nodemon = spawn('npx', [
-              'nodemon',
+            const nodemon = spawn('nodemon', [
               backendIndex,
               '--quiet',
               '--watch',
