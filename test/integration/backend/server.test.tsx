@@ -12,7 +12,7 @@ jest.mock('backend/db/connection');
  */
 describe('test server', () => {
   let app;
-  beforeAll(async () => {
+  beforeEach(async () => {
     // TODO: Might need to change to beforeEach if data is stored and queried.
 
     app = await createServer();
@@ -20,7 +20,7 @@ describe('test server', () => {
 
   it('app is defined', () => {
     expect(app).not.toBeUndefined();
-  })
+  });
 
   describe('test specification service', () => {
     it('specification service registered', () => {
@@ -37,7 +37,7 @@ describe('test server', () => {
       description: 'desc',
       path: 'path',
     };
-    beforeAll(async () => {
+    beforeEach(async () => {
       // Need a spec to add plans to.
       const createdSpec = await app.service('specifications').create(specData);
       createdSpecId = createdSpec.id;

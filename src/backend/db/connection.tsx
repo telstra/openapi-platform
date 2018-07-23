@@ -1,6 +1,6 @@
-import Sequelize from 'sequelize';
-import { config } from 'config';
 import { logger } from 'backend/logger';
+import { config } from 'config';
+import Sequelize from 'sequelize';
 
 export async function connectToDb() {
   const dbConnection = new Sequelize(
