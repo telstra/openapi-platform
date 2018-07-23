@@ -31,20 +31,17 @@ describe('test server', () => {
   });
 
   describe('test plans service', () => {
+    let createdSpecId: number;
     let planData: Plan;
     const specData: Spec = {
       title: 'title',
       description: 'desc',
       path: 'path',
     };
-    let createdSpecId: number;
     beforeAll(async () => {
       // Need a spec to add plans to.
       const createdSpec = await app.service('specifications').create(specData);
       createdSpecId = createdSpec.id;
-    });
-
-    beforeEach(() => {
       planData = {
         specId: createdSpecId,
         target: 'java is ew',
@@ -73,8 +70,7 @@ describe('test server', () => {
     });
 
     it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
-      const planDataWithBuildStatus = planData;
-      planDataWithBuildStatus.buildStatus = BuildStatus.Success; // This changes to NotRun.
+      const planDataWithBuildStatus = { ...planData, buildStatus: BuildStatus.Success }; // This changes to NotRun.
       const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
       const bs = (await app.service('plans').get(createdPlan.id)).buildStatus;
       expect(bs).toEqual(BuildStatus.NotRun);
