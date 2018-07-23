@@ -1,11 +1,19 @@
 import { createServer } from 'backend/createServer';
-import * as sdkGeneration from 'client/sdkGeneration';
 import { Plan, BuildStatus } from 'model/Plan';
 import { Spec } from 'model/Spec';
 
 jest.mock('backend/logger');
 jest.mock('sequelize');
 jest.mock('backend/db/connection');
+
+jest.mock('client/sdkGeneration');
+/*
+  Have to use require syntax as es6 imports currently makes TypeScript 
+  complain about missing mockImplementation, etc.
+  TODO: Might be fixed in TypeScript 3? Go check
+*/
+// tslint:disable:no-var-requires
+const sdkGeneration: any = require('client/sdkGeneration');
 
 /*
  * Test services are registered and any hooks.
@@ -114,14 +122,13 @@ describe('test server', () => {
         };
 
         // Mock the response of generateSdk to be successful.
-        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
+        sdkGeneration.generateSdk.mockImplementation(async () => {
           return expectedGenerationResponse;
         });
 
         const createdSdk = await app.service('sdks').create(sdkData);
 
-        // generateSdk() called once.
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
         // SDK created for the right plan.
         expect(createdSdk.planId).toBe(createdPlan.id);
         // SDK created & stored in memory.
@@ -154,7 +161,7 @@ describe('test server', () => {
 
         const sdkData = { planId: createdPlan.id };
 
-        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
+        sdkGeneration.generateSdk.mockImplementation(async () => {
           const swaggerCodegenMalformedOptionsResponse = {
             code: 500,
             type: 'unknown',
@@ -162,21 +169,10 @@ describe('test server', () => {
           };
           throw new Error(swaggerCodegenMalformedOptionsResponse.message);
         });
-
-        let createdSdk;
-        let errorMessage;
-        try {
-          createdSdk = await app.service('sdks').create(sdkData);
-        } catch (err) {
-          errorMessage = err.toString();
-        }
+        await expect(app.service('sdks').create(sdkData)).rejects.toThrowError();
 
         // generateSdk() called once.
-        expect(spy).toHaveBeenCalledTimes(1);
-        // SDK not created.
-        expect(createdSdk).toBe(undefined);
-        // Error throw with right message.
-        expect(errorMessage).toEqual('Error: something bad happened');
+        expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
       });
 
       it('create a sdk error, invalid path', async () => {
@@ -197,7 +193,7 @@ describe('test server', () => {
         const createdPlan = await app.service('plans').create(planData);
 
         const sdkData = { planId: createdPlan.id };
-        const spy = jest.spyOn(sdkGeneration, 'generateSdk').mockImplementation(() => {
+        sdkGeneration.generateSdk.mockImplementation(async () => {
           const swaggerCodegenInvalidSpecificationResponse = {
             code: 1,
             type: 'error',
@@ -206,22 +202,9 @@ describe('test server', () => {
           throw new Error(swaggerCodegenInvalidSpecificationResponse.message);
         });
 
-        let createdSdk;
-        let errorMessage;
-        try {
-          createdSdk = await app.service('sdks').create(sdkData);
-        } catch (err) {
-          errorMessage = err.toString();
-        }
+        await expect(app.service('sdks').create(sdkData)).rejects.toThrowError();
 
-        // generateSdk() called once.
-        expect(spy).toHaveBeenCalledTimes(1);
-        // SDK not created.
-        expect(createdSdk).toBe(undefined);
-        // Error throw with right message.
-        expect(errorMessage).toEqual(
-          'Error: The swagger specification supplied was not valid',
-        );
+        expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
       });
     });
   });

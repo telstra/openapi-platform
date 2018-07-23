@@ -1,5 +1,5 @@
 export function connectToDb() {
   return {
-    define: jest.fn().mockReturnValue({ sync: jest.fn() })
-  }
+    define: jest.fn().mockReturnValue({ sync: jest.fn() }),
+  };
 }
