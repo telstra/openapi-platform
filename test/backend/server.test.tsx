@@ -24,7 +24,7 @@ describe('test server', () => {
   });
 
   describe('test specification service', () => {
-    test('specification service registered', () => {
+    it('specification service registered', () => {
       const s = app.service('specifications');
       expect(s).toEqual(expect.anything());
     });
@@ -54,12 +54,12 @@ describe('test server', () => {
       };
     });
 
-    test('plans service registered', () => {
+    it('plans service registered', () => {
       const s = app.service('plans');
       expect(s).toEqual(expect.anything());
     });
 
-    test('plan created', async () => {
+    it('plan created', async () => {
       const createdPlan = await app.service('plans').create(planData);
       const retrievedPlan = await app.service('plans').get(createdPlan.id);
       const basicFields = ['specId', 'target', 'version', 'buildStatus'];
@@ -72,7 +72,7 @@ describe('test server', () => {
       expect(JSON.stringify(planData.options)).toEqual(retrievedPlan.options);
     });
 
-    test('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
+    it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
       const planDataWithBuildStatus = planData;
       planDataWithBuildStatus.buildStatus = BuildStatus.Success; // This changes to NotRun.
       const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
@@ -82,7 +82,7 @@ describe('test server', () => {
   });
 
   describe('test sdks service', () => {
-    test('sdks service registered', () => {
+    it('sdks service registered', () => {
       const s = app.service('sdks');
       expect(s).toEqual(expect.anything());
     });
@@ -91,7 +91,7 @@ describe('test server', () => {
       // A spec and plan need to be created before a SDK can be.
       // TODO: Should there be a model for SDK?
 
-      test('create a sdk success', async () => {
+      it('create a sdk success', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
@@ -139,7 +139,7 @@ describe('test server', () => {
         expect(createdSdk.id).toEqual(retrievedSdk.id);
       });
 
-      test('create a sdk error, bad options', async () => {
+      it('create a sdk error, bad options', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
@@ -185,7 +185,7 @@ describe('test server', () => {
         expect(errorMessage).toEqual('Error: something bad happened');
       });
 
-      test('create a sdk error, invalid path', async () => {
+      it('create a sdk error, invalid path', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
