@@ -67,6 +67,7 @@
     "babel-loader": "8.0.0-beta.2",
     "babel-plugin-module-resolver": "3.1.1",
     "babel-runtime": "7.0.0-beta.3",
+    "cross-spawn": "6.0.5",
     "css-loader": "0.28.11",
     "file-loader": "1.1.11",
     "html-webpack-plugin": "3.0.6",
@@ -85,8 +86,7 @@
     "webpack": "4.1.1",
     "webpack-cli": "2.0.12",
     "webpack-dev-server": "3.1.1",
-    "webpack-node-externals": "1.6.0",
-    "webpack-shell-plugin": "0.5.0"
+    "webpack-node-externals": "1.6.0"
   },
   "dependencies": {
     "@feathersjs/client": "3.4.5",
@@ -131,6 +131,7 @@
     "react-router-dom": "4.3.1",
     "sequelize": "4.37.6",
     "source-map-support": "0.5.5",
+    "sqlite3": "^4.0.2",
     "typeface-roboto": "0.0.54",
     "typeface-roboto-mono": "0.0.54",
     "valid-url": "1.0.9",
