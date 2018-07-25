@@ -8,6 +8,7 @@ import { RouteComponentProps } from 'react-router';
 import { FloatingModal } from 'basic/FloatingModal';
 import { PlanModal } from 'basic/PlanModal';
 import { state as planState, AddedPlan } from 'state/PlanState';
+import { state as specState } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -54,10 +55,13 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onAddSdkPlan = async (submittedPlan: AddedPlan) => {
+  private onSubmitPlan = async (submittedPlan: AddedPlan) => {
     this.showProgressIndicator = true;
     try {
-      await planState.addPlan(submittedPlan);
+      if (specState.expandedSpecId === null) {
+        throw new Error('expandedSpecId was unexpectedly null');
+      }
+      await planState.addPlan({ ...submittedPlan, specId: specState.expandedSpecId });
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -78,7 +82,7 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
                 submitButtonProps={{
                   children: 'Add',
                 }}
-                onSubmitPlan={this.onAddSdkPlan}
+                onSubmitPlan={this.onSubmitPlan}
                 onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,

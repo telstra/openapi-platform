@@ -54,7 +54,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onAddSpec = async (submittedSpec: AddedSpec) => {
+  private onSubmitSpec = async (submittedSpec: AddedSpec) => {
     this.showProgressIndicator = true;
     try {
       await specState.addSpec(submittedSpec);
@@ -78,7 +78,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
                 submitButtonProps={{
                   children: 'Add',
                 }}
-                onSubmitSpec={this.onAddSpec}
+                onSubmitSpec={this.onSubmitSpec}
                 onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,

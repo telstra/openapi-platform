@@ -20,7 +20,6 @@ import { FloatingModal } from 'basic/FloatingModal';
 import { PLAN_TARGETS } from 'model/Plan';
 import { Category } from 'model/Storybook';
 import { AddedPlan } from 'state/PlanState';
-import { state as specificationsState } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -178,9 +177,8 @@ export class PlanModal extends Component<PlanModalProps> {
     const target = this.formText.target;
     const version = this.formText.version;
     const options = JSON.parse(this.formText.options);
-    const specId = specificationsState.expandedSpecId;
     // TODO: submittedPlan.pushPath = "";
-    this.props.onSubmitPlan({ target, version, options, specId });
+    this.props.onSubmitPlan({ target, version, options });
   }
 
   private onTargetChange = event => {

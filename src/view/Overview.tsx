@@ -19,7 +19,7 @@ import { AddSpecModal } from 'view/AddSpecModal';
 export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private onSearch = event => {};
   private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
-  private openAddSdkPlanModal = () =>
+  private openAddPlanModal = () =>
     this.props.history.push(`${this.props.match.url}/plan/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
   private expandSpec = id => (state.expandedSpecId = id);
@@ -47,8 +47,8 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               onSpecExpanded={this.expandSpec}
               // Go to the Spec viewing route when you select a Spec
               onSpecSelected={this.goToSpec}
-              // Open a modal to add a plan when the 'Add SDK' button is clicked
-              onAddSdkPlan={this.openAddSdkPlanModal}
+              // Open a modal to add a plan when the 'Add SDK Generation Plan' button is clicked
+              onAddPlan={this.openAddPlanModal}
             />
             <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
             <Route

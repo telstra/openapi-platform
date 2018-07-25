@@ -26,7 +26,7 @@ class PlanState {
 }
 
 export interface AddedPlan {
-  specId: number | null;
+  specId?: number;
   target: string;
   version?: string;
   options?: any;
