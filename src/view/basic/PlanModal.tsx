@@ -68,7 +68,7 @@ export interface PlanModalProps {
 }
 
 /**
- * A modal window that allows the user to add a specification to the dashboard.
+ * A modal window that allows the user to add a SDK generation Plan to the dashboard.
  * Currently only supports specifying a name and URL.
  */
 export class PlanModal extends Component<PlanModalProps> {
@@ -173,10 +173,11 @@ export class PlanModal extends Component<PlanModalProps> {
       return;
     }
 
-    // Send the request to the backend
+    // Send the request to the backend.
     const target = this.formText.target;
     const version = this.formText.version;
     const options = JSON.parse(this.formText.options);
+    // TODO: submittedPlan.pushPath = "";
     this.props.onSubmitPlan({ target, version, options });
   }
 
@@ -211,7 +212,6 @@ export class PlanModal extends Component<PlanModalProps> {
       showSubmitProgress,
       submitButtonProps,
     } = this.props;
-
     return (
       <Styled>
         {({ classes }) => (
@@ -227,7 +227,7 @@ export class PlanModal extends Component<PlanModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add Plan
+                      Add SDK Generation Plan
                     </Typography>
                     <FormControl error={this.error.target !== undefined} margin="dense">
                       <InputLabel htmlFor="target">Target</InputLabel>

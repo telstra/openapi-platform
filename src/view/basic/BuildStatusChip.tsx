@@ -5,6 +5,7 @@ import { red, green, amber, grey } from '@material-ui/core/colors';
 
 import { BuildStatus } from 'model/Plan';
 import { createStyled } from 'view/createStyled';
+
 // TODO: Should probably only have to have 1 switch case
 const buildStatusToLabel = ({ buildStatus }) => {
   switch (buildStatus) {
@@ -18,6 +19,7 @@ const buildStatusToLabel = ({ buildStatus }) => {
       return 'Failed';
   }
 };
+
 const buildStatusToColor = ({ buildStatus }) => {
   switch (buildStatus) {
     case BuildStatus.NotRun:
@@ -32,6 +34,7 @@ const buildStatusToColor = ({ buildStatus }) => {
       return red[900];
   }
 };
+
 const Styled: any = createStyled(theme => ({
   root: ({ buildStatusColor }) => ({
     backgroundColor: buildStatusColor,

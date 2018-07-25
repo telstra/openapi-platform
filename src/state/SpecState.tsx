@@ -34,4 +34,6 @@ export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()
-  .then(json => json.map(spec => state.specs.set(spec.id, spec)));
+  .then(json => {
+    json.map(spec => state.specs.set(spec.id, spec));
+  });

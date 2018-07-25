@@ -5,6 +5,7 @@ export const testConfig = {
   backend: {
     port: 8112,
     useCors: true,
+    initDummyData: true,
     databaseName: '',
     databaseHost: '',
     databasePort: 5432,

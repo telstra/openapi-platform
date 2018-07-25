@@ -47,7 +47,7 @@ describe('test server', () => {
         target: 'java is ew',
         version: 'v1.0.0',
         options: { 'a choice': 'my options here' },
-        buildStatus: BuildStatus.NotRun,
+        buildStatus: BuildStatus.Success,
       };
     });
 
@@ -70,8 +70,8 @@ describe('test server', () => {
     });
 
     it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
-      const planDataWithBuildStatus = { ...planData, buildStatus: BuildStatus.Success }; // This changes to NotRun.
-      const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
+      const { buildStatus, ...planDataWithoutBuildStatus } = planData;
+      const createdPlan = await app.service('plans').create(planDataWithoutBuildStatus);
       const bs = (await app.service('plans').get(createdPlan.id)).buildStatus;
       expect(bs).toEqual(BuildStatus.NotRun);
     });

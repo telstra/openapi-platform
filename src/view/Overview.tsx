@@ -9,6 +9,7 @@ import { ContentContainer } from 'basic/ContentContainer';
 import { SimpleToolbar } from 'basic/SimpleToolbar';
 import { SpecList } from 'basic/SpecList';
 import { state } from 'state/SpecState';
+import { AddPlanModal } from 'view/AddPlanModal';
 import { AddSpecModal } from 'view/AddSpecModal';
 
 /**
@@ -17,7 +18,9 @@ import { AddSpecModal } from 'view/AddSpecModal';
  */
 export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private onSearch = event => {};
-  private addSpec = () => this.props.history.push(`${this.props.match.url}/add`);
+  private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
+  private openAddPlanModal = () =>
+    this.props.history.push(`${this.props.match.url}/plan/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
   private expandSpec = id => (state.expandedSpecId = id);
 
@@ -31,7 +34,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
             searchPrompt="Search specs"
             onSearchInputChange={this.onSearch}
             actions={[
-              <IconButton key={0} aria-label="add" onClick={this.addSpec}>
+              <IconButton key={0} aria-label="add" onClick={this.openAddSpecModal}>
                 <AddIcon />
               </IconButton>,
             ]}
@@ -44,8 +47,15 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               onSpecExpanded={this.expandSpec}
               // Go to the Spec viewing route when you select a Spec
               onSpecSelected={this.goToSpec}
+              // Open a modal to add a plan when the 'Add SDK Generation Plan' button is clicked
+              onAddPlan={this.openAddPlanModal}
             />
             <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
+            <Route
+              exact
+              path={`${this.props.match.url}/plan/add`}
+              component={AddPlanModal}
+            />
           </ContentContainer>,
         ]}
       </Observer>

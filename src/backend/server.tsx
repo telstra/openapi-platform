@@ -13,7 +13,7 @@ import { initDummyData } from 'backend/initDummyData';
 import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
-import { BuildStatus } from 'model/Plan';
+import { BuildStatus, hasValidBuildStatus } from 'model/Plan';
 
 export async function createServer(dbConnection: Sequelize.Sequelize) {
   // Define database model for specifications
@@ -74,7 +74,9 @@ export async function createServer(dbConnection: Sequelize.Sequelize) {
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
-        context.data.buildStatus = BuildStatus.NotRun;
+        if (!hasValidBuildStatus(context.data.buildStatus)) {
+          context.data.buildStatus = BuildStatus.NotRun;
+        }
         return context;
       },
     },
@@ -107,7 +109,7 @@ export async function createServer(dbConnection: Sequelize.Sequelize) {
   await planModel.sync();
   await sdkModel.sync();
 
-  if ((await specModel.count()) === 0) {
+  if (config.backend.initDummyData && (await specModel.count()) === 0) {
     // Initialise dummy data if there are no specifications
     await initDummyData(app.service('specifications'), app.service('plans'));
   }
