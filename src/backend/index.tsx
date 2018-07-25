@@ -2,7 +2,6 @@ import 'source-map-support/register';
 
 import Sequelize from 'sequelize';
 
-import { initDummyData } from 'backend/initDummyData';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { createServer } from 'backend/server';
 import { config } from 'config';
@@ -37,7 +36,6 @@ async function run(port: number) {
 
   const app = await createServer(dbConnection);
 
-  await initDummyData(app.service('specifications'), app.service('plans'));
   app.listen(port, (er, err) => {
     logger.info(`Swagger Platform Server now listening on port ${port}`);
   });

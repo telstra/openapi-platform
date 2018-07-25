@@ -1,6 +1,6 @@
 import { developmentConfig } from './development';
 import { productionConfig } from './production';
-import { testConfig } from './testConfig';
+import { testConfig } from './test';
 
 interface Configuration {
   /**
@@ -26,6 +26,11 @@ interface Configuration {
      * Whether or not CORS requests should be allowed.
      */
     readonly useCors: boolean;
+
+    /**
+     * Whether or not dummy data should be created for development purposes.
+     */
+    readonly initDummyData: boolean;
 
     /**
      * The name of the PostgreSQL database to connect to.

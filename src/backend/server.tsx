@@ -109,7 +109,7 @@ export async function createServer(dbConnection: Sequelize.Sequelize) {
   await planModel.sync();
   await sdkModel.sync();
 
-  if ((await specModel.count()) === 0) {
+  if (config.backend.initDummyData && (await specModel.count()) === 0) {
     // Initialise dummy data if there are no specifications
     await initDummyData(app.service('specifications'), app.service('plans'));
   }
