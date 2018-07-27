@@ -59,11 +59,31 @@ export function createPlanService(planModel) {
             format: 'int64',
             description: 'ID of the specification associated with the plan',
           },
+          target: {
+            type: 'string',
+            description: 'Language that the plan will generate an SDK for',
+          },
+          version: {
+            type: 'string',
+            description: 'The version number of the SDK',
+          },
+          options: {
+            type: 'object',
+            description: 'Additional options for the plan',
+            additionalProperties: true,
+          },
+          buildStatus: {
+            type: 'string',
+            description: 'The status of the build',
+          },
         },
         additionalProperties: true,
       },
       'plans list': {
         type: 'array',
+        items: {
+          $ref: '#definitions/plans',
+        },
       },
     },
   };
