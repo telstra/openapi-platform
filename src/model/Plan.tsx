@@ -48,6 +48,9 @@ export enum BuildStatus {
   Fail = 'FAIL',
 }
 
+export const hasValidBuildStatus = buildStatus =>
+  Object.values(BuildStatus).includes(buildStatus);
+
 /**
  * An array of supported plan target languages.
  */

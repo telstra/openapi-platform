@@ -6,8 +6,9 @@ import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
 import { FloatingModal } from 'basic/FloatingModal';
-import { SpecModal } from 'basic/SpecModal';
-import { state as specState, AddedSpec } from 'state/SpecState';
+import { PlanModal } from 'basic/PlanModal';
+import { state as planState, AddedPlan } from 'state/PlanState';
+import { state as specState } from 'state/SpecState';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -28,17 +29,17 @@ const Styled: any = createStyled(theme => ({
 }));
 
 /**
- * A modal window that allows the user to add a Spec to the dashboard.
- * Currently only supports specifying a name and URL.
+ * A modal window that allows the user to add a SDK Plan to the dashboard.
+ * Currently only supports specifying a target, version and options as a valid JSON.
  */
-export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
   @observable private showProgressIndicator: boolean = false;
 
   /**
-   * Whether or not the 'failed to add Spec' modal is open
+   * Whether or not the 'failed to add Plan' modal is open
    */
   @observable private showErrorModal: boolean = false;
 
@@ -54,10 +55,13 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitSpec = async (submittedSpec: AddedSpec) => {
+  private onSubmitPlan = async (submittedPlan: AddedPlan) => {
     this.showProgressIndicator = true;
     try {
-      await specState.addSpec(submittedSpec);
+      if (specState.expandedSpecId === null) {
+        throw new Error('expandedSpecId was unexpectedly null');
+      }
+      await planState.addPlan({ ...submittedPlan, specId: specState.expandedSpecId });
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -73,12 +77,12 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
         {({ classes }) => (
           <Observer>
             {() => [
-              <SpecModal
+              <PlanModal
                 key={0}
                 submitButtonProps={{
                   children: 'Add',
                 }}
-                onSubmitSpec={this.onSubmitSpec}
+                onSubmitPlan={this.onSubmitPlan}
                 onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,
@@ -90,7 +94,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the Spec.</Typography>
+                  <Typography>An error occurred adding the SDK Plan.</Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>

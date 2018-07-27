@@ -5,6 +5,7 @@ export const developmentConfig = {
   backend: {
     port: 8080,
     useCors: true,
+    initDummyData: true,
     databaseName: '',
     databaseHost: '',
     databasePort: 5432,
