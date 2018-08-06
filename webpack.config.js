@@ -145,7 +145,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        title: 'Swagger Platform',
+        title: 'OpenAPI Platform',
         template: join(paths.public, 'index.html'),
       }),
       new HotModuleReplacementPlugin(),
