@@ -6,20 +6,20 @@ import { createLogger, format, transports } from 'winston';
 const logLevel: string = process.env.LOG_LEVEL || 'debug';
 
 // Adds a timestamp to the logger information
-const swaggerPlatformTimestamp = format(info => {
+const openapiPlatformTimestamp = format(info => {
   info.timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
   return info;
 });
 
 // Aligns all the information before the message section of the log
-const swaggerPlatformAlign = format(info => {
+const openapiPlatformAlign = format(info => {
   const messageIndentation = 9;
   info.levelPadding = ' '.repeat(messageIndentation - info.level.length);
   return info;
 });
 
 // Colorizes/formats javascript objects and timestamps
-const swaggerPlatformFormatter = format((info, options) => {
+const openapiPlatformFormatter = format((info, options) => {
   info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
   // TODO: Remove this cast to any once the type definitions for Winston are fixed
   const message: any = info.message;
@@ -33,7 +33,7 @@ const swaggerPlatformFormatter = format((info, options) => {
 });
 
 // Specifies the order in which all the information is printed out
-const swaggerPlatformPrinter = format.printf(info => {
+const openapiPlatformPrinter = format.printf(info => {
   return `${info.timestamp} ${info.level}${info.levelPadding ? info.levelPadding : ' '}${
     info.message
   }`;
@@ -42,28 +42,28 @@ const swaggerPlatformPrinter = format.printf(info => {
 const logger = createLogger({
   format: format.combine(
     format.splat(),
-    swaggerPlatformTimestamp(),
-    swaggerPlatformAlign(),
+    openapiPlatformTimestamp(),
+    openapiPlatformAlign(),
   ),
   transports: [
     new transports.Console({
       level: logLevel,
       format: format.combine(
         format.colorize(),
-        swaggerPlatformFormatter({ colors: true }),
-        swaggerPlatformPrinter,
+        openapiPlatformFormatter({ colors: true }),
+        openapiPlatformPrinter,
       ),
     }),
     // Note that we don't want color codes in our file logs (looks incredibly confusing and ugly)
     new transports.File({
-      filename: 'swagger-platform.error.log',
+      filename: 'openapi-platform.error.log',
       level: 'error',
-      format: swaggerPlatformPrinter,
+      format: openapiPlatformPrinter,
     }),
     new transports.File({
-      filename: 'swagger-platform.log',
+      filename: 'openapi-platform.log',
       level: logLevel,
-      format: swaggerPlatformPrinter,
+      format: openapiPlatformPrinter,
     }),
   ],
 });

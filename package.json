@@ -1,7 +1,7 @@
 {
-  "name": "swagger-platform",
+  "name": "openapi-platform",
   "version": "1.0.0",
-  "repository": "https://github.com/telstra/swagger-platform.git",
+  "repository": "https://github.com/telstra/openapi-platform.git",
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
