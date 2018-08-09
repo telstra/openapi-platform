@@ -5,6 +5,7 @@ export const productionConfig = {
   backend: {
     port: 80,
     useCors: false,
+    initDummyData: false,
     databaseName: '',
     databaseHost: '',
     databasePort: 5432,

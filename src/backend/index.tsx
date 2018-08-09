@@ -2,7 +2,6 @@ import 'source-map-support/register';
 
 import Sequelize from 'sequelize';
 
-import { initDummyData } from 'backend/initDummyData';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
 import { createServer } from 'backend/server';
 import { config } from 'config';
@@ -13,7 +12,7 @@ async function run(port: number) {
   // Overriding logger used in non testing environments, logging in tests just go to stdout.
   overrideConsoleLogger(logger);
   overrideUtilInspectStyle();
-  logger.info('Creating Swagger Platform server...');
+  logger.info('Creating OpenAPI Platform server...');
 
   // Initialise database connection
   const dbConnection = new Sequelize(
@@ -37,9 +36,8 @@ async function run(port: number) {
 
   const app = await createServer(dbConnection);
 
-  await initDummyData(app.service('specifications'), app.service('plans'));
   app.listen(port, (er, err) => {
-    logger.info(`Swagger Platform Server now listening on port ${port}`);
+    logger.info(`OpenAPI Platform Server now listening on port ${port}`);
   });
   return app;
 }

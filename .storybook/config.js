@@ -11,7 +11,7 @@ addDecorator(checkA11y);
 addDecorator(withViewport('responsive'));
 addDecorator(withBackgrounds());
 setOptions({
-  name: 'Swagger Platform',
+  name: 'OpenAPI Platform',
 });
 configure(() => {
   const tsxModuleContext = require.context('../src/view', true, /\.tsx$/);

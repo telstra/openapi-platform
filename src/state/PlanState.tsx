@@ -1,5 +1,5 @@
 import { client } from 'client/BackendClient';
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
 
@@ -17,9 +17,16 @@ class PlanState {
     }
     return specPlans;
   }
+
+  @action
+  public async addPlan(addedPlan: AddedPlan): Promise<void> {
+    const plan: HasId<Plan> = await client.service('plans').create(addedPlan);
+    this.plans.set(plan.id, plan);
+  }
 }
 
 export interface AddedPlan {
+  specId?: number;
   target: string;
   version?: string;
   options?: any;
@@ -29,4 +36,8 @@ export const state: PlanState = new PlanState();
 client
   .service('plans')
   .find()
-  .then(plans => plans.forEach(plan => state.plans.set(plan.id, plan)));
+  .then(plans =>
+    plans.forEach(plan => {
+      state.plans.set(plan.id, plan);
+    }),
+  );
