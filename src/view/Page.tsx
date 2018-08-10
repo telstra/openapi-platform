@@ -16,8 +16,8 @@ const Styled = createStyled(theme => ({
     background: theme.palette.background.default,
   },
   sideBar: {
-    flexGrow: 0,
-    flexShrink: 0,
+    position: 'sticky',
+    top: 0,
   },
   content: {
     flexBasis: '600px',
@@ -36,8 +36,8 @@ export const Page: ComponentType<{}> = () => (
   <Styled>
     {({ classes }) => (
       <div className={classes.page}>
-        <aside className={classes.sideBar}>
-          <nav>
+        <aside>
+          <nav className={classes.sideBar}>
             <Route component={NavigationMenu} />
           </nav>
         </aside>
