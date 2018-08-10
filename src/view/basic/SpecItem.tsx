@@ -89,7 +89,7 @@ export class SpecItem extends Component<SpecItemProps> {
           <ExpansionPanel expanded={expanded} onChange={this.onChange}>
             <ExpansionPanelSummary
               classes={{ content: classes.summarySection }}
-              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutline />}
+              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutlined />}
             >
               <div className={classes.summaryTitle}>
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>

@@ -7,6 +7,7 @@ module.exports = {
   transform: {
     '^.+\\.(t|j)sx?$': 'babel-jest',
   },
+  testURL: 'http://localhost',
   resetModules: true,
   resetMocks: true,
 };

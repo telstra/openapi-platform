@@ -36,7 +36,6 @@ function createBabelSettings(options) {
       [
         '@babel/plugin-transform-runtime',
         {
-          polyfill: false,
           regenerator: true,
         },
       ],
