@@ -38,7 +38,8 @@ export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {
  * For use in lists, grids, etc.
  */
 export class PlanItem extends Component<PlanItemProps> {
-  @observable private latestSdkUrl?: string;
+  @observable
+  private latestSdkUrl?: string;
 
   @action
   public createSdk = async () => {
@@ -68,7 +69,7 @@ export class PlanItem extends Component<PlanItemProps> {
                 <div>
                   {this.latestSdkUrl ? (
                     <IconButton href={this.latestSdkUrl}>
-                      <Icons.FileDownload />
+                      <Icons.CloudDownload />
                     </IconButton>
                   ) : null}
                   <Button

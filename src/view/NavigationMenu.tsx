@@ -49,7 +49,8 @@ const NavigationButton = ({ icon, primary, classes, ...other }) => (
 );
 
 export class NavigationMenu extends Component<RouteComponentProps<{}>, {}> {
-  @observable private open: boolean = false;
+  @observable
+  private open: boolean = false;
   @computed
   get actionName(): string {
     return this.open ? 'Close' : 'Open';
@@ -108,7 +109,7 @@ export class NavigationMenu extends Component<RouteComponentProps<{}>, {}> {
                   />
                   <NavigationButton
                     onClick={this.goToSettings}
-                    icon={<Icons.Settings className={classes.navIcon} />}
+                    icon={<Icons.SettingsRounded className={classes.navIcon} />}
                     primary="Settings"
                     classes={classes}
                   />

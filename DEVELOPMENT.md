@@ -52,6 +52,9 @@ development:
    TypeScript type checker and Jest tests. Intended for use with continuous
    integration, rather than to be run directly.
 
+### Snapshots
+If you want to update Jest snapshots run `yarn test snapshots -u`.
+
 ## Other Commands
  * `yarn run checker:types` \
    Runs the TypeScript type checker on the codebase, displaying the output.
@@ -68,3 +71,33 @@ development:
  * `yarn run format` \
    Reformats all JavaScript and TypeScript code in the project, using Prettier.
    **Note that this action will overwrite files without creating a backup.**
+
+## Storybook
+Basic UI components (components with nearly or entirely UI related logic) can be added to Storybook.
+
+Storybook allows developers to see the visual appearance of various components.
+We also use Storybook examples for snapshot testing.
+
+### How to add a component to storybook
+You will want to export a variable named `storybook` in the same file as the component you want to add to Storybook. 
+
+E.g.
+```tsx
+import { SFC }, React from 'react';
+interface MyComponentProps {
+  message: string;
+}
+const MyComponent: SFC<MyComponentProps> = ({ message }) => <div>{ message }</div>;
+
+export const storybook: Category<MyComponentProps> = {
+  Component: MyComponent,
+  stories: {
+    TheTitleOfTheStory: {
+      message: 'This field represents props.message'
+    }
+  },
+};
+```
+
+
+See the `Category` type for information on the fields available in the `storybook` variable.

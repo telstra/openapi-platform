@@ -34,7 +34,7 @@ export async function initDummyData(specs, plans): Promise<void> {
   );
 
   const spec0 = await specs.create({
-    title: 'Swagger Platform',
+    title: 'OpenAPI Platform',
     description: 'Open sourced service overlay for SDK management using swagger-codegen',
     path: 'localhost:8080/swagger.json',
   });
@@ -91,7 +91,7 @@ export async function initDummyData(specs, plans): Promise<void> {
     buildStatus: BuildStatus.Fail,
   });
   const spec3 = await specs.create({
-    title: 'Swagger API Example Uber',
+    title: 'OpenAPI API Example Uber',
     description: 'A test API for Uber',
     path:
       'https://raw.githubusercontent.com/OAI/OpenAPI-Spec/master/examples/v2.0/yaml/uber.yaml',

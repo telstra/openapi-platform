@@ -1,10 +1,13 @@
+require('babel-plugin-require-context-hook/register')();
+
 module.exports = {
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
+  testMatch: ['<rootDir>/test/**/*(*.)test.(t|j)sx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/config/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/config/', '/lib/'],
   transform: {
-    '^.+\\.tsx?$': './backend.transform.js',
+    '^.+\\.(t|j)sx?$': 'babel-jest',
   },
+  testURL: 'http://localhost',
   resetModules: true,
   resetMocks: true,
 };

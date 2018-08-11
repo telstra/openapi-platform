@@ -12,7 +12,7 @@ async function run(port: number) {
   // Overriding logger used in non testing environments, logging in tests just go to stdout.
   overrideConsoleLogger(logger);
   overrideUtilInspectStyle();
-  logger.info('Creating Swagger Platform server...');
+  logger.info('Creating OpenAPI Platform server...');
 
   // Initialise database connection
   const dbConnection = new Sequelize(
@@ -37,11 +37,11 @@ async function run(port: number) {
   const app = await createServer(dbConnection);
 
   app.listen(port, (er, err) => {
-    logger.info(`Swagger Platform Server now listening on port ${port}`);
+    logger.info(`OpenAPI Platform Server now listening on port ${port}`);
   });
   return app;
 }
 
 const envPort: string | undefined = process.env.PORT;
-const appPort: number = envPort ? Number.parseInt(envPort) : config.backend.port;
+const appPort: number = envPort ? Number.parseInt(envPort, 10) : config.backend.port;
 run(appPort);
