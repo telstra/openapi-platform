@@ -4,7 +4,8 @@ import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
 
 class PlanState {
-  @observable public readonly plans: Map<Id, HasId<Plan>> = new Map();
+  @observable
+  public readonly plans: Map<Id, HasId<Plan>> = new Map();
   @computed
   public get specPlans(): Map<Id, Array<HasId<Plan>>> {
     const specPlans = new Map();

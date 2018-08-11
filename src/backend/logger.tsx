@@ -82,6 +82,7 @@ export function overrideConsoleLogger(aLogger) {
   Object.keys(aLogger.levels).forEach(level => {
     console[level] = (...args) => aLogger[level](createPlaceholders(args), ...args);
   });
+  // tslint:disable-next-line:no-console
   console.log = (...args) => aLogger.verbose(createPlaceholders(args), ...args);
 }
 

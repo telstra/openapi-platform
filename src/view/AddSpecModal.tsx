@@ -35,12 +35,14 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
-  @observable private showProgressIndicator: boolean = false;
+  @observable
+  private showProgressIndicator: boolean = false;
 
   /**
    * Whether or not the 'failed to add Spec' modal is open
    */
-  @observable private showErrorModal: boolean = false;
+  @observable
+  private showErrorModal: boolean = false;
 
   private closeModal = () => {
     this.props.history.push('/');
