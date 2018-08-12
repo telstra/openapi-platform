@@ -22,7 +22,7 @@
     "checker:lint": "tslint -p .",
     "test": "yarn test:jest",
     "test:jest": "jest",
-    "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/(integration|unit)/?(/**)?(*.)test.(t|j)sx\"",
+    "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
     "ci-test": "yarn checker:types && yarn test:no-system",
     "storybook": "start-storybook -p 9001"
   },
