@@ -22,7 +22,8 @@
     "checker:lint": "tslint -p .",
     "test": "yarn test:jest",
     "test:jest": "jest",
-    "ci-test": "yarn checker:types && yarn test",
+    "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/(integration|unit)/?(/**)?(*.)test.(t|j)sx\"",
+    "ci-test": "yarn checker:types && yarn test:no-system",
     "storybook": "start-storybook -p 9001"
   },
   "husky": {
@@ -124,6 +125,7 @@
     "feathers-sequelize": "^3.1.2",
     "feathers-swagger": "^0.7.1",
     "fs-extra": "^7.0.0",
+    "globby": "^8.0.1",
     "isomorphic-git": "^0.22.3",
     "jss": "^9.8.7",
     "jss-global": "^3.0.0",
