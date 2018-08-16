@@ -28,12 +28,12 @@ export async function downloadToPath(localPath: string, remotePath: string) {
   // Pipes the response to a file, wrapped a promise so we can use await
   response.body.pipe(stream);
   const writeToFilePromise = new Promise((resolve, reject) => {
-    response.body.on('error', reject);
-    stream.on('finish', resolve);
-    stream.on('error', err => {
+    response.body.on('error', err => {
       stream.destroy();
       reject(err);
     });
+    stream.on('finish', resolve);
+    stream.on('error', reject);
   });
   await writeToFilePromise;
 }
