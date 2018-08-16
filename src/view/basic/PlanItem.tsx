@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import { Button, Typography, IconButton } from '@material-ui/core';
+import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
+import classNames from 'classnames';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
@@ -13,31 +14,18 @@ import { Sdk } from 'model/Sdk';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
-  planItemContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    '& > *:not(:first-child)': {
-      marginLeft: theme.spacing.unit,
+  planItemCell: {
+    border: 'none',
+    padding: [0, theme.spacing.unit / 2],
+    '&:last-child': {
+      paddingRight: theme.spacing.unit * 3,
     },
-    '& > *': {
-      flexBasis: 0,
+    '&:first-child': {
+      paddingLeft: theme.spacing.unit * 3,
     },
-  },
-  planTitle: {
-    flexGrow: 6,
-  },
-  planVersion: {
-    flexGrow: 3,
   },
   planStatus: {
-    flexGrow: 3,
     textAlign: 'center',
-  },
-  planActions: {
-    flexGrow: 4,
-    textAlign: 'right',
   },
   // TODO: Regularly used classes like this should be defined somewhere else
   center: {
@@ -75,32 +63,47 @@ export class PlanItem extends Component<PlanItemProps> {
         {({ classes }) => (
           <Observer>
             {() => (
-              <div className={classes.planItemContainer}>
-                <Typography className={classes.planTitle}>{plan.target}</Typography>
-                <Typography
-                  className={classes.planVersion}
-                  variant="body1"
-                  color="textSecondary"
-                >
-                  {plan.version}
-                </Typography>
-                <div className={classes.planStatus}>
-                  <BuildStatusChip buildStatus={plan.buildStatus} />
-                </div>
-                <div className={classes.planActions}>
-                  {this.latestSdkUrl ? (
-                    <IconButton href={this.latestSdkUrl}>
-                      <Icons.CloudDownload />
-                    </IconButton>
-                  ) : null}
-                  <Button
-                    disabled={plan.buildStatus === BuildStatus.Running}
-                    onClick={this.createSdk}
+              <TableRow>
+                <TableCell padding="none" classes={{ root: classes.planItemCell }}>
+                  <Typography className={classes.planTitle}>{plan.target}</Typography>
+                </TableCell>
+                <TableCell padding="none" classes={{ root: classes.planItemCell }}>
+                  <Typography
+                    className={classes.planVersion}
+                    variant="body1"
+                    color="textSecondary"
                   >
-                    {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
-                  </Button>
-                </div>
-              </div>
+                    {plan.version}
+                  </Typography>
+                </TableCell>
+                <TableCell
+                  padding="none"
+                  classes={{ root: classNames(classes.planStatus, classes.planItemCell) }}
+                >
+                  <div className={classes.planStatus}>
+                    <BuildStatusChip buildStatus={plan.buildStatus} />
+                  </div>
+                </TableCell>
+                <TableCell
+                  numeric
+                  padding="none"
+                  classes={{ root: classes.planItemCell }}
+                >
+                  <div className={classes.planActions}>
+                    {this.latestSdkUrl ? (
+                      <IconButton href={this.latestSdkUrl}>
+                        <Icons.CloudDownload />
+                      </IconButton>
+                    ) : null}
+                    <Button
+                      disabled={plan.buildStatus === BuildStatus.Running}
+                      onClick={this.createSdk}
+                    >
+                      {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
             )}
           </Observer>
         )}
