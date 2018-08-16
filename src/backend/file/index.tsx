@@ -17,10 +17,8 @@ export async function deletePaths(paths) {
 
 /**
  * Downloads a file and writes it to a particular path
- * @param localPath
- * Where you want to download the file to
- * @param remotePath
- * The place you want to download the file from
+ * @param localPath Where you want to download the file to
+ * @param remotePath The place you want to download the file from
  */
 export async function downloadToPath(localPath: string, remotePath: string) {
   const response = await fetch(remotePath);

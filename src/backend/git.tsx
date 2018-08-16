@@ -42,10 +42,8 @@ async function deleteAllFilesInLocalRepo(dir) {
 /**
  * SDKs are downloaded as a zip file so they need to be extracted.
  * Use this method to do so.
- * @param archiveFilePath
- * The archive file path
- * @param extractToDir
- * Where you want the archive files to be extracted to
+ * @param archiveFilePath The archive file path
+ * @param extractToDir Where you want the archive files to be extracted to
  */
 async function extractSdkArchiveFileToDir(extractToDir: string, archiveFilePath: string) {
   const zip = new AdmZip(archiveFilePath);
