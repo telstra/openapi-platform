@@ -14,7 +14,6 @@ import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
   planItemRow: {
-    color: 'red',
     '& > td': {
       border: 'none',
       padding: [0, theme.spacing.unit / 2],
