@@ -30,7 +30,10 @@ export async function downloadToPath(localPath: string, remotePath: string) {
   const writeToFilePromise = new Promise((resolve, reject) => {
     response.body.on('error', reject);
     stream.on('finish', resolve);
-    stream.on('error', reject);
+    stream.on('error', err => {
+      stream.destroy();
+      reject(err);
+    });
   });
   await writeToFilePromise;
 }
