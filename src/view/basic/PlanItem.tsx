@@ -21,6 +21,23 @@ const Styled: any = createStyled(theme => ({
     '& > *:not(:first-child)': {
       marginLeft: theme.spacing.unit,
     },
+    '& > *': {
+      flexBasis: 0,
+    },
+  },
+  planTitle: {
+    flexGrow: 6,
+  },
+  planVersion: {
+    flexGrow: 3,
+  },
+  planStatus: {
+    flexGrow: 3,
+    textAlign: 'center',
+  },
+  planActions: {
+    flexGrow: 4,
+    textAlign: 'right',
   },
   // TODO: Regularly used classes like this should be defined somewhere else
   center: {
@@ -59,14 +76,18 @@ export class PlanItem extends Component<PlanItemProps> {
           <Observer>
             {() => (
               <div className={classes.planItemContainer}>
-                <Typography>{plan.target}</Typography>
-                <Typography variant="body1" color="textSecondary">
+                <Typography className={classes.planTitle}>{plan.target}</Typography>
+                <Typography
+                  className={classes.planVersion}
+                  variant="body1"
+                  color="textSecondary"
+                >
                   {plan.version}
                 </Typography>
-                <div>
+                <div className={classes.planStatus}>
                   <BuildStatusChip buildStatus={plan.buildStatus} />
                 </div>
-                <div>
+                <div className={classes.planActions}>
                   {this.latestSdkUrl ? (
                     <IconButton href={this.latestSdkUrl}>
                       <Icons.CloudDownload />
