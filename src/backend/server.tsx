@@ -9,6 +9,7 @@ import Sequelize from 'sequelize';
 import { createPlanModel, createPlanService } from 'backend/db/plan-model';
 import { createSdkModel, createSdkService } from 'backend/db/sdk-model';
 import { createSpecModel, createSpecService } from 'backend/db/spec-model';
+import { updateRepoWithNewSdk } from 'backend/git';
 import { initDummyData } from 'backend/initDummyData';
 import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
@@ -92,6 +93,9 @@ export async function createServer(dbConnection: Sequelize.Sequelize) {
         Might need to consider downloading the object from 
         wherever the Swagger gen API stores it.
         */
+        if (plan.gitInfo) {
+          await updateRepoWithNewSdk(plan.gitInfo, sdk.path);
+        }
         context.data.path = sdk.path;
         context.data.planId = plan.id;
         return context;

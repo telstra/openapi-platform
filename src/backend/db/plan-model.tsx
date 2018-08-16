@@ -27,6 +27,10 @@ export function createPlanModel(dbConnection: Sequelize.Sequelize) {
         type: Sequelize.JSON,
         allowNull: true,
       },
+      gitInfo: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
       buildStatus: {
         type: Sequelize.STRING,
         allowNull: false,
