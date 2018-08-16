@@ -16,7 +16,7 @@ const Styled: any = createStyled(theme => ({
   planItemRow: {
     '& > td': {
       border: 'none',
-      padding: [0, theme.spacing.unit / 2],
+      padding: [0, theme.spacing.unit],
       '&:last-child': {
         paddingRight: theme.spacing.unit * 3,
       },
