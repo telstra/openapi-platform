@@ -36,4 +36,5 @@ export type GitAuth = GitAuthBasic | GitAuthToken | GitAuthOAuth2;
 export interface GitInfo {
   repoUrl: string;
   auth: GitAuth;
+  branch?: string;
 }

@@ -96,6 +96,7 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: strin
     // TODO: Should also be able to configure which branch to checkout, maybe?
     logger.verbose(`Cloning ${remoteSdkUrl} into ${repoDir}`);
     await git.clone({
+      ref: gitInfo.branch,
       dir: repoDir,
       // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
       fs: oldFs,
