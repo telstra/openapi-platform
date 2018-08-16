@@ -13,13 +13,13 @@ import { logger } from './logger';
 // Note: dir = directory
 
 export async function getAllStageableFilepathsInRepo(repoDir: string) {
-  return await globby([join(repoDir, '**'), join(repoDir, '**/.*')], {
+  return await globby([join(repoDir, '**'), join(repoDir, '**', '.*')], {
     gitignore: true,
   });
 }
 
 export async function getAllFilepathsInDir(dir: string) {
-  return await globby([join(dir, '**'), join(dir, '**/.*')]);
+  return await globby([join(dir, '**'), join(dir, '**', '.*')]);
 }
 
 export async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
