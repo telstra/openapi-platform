@@ -4,6 +4,7 @@ import { Spec } from 'model/Spec';
 
 jest.mock('backend/logger');
 jest.mock('sequelize');
+jest.mock('feathers-sequelize');
 jest.mock('backend/db/connection');
 
 jest.mock('client/sdkGeneration');
@@ -21,8 +22,6 @@ const sdkGeneration: any = require('client/sdkGeneration');
 describe('test server', () => {
   let app;
   beforeEach(async () => {
-    // TODO: Might need to change to beforeEach if data is stored and queried.
-
     app = await createServer();
   });
 
@@ -54,7 +53,7 @@ describe('test server', () => {
         target: 'java is ew',
         version: 'v1.0.0',
         options: { 'a choice': 'my options here' },
-        buildStatus: BuildStatus.NotRun,
+        buildStatus: BuildStatus.Success,
       };
     });
 
@@ -76,8 +75,8 @@ describe('test server', () => {
     });
 
     it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
-      const planDataWithBuildStatus = { ...planData, buildStatus: BuildStatus.Success }; // This changes to NotRun.
-      const createdPlan = await app.service('plans').create(planDataWithBuildStatus);
+      const { buildStatus, ...planDataWithoutBuildStatus } = planData;
+      const createdPlan = await app.service('plans').create(planDataWithoutBuildStatus);
       const bs = (await app.service('plans').get(createdPlan.id)).buildStatus;
       expect(bs).toEqual(BuildStatus.NotRun);
     });

@@ -21,6 +21,10 @@ const Styled = createStyled(theme => ({
   },
   toolbar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    backgroundColor: theme.palette.background.default,
   },
   searchArea: {
     flex: '1 1 800px',

@@ -69,6 +69,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onSpecOpen: (spec: Spec) => void;
+  onAddPlan: (event: any) => void | undefined;
   plans?: Array<HasId<Plan>>;
 }
 
@@ -81,14 +82,14 @@ export class SpecItem extends Component<SpecItemProps> {
     this.props.onPanelChange(this.props.spec, expanded);
 
   public render() {
-    const { spec, expanded, plans = [] } = this.props;
+    const { spec, expanded, onAddPlan, plans = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
           <ExpansionPanel expanded={expanded} onChange={this.onChange}>
             <ExpansionPanelSummary
               classes={{ content: classes.summarySection }}
-              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutline />}
+              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutlined />}
             >
               <div className={classes.summaryTitle}>
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>
@@ -120,7 +121,7 @@ export class SpecItem extends Component<SpecItemProps> {
                 <div className={classes.sdkHeader}>
                   <div className={classes.sdkTitleSection}>
                     <Typography variant="subheading" className={classes.indent}>
-                      SDKs
+                      SDK Generation Plans
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
@@ -135,6 +136,15 @@ export class SpecItem extends Component<SpecItemProps> {
                       <PlanItem plan={plan} />
                     </ListItem>
                   ))}
+                </List>
+                <List>
+                  <ListItem className={classes.sdkHeaderActions}>
+                    <ListItemSecondaryAction>
+                      <Button variant="flat" color="primary" onClick={onAddPlan}>
+                        Add SDK Generation Plan
+                      </Button>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 </List>
               </div>
             </ExpansionPanelDetails>

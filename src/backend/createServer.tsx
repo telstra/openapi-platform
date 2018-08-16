@@ -11,10 +11,11 @@ import { createPlanModel, createPlanService } from 'backend/db/plan-model';
 import { createSdkModel, createSdkService } from 'backend/db/sdk-model';
 import { createSpecModel, createSpecService } from 'backend/db/spec-model';
 
+import { initDummyData } from 'backend/initDummyData';
 import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
-import { BuildStatus } from 'model/Plan';
+import { BuildStatus, hasValidBuildStatus } from 'model/Plan';
 
 export async function createServer() {
   const dbConnection: Sequelize.Sequelize = await connectToDb();
@@ -77,7 +78,9 @@ export async function createServer() {
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
-        context.data.buildStatus = BuildStatus.NotRun;
+        if (!hasValidBuildStatus(context.data.buildStatus)) {
+          context.data.buildStatus = BuildStatus.NotRun;
+        }
         return context;
       },
     },
@@ -110,5 +113,9 @@ export async function createServer() {
   await planModel.sync();
   await sdkModel.sync();
 
+  if (config.backend.initDummyData && (await specModel.count()) === 0) {
+    // Initialise dummy data if there are no specifications
+    await initDummyData(app.service('specifications'), app.service('plans'));
+  }
   return app;
 }
