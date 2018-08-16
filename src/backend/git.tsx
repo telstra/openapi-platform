@@ -62,9 +62,9 @@ export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
    * one for downloading, one for unzipping.
    */
   const downloadDir = await makeTempDir('download');
-  const sdkArchiveFilePath = join(downloadDir, 'sdk.zip');
-  await downloadToPath(sdkArchiveFilePath, remoteSdkUrl);
   try {
+    const sdkArchiveFilePath = join(downloadDir, 'sdk.zip');
+    await downloadToPath(sdkArchiveFilePath, remoteSdkUrl);
     const sdkDir = await makeTempDir('sdk');
     try {
       logger.verbose(`Extracting ${sdkArchiveFilePath} to ${sdkDir}`);
