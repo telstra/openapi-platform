@@ -80,10 +80,6 @@ export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
   } catch (err) {
     throw err;
   } finally {
-    /*
-       * TODO: Confirm if this is necessary, 
-       * do temp folders ever get deleted if they aren't explicitly told to be deleted?
-       */
     await deletePaths([downloadDir]);
   }
 }
