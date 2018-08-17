@@ -1,7 +1,11 @@
 import 'source-map-support/register';
 
 import { createServer } from './createServer';
-import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from '@openapi-platform/logger';
+import {
+  logger,
+  overrideConsoleLogger,
+  overrideUtilInspectStyle,
+} from '@openapi-platform/logger';
 import { config } from '../config';
 
 async function run(port: number) {

@@ -1,4 +1,3 @@
-const paths = require('./paths');
 function createBabelPresets(options) {
   const presets = [];
   if (options.envSettings) {
