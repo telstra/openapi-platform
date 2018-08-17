@@ -1,9 +1,7 @@
 import 'source-map-support/register';
 
-import Sequelize from 'sequelize';
-
+import { createServer } from 'backend/createServer';
 import { logger, overrideConsoleLogger, overrideUtilInspectStyle } from 'backend/logger';
-import { createServer } from 'backend/server';
 import { config } from 'config';
 
 import 'source-map-support/register';
@@ -14,31 +12,12 @@ async function run(port: number) {
   overrideUtilInspectStyle();
   logger.info('Creating OpenAPI Platform server...');
 
-  // Initialise database connection
-  const dbConnection = new Sequelize(
-    config.backend.databaseName,
-    config.backend.databaseUsername,
-    config.backend.databasePassword,
-    {
-      dialect: 'postgres',
-      host: config.backend.databaseHost,
-      port: config.backend.databasePort,
-      logging: logger.info,
-    },
-  );
-  try {
-    await dbConnection.authenticate();
-    logger.info('Successfully connected to database');
-  } catch (err) {
-    logger.error('Unable to connect to database: %s', err);
-    return;
-  }
-
-  const app = await createServer(dbConnection);
+  const app = await createServer();
 
   app.listen(port, (er, err) => {
     logger.info(`OpenAPI Platform Server now listening on port ${port}`);
   });
+
   return app;
 }
 
