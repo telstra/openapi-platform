@@ -3,8 +3,8 @@ import React, { SFC } from 'react';
 import { TextField, Toolbar, Typography } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 
-import { Category } from 'model/Storybook';
-import { createStyled } from 'view/createStyled';
+import { Category } from '@openapi-platform/model';
+import { createStyled } from '../createStyled';
 
 export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> {
   title: string;

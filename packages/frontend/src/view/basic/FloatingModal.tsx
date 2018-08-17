@@ -3,7 +3,7 @@ import React, { SFC } from 'react';
 import { Modal } from '@material-ui/core';
 import classNames from 'classnames';
 
-import { createStyled } from 'view/createStyled';
+import { createStyled } from '../createStyled';
 
 const Styled = createStyled(theme => ({
   modalRoot: {

@@ -1,13 +1,13 @@
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { NotFound } from 'basic/NotFound';
-import { createStyled } from 'view/createStyled';
-import { NavigationMenu } from 'view/NavigationMenu';
-import { Overview } from 'view/Overview';
-import { ProfileViewer } from 'view/ProfileViewer';
-import { SettingsViewer } from 'view/SettingsViewer';
-import { SpecViewer } from 'view/SpecViewer';
+import { NotFound } from './basic/NotFound';
+import { createStyled } from './createStyled';
+import { NavigationMenu } from './NavigationMenu';
+import { Overview } from './Overview';
+import { ProfileViewer } from './ProfileViewer';
+import { SettingsViewer } from './SettingsViewer';
+import { SpecViewer } from './SpecViewer';
 
 const Styled = createStyled(theme => ({
   page: {

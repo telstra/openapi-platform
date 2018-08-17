@@ -1,6 +1,6 @@
 import React, { SFC } from 'react';
 
-import { Spec } from 'model/Spec';
+import { Spec } from '@openapi-platform/model';
 export interface SpecInformation {
   spec: Spec;
 }

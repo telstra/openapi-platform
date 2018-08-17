@@ -1,7 +1,7 @@
 import { client } from 'client/BackendClient';
 import { observable, computed, action } from 'mobx';
-import { HasId } from 'model/Entity';
-import { Spec } from 'model/Spec';
+import { HasId } from '@openapi-platform/model';
+import { Spec } from '@openapi-platform/model';
 
 export interface SpecState {
   specs: Map<number, HasId<Spec>>;

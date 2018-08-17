@@ -16,7 +16,7 @@ import { initDummyData } from 'backend/initDummyData';
 import { logger } from 'backend/logger';
 import { generateSdk } from 'client/sdkGeneration';
 import { config } from 'config';
-import { BuildStatus, hasValidBuildStatus } from 'model/Plan';
+import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
 
 export async function createServer() {
   const dbConnection: Sequelize.Sequelize = await connectToDb();

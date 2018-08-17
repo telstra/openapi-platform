@@ -5,12 +5,12 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Route } from 'react-router-dom';
 
-import { ContentContainer } from 'basic/ContentContainer';
-import { SimpleToolbar } from 'basic/SimpleToolbar';
-import { SpecList } from 'basic/SpecList';
-import { state } from 'state/SpecState';
-import { AddPlanModal } from 'view/AddPlanModal';
-import { AddSpecModal } from 'view/AddSpecModal';
+import { ContentContainer } from './basic/ContentContainer';
+import { SimpleToolbar } from './basic/SimpleToolbar';
+import { SpecList } from './basic/SpecList';
+import { state } from '../state/SpecState';
+import { AddPlanModal } from './AddPlanModal';
+import { AddSpecModal } from './AddSpecModal';
 
 /**
  * An overview of the current state of Swagger Platform.

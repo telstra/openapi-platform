@@ -1,4 +1,4 @@
-import { BuildStatus } from 'model/Plan';
+import { BuildStatus } from '@openapi-platform/model';
 export async function initDummyData(specs, plans): Promise<void> {
   // TODO: Shouldn't the params be typed?
   const addToSpec = async (spec, ...specPlans) => {

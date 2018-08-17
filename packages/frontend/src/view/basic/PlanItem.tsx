@@ -5,12 +5,12 @@ import * as Icons from '@material-ui/icons';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
-import { BuildStatusChip } from 'basic/BuildStatusChip';
+import { BuildStatusChip } from './basic/BuildStatusChip';
 import { client } from 'client/BackendClient';
-import { HasId } from 'model/Entity';
-import { Plan, BuildStatus } from 'model/Plan';
-import { Sdk } from 'model/Sdk';
-import { createStyled } from 'view/createStyled';
+import { HasId } from '@openapi-platform/model';
+import { Plan, BuildStatus } from '@openapi-platform/model';
+import { Sdk } from '@openapi-platform/model';
+import { createStyled } from '../createStyled';
 
 const Styled: any = createStyled(theme => ({
   planItemRow: {

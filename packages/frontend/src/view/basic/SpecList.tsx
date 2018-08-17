@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-import { SpecItem } from 'basic/SpecItem';
 import { Observer } from 'mobx-react';
-import { HasId } from 'model/Entity';
-import { Spec } from 'model/Spec';
-import { state } from 'state/PlanState';
-import { createStyled } from 'view/createStyled';
+
+import { SpecItem } from './SpecItem';
+import { HasId, Spec } from '@openapi-platform/model';
+import { state } from '../../state/PlanState';
+import { createStyled } from '../createStyled';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
   expandedSpecId: number | null;

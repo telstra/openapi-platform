@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-import { HasId } from 'model/Entity';
-import { Plan } from 'model/Plan';
-import { Sdk } from 'model/Sdk';
-import { Spec } from 'model/Spec';
+import { HasId } from '@openapi-platform/model';
+import { Plan } from '@openapi-platform/model';
+import { Sdk } from '@openapi-platform/model';
+import { Spec } from '@openapi-platform/model';
 
 const SWAGGER_CODEGEN_ENDPOINT = 'http://generator.swagger.io/api/gen/clients/';
 

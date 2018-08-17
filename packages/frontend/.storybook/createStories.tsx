@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { basename } from 'path';
-import { ThemeProvider } from 'view/ThemeProvider';
+import { ThemeProvider } from '../src/view/ThemeProvider';
 export function createStories(moduleInfo) {
   moduleInfo.forEach(({ path, requiredModule }) => {
     const storybookInfo = requiredModule.storybook;

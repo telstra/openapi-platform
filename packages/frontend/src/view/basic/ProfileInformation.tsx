@@ -2,8 +2,8 @@ import React, { SFC } from 'react';
 
 import { Paper, Typography } from '@material-ui/core';
 
-import { Profile } from 'model/Profile';
-import { createStyled } from 'view/createStyled';
+import { Profile } from '@openapi-platform/model';
+import { createStyled } from '../createStyled';
 
 const Styled = createStyled(theme => ({
   paper: {

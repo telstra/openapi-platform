@@ -14,11 +14,11 @@ import { ModalProps } from '@material-ui/core/Modal';
 import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 
-import { FloatingModal } from 'basic/FloatingModal';
-import { Category } from 'model/Storybook';
-import { AddedSpec } from 'state/SpecState';
+import { FloatingModal } from './FloatingModal';
+import { Category } from '@openapi-platform/model';
+import { AddedSpec } from '../../state/SpecState';
 import { isWebUri } from 'valid-url';
-import { createStyled } from 'view/createStyled';
+import { createStyled } from '../createStyled';
 
 const Styled: any = createStyled(theme => ({
   modalPaper: {

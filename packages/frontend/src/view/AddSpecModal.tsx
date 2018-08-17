@@ -5,10 +5,10 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
-import { FloatingModal } from 'basic/FloatingModal';
-import { SpecModal } from 'basic/SpecModal';
-import { state as specState, AddedSpec } from 'state/SpecState';
-import { createStyled } from 'view/createStyled';
+import { FloatingModal } from './basic/FloatingModal';
+import { SpecModal } from './basic/SpecModal';
+import { state as specState, AddedSpec } from '../state/SpecState';
+import { createStyled } from './createStyled';
 
 const Styled: any = createStyled(theme => ({
   errorModalPaper: {

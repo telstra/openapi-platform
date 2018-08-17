@@ -1,6 +1,6 @@
 import { createServer } from 'backend/createServer';
-import { Plan, BuildStatus } from 'model/Plan';
-import { Spec } from 'model/Spec';
+import { Plan, BuildStatus } from '@openapi-platform/model';
+import { Spec } from '@openapi-platform/model';
 
 jest.mock('backend/logger');
 jest.mock('sequelize');

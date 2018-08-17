@@ -3,8 +3,8 @@ import React, { SFC } from 'react';
 import { Chip } from '@material-ui/core';
 import { red, green, amber, grey } from '@material-ui/core/colors';
 
-import { BuildStatus } from 'model/Plan';
-import { createStyled } from 'view/createStyled';
+import { BuildStatus } from '@openapi-platform/model';
+import { createStyled } from '../createStyled';
 
 // TODO: Should probably only have to have 1 switch case
 const buildStatusToLabel = ({ buildStatus }) => {

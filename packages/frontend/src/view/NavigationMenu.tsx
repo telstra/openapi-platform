@@ -8,8 +8,8 @@ import { Observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 
-import { state as profileState } from 'state/ProfileState';
-import { createStyled } from 'view/createStyled';
+import { state as profileState } from '../state/ProfileState';
+import { createStyled } from './createStyled';
 
 // TODO: Maybe come back to this and see if we can get proper type validation going
 const Styled: any = createStyled(theme => ({

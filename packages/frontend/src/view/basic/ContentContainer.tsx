@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 
-import { createStyled } from 'view/createStyled';
+import { createStyled } from '../createStyled';
 
 const Styled = createStyled(theme => ({
   content: {

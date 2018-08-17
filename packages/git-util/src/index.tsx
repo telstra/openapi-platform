@@ -7,7 +7,7 @@ import globby from 'globby';
 import git from 'isomorphic-git';
 
 import { downloadToPath, deletePaths, makeTempDir } from 'backend/file/index';
-import { GitInfo } from 'model/GitInfo';
+import { GitInfo } from '@openapi-platform/model';
 import { logger } from './logger';
 
 // Note: dir = directory
