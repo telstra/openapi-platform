@@ -45,41 +45,6 @@ module.exports = (env, argv) => {
     };
   };
 
-  const backendPlugins = [];
-  if (argv.mode === 'development') {
-    const backendIndex = join(paths.buildBackend, 'main.js');
-    backendPlugins.push({
-      apply: compiler => {
-        let firstBuild = true;
-        compiler.hooks.afterEmit.tap('AfterBuildPlugin', compilation => {
-          console.log('Rebuilding backend...');
-          if (firstBuild) {
-            const nodemon = spawn('nodemon', [
-              backendIndex,
-              '--quiet',
-              '--watch',
-              './build/backend',
-            ]);
-            nodemon.stdout.on('data', data => process.stdout.write(data));
-            nodemon.stderr.on('data', data => process.stderr.write(data));
-            firstBuild = false;
-          }
-        });
-      },
-    });
-  }
-  const backend = {
-    name: 'Backend',
-    target: 'node',
-    entry: join(paths.src, 'backend', 'index.tsx'),
-    output: {
-      path: join(__dirname, 'build', 'backend'),
-      filename: '[name].js',
-    },
-    plugins: backendPlugins,
-    externals: [nodeExternals()],
-    ...createWebpackSettings(),
-  };
   const frontend = {
     ...createWebpackSettings(),
     name: 'Frontend',
@@ -118,5 +83,5 @@ module.exports = (env, argv) => {
       loader: 'file-loader',
     },
   );
-  return [backend, frontend];
+  return frontend;
 };

@@ -12,25 +12,6 @@ function createBabelSettings(options) {
   return {
     presets: createBabelPresets(options),
     plugins: [
-      [
-        'module-resolver',
-        {
-          root: ['.'],
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          alias: {
-            src: paths.src,
-            test: paths.test,
-            config: paths.config,
-            view: paths.view,
-            model: paths.model,
-            basic: paths.basic,
-            state: paths.state,
-            client: paths.client,
-            backend: paths.backend,
-            frontend: paths.frontend,
-          },
-        },
-      ],
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ['@babel/plugin-proposal-class-properties', { loose: true }],
       [
