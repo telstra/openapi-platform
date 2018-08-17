@@ -1,11 +1,11 @@
-export const productionConfig = {
+export const testConfig = {
   frontend: {
-    baseApiUrl: '/',
+    baseApiUrl: 'http://localhost:8111/',
   },
   backend: {
-    port: 80,
-    useCors: false,
-    initDummyData: false,
+    port: 8112,
+    useCors: true,
+    initDummyData: true,
     databaseName: '',
     databaseHost: '',
     databasePort: 5432,

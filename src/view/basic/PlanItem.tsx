@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Button, Typography, IconButton } from '@material-ui/core';
+import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
@@ -13,14 +13,20 @@ import { Sdk } from 'model/Sdk';
 import { createStyled } from 'view/createStyled';
 
 const Styled: any = createStyled(theme => ({
-  planItemContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    '& > *:not(:first-child)': {
-      marginLeft: theme.spacing.unit,
+  planItemRow: {
+    '& > td': {
+      border: 'none',
+      padding: [0, theme.spacing.unit],
+      '&:last-child': {
+        paddingRight: theme.spacing.unit * 3,
+      },
+      '&:first-child': {
+        paddingLeft: theme.spacing.unit * 3,
+      },
     },
+  },
+  planStatus: {
+    textAlign: 'center',
   },
   // TODO: Regularly used classes like this should be defined somewhere else
   center: {
@@ -38,7 +44,8 @@ export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {
  * For use in lists, grids, etc.
  */
 export class PlanItem extends Component<PlanItemProps> {
-  @observable private latestSdkUrl?: string;
+  @observable
+  private latestSdkUrl?: string;
 
   @action
   public createSdk = async () => {
@@ -57,28 +64,40 @@ export class PlanItem extends Component<PlanItemProps> {
         {({ classes }) => (
           <Observer>
             {() => (
-              <div className={classes.planItemContainer}>
-                <Typography>{plan.target}</Typography>
-                <Typography variant="body1" color="textSecondary">
-                  {plan.version}
-                </Typography>
-                <div>
-                  <BuildStatusChip buildStatus={plan.buildStatus} />
-                </div>
-                <div>
-                  {this.latestSdkUrl ? (
-                    <IconButton href={this.latestSdkUrl}>
-                      <Icons.FileDownload />
-                    </IconButton>
-                  ) : null}
-                  <Button
-                    disabled={plan.buildStatus === BuildStatus.Running}
-                    onClick={this.createSdk}
+              <TableRow classes={{ root: classes.planItemRow }}>
+                <TableCell>
+                  <Typography className={classes.planTitle}>{plan.target}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    className={classes.planVersion}
+                    variant="body1"
+                    color="textSecondary"
                   >
-                    {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
-                  </Button>
-                </div>
-              </div>
+                    {plan.version}
+                  </Typography>
+                </TableCell>
+                <TableCell classes={{ root: classes.planStatus }}>
+                  <div className={classes.planStatus}>
+                    <BuildStatusChip buildStatus={plan.buildStatus} />
+                  </div>
+                </TableCell>
+                <TableCell numeric>
+                  <div className={classes.planActions}>
+                    {this.latestSdkUrl ? (
+                      <IconButton href={this.latestSdkUrl}>
+                        <Icons.CloudDownload />
+                      </IconButton>
+                    ) : null}
+                    <Button
+                      disabled={plan.buildStatus === BuildStatus.Running}
+                      onClick={this.createSdk}
+                    >
+                      {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
             )}
           </Observer>
         )}

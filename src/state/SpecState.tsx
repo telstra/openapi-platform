@@ -17,7 +17,8 @@ export interface AddedSpec {
 }
 
 export class BasicSpecState implements SpecState {
-  @observable public readonly specs: Map<number, HasId<Spec>> = new Map();
+  @observable
+  public readonly specs: Map<number, HasId<Spec>> = new Map();
   @computed
   public get specList(): Array<HasId<Spec>> {
     return Array.from(this.specs.values()).map(value => value);
@@ -27,11 +28,14 @@ export class BasicSpecState implements SpecState {
     const spec: HasId<Spec> = await client.service('specifications').create(addedSpec);
     this.specs.set(spec.id, spec);
   }
-  @observable public expandedSpecId: number | null = null;
+  @observable
+  public expandedSpecId: number | null = null;
 }
 
 export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()
-  .then(json => json.map(spec => state.specs.set(spec.id, spec)));
+  .then(json => {
+    json.map(spec => state.specs.set(spec.id, spec));
+  });

@@ -1,5 +1,6 @@
 import { developmentConfig } from './development';
 import { productionConfig } from './production';
+import { testConfig } from './test';
 
 interface Configuration {
   /**
@@ -25,6 +26,11 @@ interface Configuration {
      * Whether or not CORS requests should be allowed.
      */
     readonly useCors: boolean;
+
+    /**
+     * Whether or not dummy data should be created for development purposes.
+     */
+    readonly initDummyData: boolean;
 
     /**
      * The name of the PostgreSQL database to connect to.
@@ -58,8 +64,10 @@ if (process.env.NODE_ENV === 'development') {
   configTemp = developmentConfig;
 } else if (process.env.NODE_ENV === 'production') {
   configTemp = productionConfig;
+} else if (process.env.NODE_ENV === 'test') {
+  configTemp = testConfig;
 } else {
-  throw new Error('Unknown environment type');
+  throw new Error('Unknown environment type: ' + process.env.NODE_ENV);
 }
 
 export const config = configTemp as Configuration;

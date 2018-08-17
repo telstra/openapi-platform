@@ -11,8 +11,10 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  Table,
 } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
+import classNames from 'classnames';
 
 import { PlanItem } from 'basic/PlanItem';
 import { HasId } from 'model/Entity';
@@ -62,6 +64,10 @@ const Styled: any = createStyled(theme => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
   },
+  sdkList: {
+    borderCollapse: 'separate',
+    padding: [theme.spacing.unit / 2, 0],
+  },
 }));
 
 export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
@@ -69,6 +75,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onSpecOpen: (spec: Spec) => void;
+  onAddPlan: (event: any) => void | undefined;
   plans?: Array<HasId<Plan>>;
 }
 
@@ -81,14 +88,14 @@ export class SpecItem extends Component<SpecItemProps> {
     this.props.onPanelChange(this.props.spec, expanded);
 
   public render() {
-    const { spec, expanded, plans = [] } = this.props;
+    const { spec, expanded, onAddPlan, plans = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
           <ExpansionPanel expanded={expanded} onChange={this.onChange}>
             <ExpansionPanelSummary
               classes={{ content: classes.summarySection }}
-              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutline />}
+              expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutlined />}
             >
               <div className={classes.summaryTitle}>
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>
@@ -120,7 +127,7 @@ export class SpecItem extends Component<SpecItemProps> {
                 <div className={classes.sdkHeader}>
                   <div className={classes.sdkTitleSection}>
                     <Typography variant="subheading" className={classes.indent}>
-                      SDKs
+                      SDK Generation Plans
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
@@ -129,12 +136,19 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Button>
                   </div>
                 </div>
-                <List className={classes.bordered}>
+                <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
                   {plans.map(plan => (
-                    <ListItem key={plan.id}>
-                      <PlanItem plan={plan} />
-                    </ListItem>
+                    <PlanItem plan={plan} />
                   ))}
+                </Table>
+                <List>
+                  <ListItem className={classes.sdkHeaderActions}>
+                    <ListItemSecondaryAction>
+                      <Button variant="flat" color="primary" onClick={onAddPlan}>
+                        Add SDK Generation Plan
+                      </Button>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 </List>
               </div>
             </ExpansionPanelDetails>

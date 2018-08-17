@@ -1,4 +1,5 @@
 import { Id } from 'model/Entity';
+import { GitInfo } from 'model/GitInfo';
 
 /**
  * Represents a plan, used to define how an SDK should be built for a specification.
@@ -31,6 +32,10 @@ export interface Plan {
    * The current build status of the SDK.
    */
   buildStatus: BuildStatus;
+  /**
+   * Info about where the generated SDK will be pushed to
+   */
+  gitInfo?: GitInfo;
 }
 
 /**
@@ -42,6 +47,9 @@ export enum BuildStatus {
   Success = 'SUCCESS',
   Fail = 'FAIL',
 }
+
+export const hasValidBuildStatus = buildStatus =>
+  Object.values(BuildStatus).includes(buildStatus);
 
 /**
  * An array of supported plan target languages.
