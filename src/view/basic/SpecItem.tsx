@@ -11,8 +11,10 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  Table,
 } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
+import classNames from 'classnames';
 
 import { PlanItem } from 'basic/PlanItem';
 import { HasId } from 'model/Entity';
@@ -61,6 +63,10 @@ const Styled: any = createStyled(theme => ({
   sdkHeaderActions: {
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
+  },
+  sdkList: {
+    borderCollapse: 'separate',
+    padding: [theme.spacing.unit / 2, 0],
   },
 }));
 
@@ -130,13 +136,11 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Button>
                   </div>
                 </div>
-                <List className={classes.bordered}>
+                <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
                   {plans.map(plan => (
-                    <ListItem key={plan.id}>
-                      <PlanItem plan={plan} />
-                    </ListItem>
+                    <PlanItem plan={plan} />
                   ))}
-                </List>
+                </Table>
                 <List>
                   <ListItem className={classes.sdkHeaderActions}>
                     <ListItemSecondaryAction>
