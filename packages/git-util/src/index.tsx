@@ -6,9 +6,9 @@ import { move } from 'fs-extra';
 import globby from 'globby';
 import git from 'isomorphic-git';
 
-import { downloadToPath, deletePaths, makeTempDir } from 'backend/file/index';
+import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 import { GitInfo } from '@openapi-platform/model';
-import { logger } from './logger';
+import { logger } from '@openapi-platform/logger';
 
 // Note: dir = directory
 

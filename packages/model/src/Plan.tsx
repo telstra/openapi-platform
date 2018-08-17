@@ -1,5 +1,5 @@
-import { Id } from 'model/Entity';
-import { GitInfo } from 'model/GitInfo';
+import { Id } from './Id';
+import { GitInfo } from './GitInfo';
 
 /**
  * Represents a plan, used to define how an SDK should be built for a specification.

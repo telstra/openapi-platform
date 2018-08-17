@@ -1,4 +1,4 @@
-import { Id } from 'model/Entity';
+import { Id } from './Id';
 
 /**
  * Represents an SDK that has been built from a plan for a specification.
