@@ -3,7 +3,7 @@ export function connectToDb() {
     define: jest.fn().mockReturnValue({
       sync: jest.fn(),
       // Note: This is obviously wrong, but the only reason it needs to exist is to stop the initDummyData check from crashing
-      count: jest.fn().mockReturnValue(1),
+      count: jest.fn().mockReturnValue(Promise.resolve(1.5)),
     }),
   };
 }
