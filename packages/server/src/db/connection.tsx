@@ -1,5 +1,5 @@
-import { logger } from 'backend/logger';
-import { config } from 'config';
+import { logger } from '@openapi-platform/logger';
+import { config } from '../../config';
 import Sequelize from 'sequelize';
 
 export async function connectToDb() {

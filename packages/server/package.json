@@ -4,5 +4,29 @@
   "main": "./lib/index.js",
   "types": "./src/index.tsx",
   "license": "Apache-2",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "source-map-support": "^0.5.5",
+    "@openapi-platform/model": "1.0.0-alpha.0",
+    "@openapi-platform/logger": "1.0.0-alpha.0",
+    "@openapi-platform/openapi-sdk-gen-client": "1.0.0-alpha.0",
+    "@openapi-platform/git-util": "1.0.0-alpha.0",
+    "@feathersjs/express": "^1.2.2",
+    "@feathersjs/feathers": "^3.1.5",
+    "@feathersjs/socketio": "^3.2.1",
+    "feathers-memory": "^2.1.1",
+    "feathers-sequelize": "^3.1.2",
+    "@types/express": "^4.16.0",
+    "cors": "^2.8.4",
+    "feathers-swagger": "^0.7.1",
+    "sequelize": "^4.37.6",
+    "express": "^4.16.3",
+    "pg": "^7.4.3",
+    "@types/cors": "^2.8.3",
+    "pg-hstore": "^2.3.2",
+    "sqlite3": "^4.0.2",
+    "@feathersjs/errors": "^3.3.0",
+    "@types/sequelize": "^4.27.23",
+    "body-parser": "^1.18.2"
+  }
 }
