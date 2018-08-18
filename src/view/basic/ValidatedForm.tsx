@@ -75,7 +75,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
   private readonly inputValues: Map<I, string> = new Map();
 
   /**
-   * Maps each form input to its current error message. If a form input is not
+   * Maps each form input to its current error message, if it has one.
    */
   @observable
   private readonly inputErrors: Map<I, string> = new Map();
