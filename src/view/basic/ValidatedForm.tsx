@@ -84,7 +84,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
    * Creates the ValidatedForm.
    *
    * @param inputs An object describing the how each input should be validated, and what its initial
-   *               value should be
+   *               value should be.
    * @param inputs.validation A ValidationFunction called each time the input needs to be validated.
    * @param inputs.initialValue The initial value of the input.
    */
@@ -152,7 +152,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
     if (this.getInputError(input) !== null) {
       const result = this.validateInput(input);
       if (result.valid) {
-        // An error message was displayed, but now the used has fixed the reason
+        // An error message was displayed, but now the user has fixed the reason
         this.clearInputError(input);
       } else if (result.reason !== this.getInputError(input)) {
         // The displayed error message has now changed to a different one
