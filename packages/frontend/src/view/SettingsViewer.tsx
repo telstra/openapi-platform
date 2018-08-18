@@ -11,9 +11,9 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import { observer } from 'mobx-react';
 import React, { ComponentType } from 'react';
 
+import { state } from '../state/SettingsState';
 import { ContentContainer } from './basic/ContentContainer';
 import { SimpleToolbar } from './basic/SimpleToolbar';
-import { state } from '../state/SettingsState';
 import { createStyled } from './createStyled';
 
 const Styled = createStyled(theme => ({

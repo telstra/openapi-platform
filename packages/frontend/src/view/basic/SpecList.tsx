@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 
 import { Observer } from 'mobx-react';
 
-import { SpecItem } from './SpecItem';
 import { HasId, Spec } from '@openapi-platform/model';
 import { state } from '../../state/PlanState';
 import { createStyled } from '../createStyled';
+import { SpecItem } from './SpecItem';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
   expandedSpecId: number | null;

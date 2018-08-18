@@ -13,7 +13,6 @@ const filter = require('gulp-filter');
 
 const webpack = require('webpack-stream');
 
-
 const through = require('through2');
 
 const packagesDirName = 'packages';
@@ -40,7 +39,10 @@ function rename(fn) {
 }
 
 function globFromPackagesDirName(dirName) {
-  return [`./${dirName}/*/src/**/*.{js,jsx,ts,tsx}`, `!./${dirName}/*/src/**/__mocks__/*.{js,ts,tsx,jsx}`];
+  return [
+    `./${dirName}/*/src/**/*.{js,jsx,ts,tsx}`,
+    `!./${dirName}/*/src/**/__mocks__/*.{js,ts,tsx,jsx}`,
+  ];
 }
 
 function compilationLogger(rollup) {
@@ -53,11 +55,11 @@ function compilationLogger(rollup) {
 const base = join(__dirname, packagesDirName);
 function buildBabel(exclude) {
   let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base });
-  
+
   if (exclude) {
     // We need to exclude things that get bundled
     const filters = exclude.map(p => `!**/${p}/**`);
-    filters.unshift("**");
+    filters.unshift('**');
     stream = stream.pipe(filter(filters));
   }
 
@@ -83,7 +85,7 @@ gulp.task('transpile', function transpile() {
 });
 
 gulp.task('bundle', function bundle() {
-  return buildBundle('frontend');  
+  return buildBundle('frontend');
 });
 
 gulp.task('build', gulp.series('transpile', 'bundle'));

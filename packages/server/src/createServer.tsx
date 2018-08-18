@@ -6,18 +6,18 @@ import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
-import { logger } from '@openapi-platform/logger';
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
-import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
+import { logger } from '@openapi-platform/logger';
 import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
+import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 
 import { connectToDb } from './db/connection';
 import { createPlanModel, createPlanService } from './db/plan-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 
-import { initDummyData } from './initDummyData';
 import { config } from '../config';
+import { initDummyData } from './initDummyData';
 
 export async function createServer() {
   const dbConnection: Sequelize.Sequelize = await connectToDb();

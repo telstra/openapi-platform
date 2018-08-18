@@ -3,10 +3,10 @@ import AddIcon from '@material-ui/icons/Add';
 import { observer } from 'mobx-react';
 import React, { SFC } from 'react';
 
+import { state } from '../state/ProfileState';
 import { ContentContainer } from './basic/ContentContainer';
 import { ProfileInformation } from './basic/ProfileInformation';
 import { SimpleToolbar } from './basic/SimpleToolbar';
-import { state } from '../state/ProfileState';
 
 const onSearch = event => {};
 

@@ -1,5 +1,5 @@
-import { observable } from 'mobx';
 import { HasId, Profile } from '@openapi-platform/model';
+import { observable } from 'mobx';
 
 export interface ProfileState {
   me: HasId<Profile>;

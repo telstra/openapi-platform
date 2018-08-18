@@ -66,7 +66,10 @@ module.exports = api => {
       aren't run through Webpack.
     */
     config.overrides.push({
-      test: ['.storybook', 'test/snapshots/storyshots.test.tsx'],
+      test: [
+        './packages/frontend/.storybook',
+        './packages/frontend/test/snapshots/storyshots.test.tsx',
+      ],
       ...storyshotsSettings,
     });
   }

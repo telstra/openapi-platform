@@ -16,9 +16,9 @@ import {
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
-import { PlanItem } from './PlanItem';
 import { HasId, Plan, Spec } from '@openapi-platform/model';
 import { createStyled } from '../createStyled';
+import { PlanItem } from './PlanItem';
 
 const Styled: any = createStyled(theme => ({
   bordered: {

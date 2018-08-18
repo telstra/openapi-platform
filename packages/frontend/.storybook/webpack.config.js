@@ -1,8 +1,6 @@
-const createOurConfigs = require('../webpack.config');
+const createWebpackConfig = require('../webpack.config');
 module.exports = (storybookConfig, configType) => {
-  const frontendConfig = createOurConfigs([], 'development').filter(
-    config => config.name === 'Frontend',
-  )[0];
+  const frontendConfig = createWebpackConfig([], 'development');
   storybookConfig.module = frontendConfig.module;
   storybookConfig.resolve = frontendConfig.resolve;
   return storybookConfig;

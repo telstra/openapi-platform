@@ -11,22 +11,23 @@
   "scripts": {
     "format": "run-s format:*",
     "format:prettier": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
-    "format:lint": "yarn checker:lint --force --fix",
+    "format:lint": "yarn checker:lint --fix",
     "build": "gulp build",
     "watch": "gulp watch",
+    "transpile": "gulp tranpsile",
     "watch:checker": "nodemon --quiet -e tsx --watch ./packages --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
     "checker:lint": "tslint -p .",
-    "test": "yarn build && yarn test:jest",
+    "test": "yarn transpile && yarn test:jest",
     "test:jest": "jest",
     "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
-    "ci-test": "yarn checker:types && yarn test:no-system",
+    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system",
     "storybook": "start-storybook -p 9001"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn checker:lint && yarn test"
+      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn test:no-system"
     }
   },
   "lint-staged": {

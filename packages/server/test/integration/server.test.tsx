@@ -1,6 +1,6 @@
-import { createServer } from '../../src/createServer';
 import { Plan, BuildStatus } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
+import { createServer } from '../../src/createServer';
 
 jest.mock('@openapi-platform/logger');
 jest.mock('sequelize');

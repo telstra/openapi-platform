@@ -5,10 +5,10 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
-import { FloatingModal } from './basic/FloatingModal';
-import { PlanModal } from './basic/PlanModal';
 import { state as planState, AddedPlan } from '../state/PlanState';
 import { state as specState } from '../state/SpecState';
+import { FloatingModal } from './basic/FloatingModal';
+import { PlanModal } from './basic/PlanModal';
 import { createStyled } from './createStyled';
 
 const Styled: any = createStyled(theme => ({

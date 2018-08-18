@@ -1,7 +1,7 @@
-import { client } from '@openapi-platform/server-client';
-import { observable, computed, action } from 'mobx';
 import { HasId } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
+import { client } from '@openapi-platform/server-client';
+import { observable, computed, action } from 'mobx';
 
 export interface SpecState {
   specs: Map<number, HasId<Spec>>;

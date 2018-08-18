@@ -1,7 +1,7 @@
 import { observable, computed, action } from 'mobx';
 
-import { client } from '@openapi-platform/server-client';
 import { HasId, Id, Plan } from '@openapi-platform/model';
+import { client } from '@openapi-platform/server-client';
 
 class PlanState {
   @observable

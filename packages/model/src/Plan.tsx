@@ -1,5 +1,5 @@
-import { Id } from './Id';
 import { GitInfo } from './GitInfo';
+import { Id } from './Id';
 
 /**
  * Represents a plan, used to define how an SDK should be built for a specification.

@@ -45,7 +45,7 @@ module.exports = {
       {
         test: /\.(svg|tff|woff2?)$/,
         loader: 'file-loader',
-      },      
+      },
     ],
   },
   devtool: 'cheap-module-source-map',

@@ -1,5 +1,5 @@
-import { logger, overrideConsoleLogger } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
+import { logger, overrideConsoleLogger } from '../../src';
 const mockLogger: any = mockFunctions({ ...logger });
 
 /**
@@ -8,10 +8,8 @@ const mockLogger: any = mockFunctions({ ...logger });
 function testLoggerCallCounts(callCounts) {
   Object.keys(mockLogger.levels).forEach(level => {
     const callCount = callCounts[level] ? callCounts[level] : 0;
-    expect(mockLogger[level].mock.calls.length).toBe(
-      callCount,
-    );  
-  })
+    expect(mockLogger[level].mock.calls.length).toBe(callCount);
+  });
 }
 
 /**
