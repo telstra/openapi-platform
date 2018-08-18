@@ -3,6 +3,7 @@
  */
 const colors = require('colors');
 const { join, sep, resolve } = require('path');
+const { spawn } = require('child_process');
 
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
@@ -14,11 +15,15 @@ const filter = require('gulp-filter');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
+const historyApiFallback  = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
 
 const through = require('through2');
 
 const packagesDirName = 'packages';
+const frontendPackageName = 'frontend';
+
+let backendNode = undefined;
 
 function swapSrcWith(srcPath, newDirName) {
   const parts = srcPath.split(sep);
@@ -51,9 +56,9 @@ function compilationLogger(rollup) {
   });
 }
 
-const base = join(__dirname, packagesDirName);
+const packagesDir = join(__dirname, packagesDirName);
 function buildBabel(exclude) {
-  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base });
+  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
 
   if (exclude) {
     // We need to exclude things that get bundled
@@ -63,13 +68,13 @@ function buildBabel(exclude) {
   }
 
   return stream
-    .pipe(newer({ dest: base, map: swapSrcWithLib }))
+    .pipe(newer({ dest: packagesDir, map: swapSrcWithLib }))
     .pipe(compilationLogger())
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(rename(file => resolve(file.base, swapSrcWithLib(file.relative))))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(base));
+    .pipe(gulp.dest(packagesDir));
 }
 
 function createWebpackStream(packageDir) {
@@ -78,14 +83,12 @@ function createWebpackStream(packageDir) {
 }
 
 function buildBundle(packageName) {
-  const packageDir = join(base, packageName);
+  const packageDir = join(packagesDir, packageName);
   const stream = gulp.src(packageDir, 'src', 'index.tsx');
   return stream
     .pipe(createWebpackStream(packageDir))
     .pipe(gulp.dest(join(packageDir, 'dist')));
 }
-
-const frontendPackageName = 'frontend';
 
 gulp.task('transpile', function transpile() {
   return buildBabel([frontendPackageName]);
@@ -103,27 +106,64 @@ gulp.task(
 
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
-gulp.task('serve-frontend', function frontend() {
+gulp.task('serve:frontend', function serveFrontend() {
   browserSync.init({
     server: {
       baseDir: './packages/frontend/dist',
       ws: true,
+      // We need this so that routes work properly
+      middleware: [historyApiFallback()],
     },
   });
 });
 
+gulp.task('restart:backend', function startBackend() {
+  if (backendNode) {
+    backendNode.kill();
+  }
+  const backendEnv = Object.create(process.env);
+  backendEnv.NODE_ENV = 'development';
+  backendNode = spawn(
+    'node', 
+    ['./packages/server/lib/index.js'], { 
+      stdio: 'inherit', 
+      env: backendEnv
+    }
+  );
+  
+  backendNode.on('close', function (code) {
+    if (code === 8) {
+      console.log('Error detected, waiting for changes...'.red);
+    }
+  });
+});
+
+/**
+ * Watches for anything that intigates a build and reloads the backend and frontend
+ */
 gulp.task(
   'watch',
-  gulp.parallel(
-    'serve-frontend',
-    gulp.series('build', function watch() {
-      return gulpWatch(
-        globFromPackagesDirName(packagesDirName),
-        { debounceDelay: 200 },
-        gulp.task('build'),
-      );
-    }),
+  gulp.series(
+    'build',
+    'restart:backend',
+    gulp.parallel(
+      'serve:frontend',
+      function watch() {
+        return gulpWatch(
+          globFromPackagesDirName(packagesDirName),
+          { debounceDelay: 200 },
+          gulp.series('build', 'restart:backend'),
+        );
+      }
+    ),
   ),
 );
 
 gulp.task('default', gulp.series('build'));
+
+process.on('exit', () => {
+  if(backendNode) {
+    // Kill off the backend node instance 
+    backendNode.kill();
+  }
+})

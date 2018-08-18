@@ -5,9 +5,9 @@ import {
   overrideConsoleLogger,
   overrideUtilInspectStyle,
 } from '@openapi-platform/logger';
-import { config } from '../config';
+import { config } from './config';
 import { createServer } from './createServer';
-
+console.log('lel!');
 async function run(port: number) {
   // Overriding logger used in non testing environments, logging in tests just go to stdout.
   overrideConsoleLogger(logger);

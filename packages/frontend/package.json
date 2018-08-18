@@ -1,7 +1,7 @@
 {
   "name": "@openapi-platform/frontend",
   "version": "1.0.0-alpha.0",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,

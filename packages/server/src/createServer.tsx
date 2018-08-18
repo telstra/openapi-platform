@@ -16,7 +16,7 @@ import { createPlanModel, createPlanService } from './db/plan-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 
-import { config } from '../config';
+import { config } from './config';
 import { initDummyData } from './initDummyData';
 
 export async function createServer() {
