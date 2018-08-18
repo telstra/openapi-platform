@@ -11,9 +11,10 @@ const newer = require('gulp-newer');
 const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 
+const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
-const browserSync = require('browser-sync');
+const browserSync = require('browser-sync').create();
 
 const through = require('through2');
 
@@ -73,7 +74,7 @@ function buildBabel(exclude) {
 
 function createWebpackStream(packageDir) {
   const webpackConfig = require(join(packageDir, 'webpack.config'));
-  return webpackStream(webpackConfig);
+  return webpackStream(webpackConfig, webpack);
 }
 
 function buildBundle(packageName) {
@@ -90,13 +91,19 @@ gulp.task('transpile', function transpile() {
   return buildBabel([frontendPackageName]);
 });
 
-gulp.task('bundle', function bundle() {
-  return buildBundle(frontendPackageName);
-});
+gulp.task(
+  'bundle',
+  function bundle() {
+    return buildBundle(frontendPackageName);
+  },
+  function reloadBrowser() {
+    browserSync.reload();
+  },
+);
 
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
-gulp.task('watch:frontend', function frontend() {
+gulp.task('serve-frontend', function frontend() {
   browserSync.init({
     server: {
       baseDir: './packages/frontend/dist',
@@ -107,13 +114,16 @@ gulp.task('watch:frontend', function frontend() {
 
 gulp.task(
   'watch',
-  gulp.series('build', function watch() {
-    return gulpWatch(
-      globFromPackagesDirName(packagesDirName),
-      { debounceDelay: 200 },
-      gulp.task('build'),
-    );
-  }),
+  gulp.parallel(
+    'serve-frontend',
+    gulp.series('build', function watch() {
+      return gulpWatch(
+        globFromPackagesDirName(packagesDirName),
+        { debounceDelay: 200 },
+        gulp.task('build'),
+      );
+    }),
+  ),
 );
 
 gulp.task('default', gulp.series('build'));

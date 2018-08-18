@@ -20,7 +20,6 @@ jss
     } as any,
   })
   .attach();
-
 hydrate(
   <ThemeProvider>
     <BrowserRouter>
