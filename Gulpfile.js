@@ -40,7 +40,7 @@ function rename(fn) {
 }
 
 function globFromPackagesDirName(dirName) {
-  return `./${dirName}/*/src/!(__mocks__)**/*.{js,jsx,ts,tsx}`;
+  return [`./${dirName}/*/src/**/*.{js,jsx,ts,tsx}`, `!./${dirName}/*/src/**/__mocks__/*.{js,ts,tsx,jsx}`];
 }
 
 function compilationLogger(rollup) {
@@ -92,7 +92,7 @@ gulp.task(
   'watch',
   gulp.series('build', function watch() {
     gulpWatch(
-      [globFromPackagesDirName(packagesDirName)],
+      globFromPackagesDirName(packagesDirName),
       { debounceDelay: 200 },
       gulp.task('build'),
     );
