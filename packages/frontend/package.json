@@ -5,6 +5,9 @@
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,
+  "scripts": {
+    "storybook": "start-storybook -p 9001"
+  },
   "devDependencies": {
     "@storybook/addon-a11y": "^4.0.0-alpha.14",
     "@storybook/addon-actions": "^4.0.0-alpha.14",

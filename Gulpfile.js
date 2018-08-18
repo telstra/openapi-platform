@@ -15,7 +15,7 @@ const filter = require('gulp-filter');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
-const historyApiFallback  = require('connect-history-api-fallback');
+const historyApiFallback = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
 
 const through = require('through2');
@@ -123,15 +123,12 @@ gulp.task('restart:backend', function startBackend() {
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn(
-    'node', 
-    ['./packages/server/lib/index.js'], { 
-      stdio: 'inherit', 
-      env: backendEnv
-    }
-  );
-  
-  backendNode.on('close', function (code) {
+  backendNode = spawn('node', ['./packages/server/lib/index.js'], {
+    stdio: 'inherit',
+    env: backendEnv,
+  });
+
+  backendNode.on('close', function(code) {
     if (code === 8) {
       console.log('Error detected, waiting for changes...'.red);
     }
@@ -146,24 +143,21 @@ gulp.task(
   gulp.series(
     'build',
     'restart:backend',
-    gulp.parallel(
-      'serve:frontend',
-      function watch() {
-        return gulpWatch(
-          globFromPackagesDirName(packagesDirName),
-          { debounceDelay: 200 },
-          gulp.series('build', 'restart:backend'),
-        );
-      }
-    ),
+    gulp.parallel('serve:frontend', function watch() {
+      return gulpWatch(
+        globFromPackagesDirName(packagesDirName),
+        { debounceDelay: 200 },
+        gulp.series('build', 'restart:backend'),
+      );
+    }),
   ),
 );
 
 gulp.task('default', gulp.series('build'));
 
 process.on('exit', () => {
-  if(backendNode) {
-    // Kill off the backend node instance 
+  if (backendNode) {
+    // Kill off the backend node instance
     backendNode.kill();
   }
-})
+});

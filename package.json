@@ -23,8 +23,7 @@
     "test": "yarn transpile && yarn test:jest",
     "test:jest": "jest",
     "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
-    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system",
-    "storybook": "start-storybook -p 9001"
+    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system"
   },
   "husky": {
     "hooks": {
