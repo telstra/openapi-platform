@@ -53,7 +53,7 @@ module.exports = api => {
     ...defaultSettings,
     overrides: [
       {
-        test: 'src/frontend',
+        test: './packages/frontend/src',
         ...frontendSettings,
       },
     ],

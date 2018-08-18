@@ -93,7 +93,7 @@ gulp.task('build', gulp.series('transpile', 'bundle'));
 gulp.task(
   'watch',
   gulp.series('build', function watch() {
-    gulpWatch(
+    return gulpWatch(
       globFromPackagesDirName(packagesDirName),
       { debounceDelay: 200 },
       gulp.task('build'),

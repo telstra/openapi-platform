@@ -14,7 +14,7 @@
     "format:lint": "yarn checker:lint --fix",
     "build": "gulp build",
     "watch": "gulp watch",
-    "transpile": "gulp tranpsile",
+    "transpile": "gulp transpile",
     "watch:checker": "nodemon --quiet -e tsx --watch ./packages --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",

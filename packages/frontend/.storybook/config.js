@@ -6,6 +6,10 @@ import { withViewport } from '@storybook/addon-viewport';
 import { setOptions } from '@storybook/addon-options';
 import { withBackgrounds } from '@storybook/addon-backgrounds';
 import { addDecorator } from '@storybook/react';
+import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
+
+registerRequireContextHook();
+
 addDecorator(withKnobs);
 addDecorator(checkA11y);
 addDecorator(withViewport('responsive'));
