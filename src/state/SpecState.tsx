@@ -1,5 +1,5 @@
 import { client } from 'client/BackendClient';
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, runInAction } from 'mobx';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
 
@@ -37,5 +37,7 @@ client
   .service('specifications')
   .find()
   .then(json => {
-    json.map(spec => state.specs.set(spec.id, spec));
+    runInAction(() => {
+      json.map(spec => state.specs.set(spec.id, spec));
+    });
   });

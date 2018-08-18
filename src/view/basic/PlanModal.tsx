@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -13,10 +13,15 @@ import {
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
 import { ModalProps } from '@material-ui/core/Modal';
-import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
+import {
+  ValidatedForm,
+  inputValid,
+  inputInvalid,
+  alwaysValid,
+} from 'basic/ValidatedForm';
 import { PLAN_TARGETS } from 'model/Plan';
 import { Category } from 'model/Storybook';
 import { AddedPlan } from 'state/PlanState';
@@ -45,17 +50,6 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface FormText {
-  target: string;
-  version: string;
-  options: string;
-}
-
-export interface FormError {
-  target?: string;
-  options?: string;
-}
-
 export type OnCloseModal = () => void;
 export type OnSubmitPlan = (plan: AddedPlan) => void;
 export interface PlanModalProps {
@@ -67,137 +61,66 @@ export interface PlanModalProps {
   readonly modalProps?: ModalProps;
 }
 
+type PlanModalInput = 'target' | 'version' | 'options';
+
 /**
  * A modal window that allows the user to add a SDK generation Plan to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class PlanModal extends Component<PlanModalProps> {
-  /**
-   * Currently entered form data
-   */
-  @observable
-  private readonly formText: FormText = {
-    target: '',
-    version: '',
-    options: '{}',
-  };
-
-  /**
-   * Current error messages (if any) for each form field
-   */
-  @observable
-  private readonly error: FormError = {
-    target: undefined,
-    options: undefined,
-  };
-
-  /**
-   * @returns An error message if the target is invalid in some way
-   */
-  @computed
-  get targetError(): string | undefined {
-    const title = this.formText.target;
-    return !title ? 'Error: Missing target' : undefined;
-  }
-
-  /**
-   * @returns An error message if the options are invalid in some way
-   */
-  @computed
-  get optionsError(): string | undefined {
-    const optionsStr = this.formText.options;
-    try {
-      JSON.parse(optionsStr);
-      return undefined;
-    } catch (e) {
-      return 'Error: invalid JSON';
-    }
-  }
-
-  /**
-   * Checks whether the plan's target input is valid
-   * @param showErrorMesssage If false, clear the error message
-   */
-  @action
-  private validateTarget(showErrorMesssage: boolean = true): boolean {
-    let valid: boolean;
-    if (this.targetError) {
-      if (showErrorMesssage) {
-        this.error.target = this.targetError;
-      }
-      valid = false;
-    } else {
-      this.error.target = undefined;
-      valid = true;
-    }
-    return valid;
-  }
-
-  /**
-   * Checks whether the plan's options input is valid
-   * @param showErrorMesssage If false, clear the error message
-   */
-  @action
-  private validateOptions(showErrorMesssage: boolean = true): boolean {
-    let valid: boolean;
-    if (this.optionsError) {
-      if (showErrorMesssage) {
-        this.error.options = this.optionsError;
-      }
-      valid = false;
-    } else {
-      this.error.options = undefined;
-      valid = true;
-    }
-    return valid;
-  }
-
-  /**
-   * @param showErrorMessages If false, only clears validation errors rather than adding them.
-   * @returns true if the input was valid, false otherwise.
-   */
-  @action
-  private validateAllInputs(showErrorMessages: boolean = true) {
-    const targetValid = this.validateTarget(showErrorMessages);
-    const optionsValid = this.validateOptions(showErrorMessages);
-    return targetValid && optionsValid;
+export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
+  constructor(props: Readonly<PlanModalProps>) {
+    super(
+      {
+        target: {
+          validation: target =>
+            !PLAN_TARGETS.includes(target)
+              ? inputInvalid('Error: Missing target')
+              : inputValid(),
+          initialValue: '',
+        },
+        version: {
+          validation: alwaysValid,
+          initialValue: '',
+        },
+        options: {
+          validation: options => {
+            try {
+              JSON.parse(options);
+              return inputValid();
+            } catch (e) {
+              return inputInvalid('Error: invalid JSON');
+            }
+          },
+          initialValue: '{}',
+        },
+      },
+      props,
+    );
   }
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
-  @action
   private onSubmitPlan() {
     // Validate input
-    if (!this.validateAllInputs()) {
+    if (!this.inputsValid) {
+      this.updateAllInputErrors();
       return;
     }
 
     // Send the request to the backend.
-    const target = this.formText.target;
-    const version = this.formText.version;
-    const options = JSON.parse(this.formText.options);
+    const target = this.getInputValue('target');
+    const version = this.getInputValue('version');
+    const options = JSON.parse(this.getInputValue('options'));
     // TODO: submittedPlan.pushPath = "";
     this.props.onSubmitPlan({ target, version, options });
   }
 
-  private onTargetChange = event => {
-    this.formText.target = event.target.value;
-    this.validateTarget(false);
-  };
-
-  private forceValidateTarget = () => this.validateTarget();
-
-  private onVersionChange = event => {
-    this.formText.version = event.target.value;
-  };
-
-  private onOptionsChange = event => {
-    this.formText.options = event.target.value;
-    this.validateOptions(false);
-  };
-
-  private forceValidateOptions = () => this.validateOptions();
+  private onInputChange = event =>
+    this.setInputValue(event.target.id as PlanModalInput, event.target.value);
+  private onInputBlur = event => this.updateInputError(event.target.id as PlanModalInput);
+  private onTargetChange = event => this.setInputValue('target', event.target.value);
+  private onTargetBlur = () => this.updateInputError('target');
 
   private onAddButtonClick = event => {
     event.preventDefault();
@@ -229,12 +152,15 @@ export class PlanModal extends Component<PlanModalProps> {
                     <Typography variant="title" className={classes.title}>
                       Add SDK Generation Plan
                     </Typography>
-                    <FormControl error={this.error.target !== undefined} margin="dense">
+                    <FormControl
+                      error={this.getInputError('target') !== null}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="target">Target</InputLabel>
                       <Select
                         onChange={this.onTargetChange}
-                        onBlur={this.forceValidateTarget}
-                        value={this.formText.target}
+                        onBlur={this.onTargetBlur}
+                        value={this.getInputValue('target')}
                         inputProps={{
                           id: 'target',
                         }}
@@ -245,31 +171,40 @@ export class PlanModal extends Component<PlanModalProps> {
                           </MenuItem>
                         ))}
                       </Select>
-                      <FormHelperText>{this.error.target}</FormHelperText>
+                      <FormHelperText>{this.getInputError('target')}</FormHelperText>
                     </FormControl>
-                    <FormControl margin="dense">
+                    <FormControl
+                      error={this.getInputError('version') !== null}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="version">Version</InputLabel>
                       <Input
                         id="version"
-                        onChange={this.onVersionChange}
-                        value={this.formText.version}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.getInputValue('version')}
                       />
-                      <FormHelperText>E.g. 1.2.34</FormHelperText>
+                      <FormHelperText>
+                        {this.getInputError('version') || 'E.g. 1.2.34'}
+                      </FormHelperText>
                     </FormControl>
-                    <FormControl error={this.error.options !== undefined} margin="dense">
+                    <FormControl
+                      error={this.getInputError('options') !== null}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="options">Options</InputLabel>
                       <Input
                         id="options"
                         className={classes.optionsText}
-                        onChange={this.onOptionsChange}
-                        onBlur={this.forceValidateOptions}
-                        value={this.formText.options}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.getInputValue('options')}
                         multiline
                         rows={5}
                         rowsMax={10}
                       />
                       <FormHelperText>
-                        {this.error.options ||
+                        {this.getInputError('options') ||
                           'Target-specific options to pass to Swagger Codegen in JSON'}
                       </FormHelperText>
                     </FormControl>

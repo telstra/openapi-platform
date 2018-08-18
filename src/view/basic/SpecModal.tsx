@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { MouseEvent } from 'react';
 
 import {
   Button,
@@ -11,10 +11,15 @@ import {
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
 import { ModalProps } from '@material-ui/core/Modal';
-import { observable, action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
+import {
+  ValidatedForm,
+  inputValid,
+  inputInvalid,
+  alwaysValid,
+} from 'basic/ValidatedForm';
 import { Category } from 'model/Storybook';
 import { AddedSpec } from 'state/SpecState';
 import { isWebUri } from 'valid-url';
@@ -40,17 +45,6 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface FormText {
-  title: string;
-  url: string;
-  description: string;
-}
-
-export interface FormError {
-  title?: string;
-  url?: string;
-}
-
 export type OnCloseModal = () => void;
 export type OnSubmitSpec = (spec: AddedSpec) => void;
 export interface SpecModalProps {
@@ -62,137 +56,63 @@ export interface SpecModalProps {
   readonly modalProps?: ModalProps;
 }
 
+type SpecModalInput = 'title' | 'url' | 'description';
+
 /**
  * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecModal extends Component<SpecModalProps> {
-  /**
-   * Currently entered form data
-   */
-  @observable
-  private readonly formText: FormText = {
-    title: '',
-    url: '',
-    description: '',
-  };
-
-  /**
-   * Current error messages (if any) for each form field
-   */
-  @observable
-  private readonly error: FormError = {
-    title: undefined,
-    url: undefined,
-  };
-
-  /**
-   * @returns An error message if the title is invalid in some way
-   */
-  @computed
-  get titleError(): string | undefined {
-    const title = this.formText.title;
-    return !title ? 'Error: Missing title' : undefined;
+export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
+  constructor(props: Readonly<SpecModalProps>) {
+    super(
+      {
+        title: {
+          validation: title =>
+            !title ? inputInvalid('Error: Missing title') : inputValid(),
+          initialValue: '',
+        },
+        url: {
+          validation: url => {
+            if (!url) {
+              return inputInvalid('Error: URL cannot be empty');
+            } else if (!isWebUri(url)) {
+              return inputInvalid('Error: Invalid URL');
+            }
+            return inputValid();
+          },
+          initialValue: '',
+        },
+        description: {
+          validation: alwaysValid,
+          initialValue: '',
+        },
+      },
+      props,
+    );
   }
-
-  /**
-   * @returns An error message if the url is invalid in some way
-   */
-  @computed
-  get urlError(): string | undefined {
-    const url = this.formText.url;
-    if (!url) {
-      return 'Error: URL cannot be empty';
-    } else if (!isWebUri(url)) {
-      return 'Error: Invalid URL';
-    } else {
-      return undefined;
-    }
-  }
-
-  /**
-   * Checks whether the Spec's URL input is valid
-   * @param showErrorMesssage If false, clear the error message
-   */
-  @action
-  private validateUrl = (showErrorMesssage: boolean = true): boolean => {
-    let valid: boolean;
-    if (this.urlError) {
-      if (showErrorMesssage) {
-        this.error.url = this.urlError;
-      }
-      valid = false;
-    } else {
-      this.error.url = undefined;
-      valid = true;
-    }
-    return valid;
-  };
-
-  /**
-   * Checks whether the Spec's title input is valid
-   * @param showErrorMesssage If false, clear the error message
-   */
-  @action
-  private validateTitle = (showErrorMesssage: boolean = true): boolean => {
-    let valid: boolean;
-    if (this.titleError) {
-      if (showErrorMesssage) {
-        this.error.title = this.titleError;
-      }
-      valid = false;
-    } else {
-      this.error.title = undefined;
-      valid = true;
-    }
-    return valid;
-  };
-
-  /**
-   * @param showErrorMessages If false, only clears validation errors rather than adding them.
-   * @returns true if the input was valid, false otherwise.
-   */
-  @action
-  private validateAllInputs = (showErrorMessages: boolean = true) => {
-    const titleValid = this.validateTitle(showErrorMessages);
-    const urlValid = this.validateUrl(showErrorMessages);
-    return titleValid && urlValid;
-  };
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
-  @action
   private onSubmitSpec = () => {
     // Validate input
-    if (!this.validateAllInputs()) {
+    if (!this.inputsValid) {
+      this.updateAllInputErrors();
       return;
     }
 
     // Send the request to the backend
-    const title = this.formText.title;
-    const path = isWebUri(this.formText.url);
-    const description = this.formText.description;
+    const title = this.getInputValue('title');
+    const path = isWebUri(this.getInputValue('url'));
+    const description = this.getInputValue('description');
     this.props.onSubmitSpec({ title, path, description });
   };
 
-  private onTitleChange = event => {
-    this.formText.title = event.target.value;
-    this.validateTitle(false);
-  };
+  private onInputChange = event =>
+    this.setInputValue(event.target.id as SpecModalInput, event.target.value);
+  private onInputBlur = event => this.updateInputError(event.target.id as SpecModalInput);
 
-  private forceValidateTitle = () => this.validateTitle();
-
-  private onUrlChange = event => {
-    this.formText.url = event.target.value;
-    this.validateUrl(false);
-  };
-
-  private forceValidateUrl = () => this.validateUrl();
-
-  private onFormTextChange = event => (this.formText.description = event.target.value);
-
-  private onAddButtonClick = event => {
+  private onAddButtonClick = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
     this.onSubmitSpec();
   };
@@ -223,40 +143,51 @@ export class SpecModal extends Component<SpecModalProps> {
                     <Typography variant="title" className={classes.title}>
                       Add Swagger Spec
                     </Typography>
-                    <FormControl error={this.error.title !== undefined} margin="normal">
+                    <FormControl
+                      error={this.getInputError('title') !== null}
+                      margin="normal"
+                    >
                       <InputLabel htmlFor="title">Title</InputLabel>
                       <Input
                         id="title"
-                        onChange={this.onTitleChange}
-                        onBlur={this.forceValidateTitle}
-                        value={this.formText.title}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.getInputValue('title')}
                       />
                       <FormHelperText>
-                        {this.error.title || 'E.g. Petstore'}
+                        {this.getInputError('title') || 'E.g. Petstore'}
                       </FormHelperText>
                     </FormControl>
-                    <FormControl error={this.error.url !== undefined} margin="dense">
+                    <FormControl
+                      error={this.getInputError('url') !== null}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="url">URL</InputLabel>
                       <Input
                         id="url"
-                        onChange={this.onUrlChange}
-                        onBlur={this.forceValidateUrl}
-                        value={this.formText.url}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.getInputValue('url')}
                       />
                       <FormHelperText>
-                        {this.error.url ||
+                        {this.getInputError('url') ||
                           'E.g. http://petstore.swagger.io/v2/swagger.json'}
                       </FormHelperText>
                     </FormControl>
-                    <FormControl margin="dense">
+                    <FormControl
+                      error={this.getInputError('description') !== null}
+                      margin="dense"
+                    >
                       <InputLabel htmlFor="description">Description</InputLabel>
                       <Input
                         id="description"
-                        onChange={this.onFormTextChange}
-                        value={this.formText.description}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.getInputValue('description')}
                         multiline
                         rowsMax={3}
                       />
+                      <FormHelperText>{this.getInputError('description')}</FormHelperText>
                     </FormControl>
                   </div>
 
