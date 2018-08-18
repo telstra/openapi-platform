@@ -1,20 +1,20 @@
-import { createServer } from 'backend/createServer';
+import { createServer } from '../../src/createServer';
 import { Plan, BuildStatus } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
 
-jest.mock('backend/logger');
+jest.mock('@openapi-platform/logger');
 jest.mock('sequelize');
 jest.mock('feathers-sequelize');
-jest.mock('backend/db/connection');
+jest.mock('../src/db/connection');
 
-jest.mock('client/sdkGeneration');
+jest.mock('@openapi-platform/swagger-sdk-gen-client');
 /*
   Have to use require syntax as es6 imports currently makes TypeScript 
   complain about missing mockImplementation, etc.
   TODO: Might be fixed in TypeScript 3? Go check
 */
 // tslint:disable:no-var-requires
-const sdkGeneration: any = require('client/sdkGeneration');
+const sdkGeneration: any = require('@openapi-platform/swagger-sdk-gen-client');
 
 /*
  * Test services are registered and any hooks.

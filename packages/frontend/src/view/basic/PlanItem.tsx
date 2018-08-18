@@ -5,8 +5,8 @@ import * as Icons from '@material-ui/icons';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
-import { BuildStatusChip } from './basic/BuildStatusChip';
-import { client } from 'client/BackendClient';
+import { BuildStatusChip } from './BuildStatusChip';
+import { client } from '@openapi-platform/server-client';
 import { HasId } from '@openapi-platform/model';
 import { Plan, BuildStatus } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';

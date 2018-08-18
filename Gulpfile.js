@@ -9,15 +9,27 @@ const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const newer = require('gulp-newer');
 const gulpWatch = require('gulp-watch');
+const filter = require('gulp-filter');
+
+const webpack = require('webpack-stream');
+
 
 const through = require('through2');
 
 const packagesDirName = 'packages';
 
-function swapSrcWithLib(srcPath) {
+function swapSrcWith(srcPath, newDirName) {
   const parts = srcPath.split(sep);
-  parts[1] = 'lib';
+  parts[1] = newDirName;
   return parts.join(sep);
+}
+
+function swapSrcWithLib(srcPath) {
+  return swapSrcWith(srcPath, 'lib');
+}
+
+function swapSrcWithDist(srcPath) {
+  return swapSrcWith(srcPath, 'dist');
 }
 
 function rename(fn) {
@@ -38,9 +50,17 @@ function compilationLogger(rollup) {
   });
 }
 
-function buildBabel() {
-  const base = join(__dirname, packagesDirName);
-  const stream = gulp.src(globFromPackagesDirName(packagesDirName), { base });
+const base = join(__dirname, packagesDirName);
+function buildBabel(exclude) {
+  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base });
+  
+  if (exclude) {
+    // We need to exclude things that get bundled
+    const filters = exclude.map(p => `!**/${p}/**`);
+    filters.unshift("**");
+    stream = stream.pipe(filter(filters));
+  }
+
   return stream
     .pipe(newer({ dest: base, map: swapSrcWithLib }))
     .pipe(compilationLogger())
@@ -51,9 +71,22 @@ function buildBabel() {
     .pipe(gulp.dest(base));
 }
 
-gulp.task('build', () => {
-  return buildBabel();
+function buildBundle(packageName) {
+  const stream = gulp.src(join(base, packageName, 'src', 'index.tsx'));
+  return stream
+    .pipe(webpack(require(join(base, packageName, 'webpack.config'))))
+    .pipe(gulp.dest(join(base, packageName, 'dist')));
+}
+
+gulp.task('transpile', function transpile() {
+  return buildBabel(['frontend']);
 });
+
+gulp.task('bundle', function bundle() {
+  return buildBundle('frontend');  
+});
+
+gulp.task('build', gulp.series('transpile', 'bundle'));
 
 gulp.task(
   'watch',

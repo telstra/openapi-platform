@@ -65,6 +65,7 @@
     "file-loader": "^1.1.11",
     "gulp": "4",
     "gulp-babel": "8.0.0-beta.2",
+    "gulp-filter": "^5.1.0",
     "gulp-newer": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-watch": "^5.0.1",
@@ -87,7 +88,8 @@
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.1",
-    "webpack-node-externals": "^1.6.0"
+    "webpack-node-externals": "^1.6.0",
+    "webpack-stream": "^5.1.1"
   },
   "contributors": [
     {
