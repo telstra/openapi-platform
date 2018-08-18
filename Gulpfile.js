@@ -11,7 +11,9 @@ const newer = require('gulp-newer');
 const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 
-const webpack = require('webpack-stream');
+const webpackStream = require('webpack-stream');
+
+const browserSync = require('browser-sync');
 
 const through = require('through2');
 
@@ -25,10 +27,6 @@ function swapSrcWith(srcPath, newDirName) {
 
 function swapSrcWithLib(srcPath) {
   return swapSrcWith(srcPath, 'lib');
-}
-
-function swapSrcWithDist(srcPath) {
-  return swapSrcWith(srcPath, 'dist');
 }
 
 function rename(fn) {
@@ -73,22 +71,39 @@ function buildBabel(exclude) {
     .pipe(gulp.dest(base));
 }
 
-function buildBundle(packageName) {
-  const stream = gulp.src(join(base, packageName, 'src', 'index.tsx'));
-  return stream
-    .pipe(webpack(require(join(base, packageName, 'webpack.config'))))
-    .pipe(gulp.dest(join(base, packageName, 'dist')));
+function createWebpackStream(packageDir) {
+  const webpackConfig = require(join(packageDir, 'webpack.config'));
+  return webpackStream(webpackConfig);
 }
 
+function buildBundle(packageName) {
+  const packageDir = join(base, packageName);
+  const stream = gulp.src(packageDir, 'src', 'index.tsx');
+  return stream
+    .pipe(createWebpackStream(packageDir))
+    .pipe(gulp.dest(join(packageDir, 'dist')));
+}
+
+const frontendPackageName = 'frontend';
+
 gulp.task('transpile', function transpile() {
-  return buildBabel(['frontend']);
+  return buildBabel([frontendPackageName]);
 });
 
 gulp.task('bundle', function bundle() {
-  return buildBundle('frontend');
+  return buildBundle(frontendPackageName);
 });
 
 gulp.task('build', gulp.series('transpile', 'bundle'));
+
+gulp.task('watch:frontend', function frontend() {
+  browserSync.init({
+    server: {
+      baseDir: './packages/frontend/dist',
+      ws: true,
+    },
+  });
+});
 
 gulp.task(
   'watch',

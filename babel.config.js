@@ -33,7 +33,7 @@ const defaultSettings = createBabelSettings({
 const frontendSettings = createBabelSettings({
   envSettings: {
     targets: {
-      browsers: ['last 2 versions'],
+      browsers: ['edge >= 12'],
     },
   },
 });
@@ -46,7 +46,6 @@ const storyshotsSettings = createBabelSettings({
   },
 });
 storyshotsSettings.plugins.push('require-context-hook');
-
 module.exports = api => {
   const env = api.env();
   const config = {

@@ -1,7 +1,7 @@
 import jss from 'jss';
 import * as jssGlobal from 'jss-global';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { hydrate } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import 'typeface-roboto';
 import 'typeface-roboto-mono';
@@ -20,7 +20,8 @@ jss
     } as any,
   })
   .attach();
-ReactDOM.render(
+
+hydrate(
   <ThemeProvider>
     <BrowserRouter>
       <Page />
