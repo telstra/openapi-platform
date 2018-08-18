@@ -46,7 +46,7 @@ describe('git', () => {
   describe('updateRepoWithNewSdk', () => {
     it("doesn't crash", async () => {
       // TODO: ES6 didn't work
-      const { updateRepoWithNewSdk } = require('backend/git');
+      const { updateRepoWithNewSdk } = require('../../src');
 
       // TODO: Need to test the outputs of this method
       await updateRepoWithNewSdk(

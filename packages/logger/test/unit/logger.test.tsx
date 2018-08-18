@@ -1,6 +1,6 @@
 import { logger, overrideConsoleLogger } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
-const mockLogger: any = mockFunctions(logger);
+const mockLogger: any = mockFunctions({ ...logger });
 
 /**
  * Checks which logging methods in the custom logger were actually called
@@ -8,13 +8,10 @@ const mockLogger: any = mockFunctions(logger);
 function testLoggerCallCounts(callCounts) {
   Object.keys(mockLogger.levels).forEach(level => {
     const callCount = callCounts[level] ? callCounts[level] : 0;
-    const testName = `logger.${level} ${callCount > 0 ? 'called' : 'not called'}`;
-    it(testName, () => {
-      expect(mockLogger[level].mock.calls.length).toBe(
-        callCount,
-      );  
-    })
-  });
+    expect(mockLogger[level].mock.calls.length).toBe(
+      callCount,
+    );  
+  })
 }
 
 /**
@@ -24,7 +21,7 @@ function testLoggerCallCounts(callCounts) {
 function testConsoleInput(...input) {
   const stringifiedInput = input.map(i => JSON.stringify(i)).join();
   describe(`input = [${stringifiedInput}]`, () => {
-    describe(`logged to console.log`, () => {
+    it(`logging to console.log`, () => {
       overrideConsoleLogger(mockLogger);
       // tslint:disable-next-line:no-console
       console.log(...input);
@@ -32,7 +29,7 @@ function testConsoleInput(...input) {
     });
     const loggingMethods = ['error', 'debug', 'info'];
     loggingMethods.forEach(loggingMethodName => {
-      describe(`logged to console.${loggingMethodName}`, () => {
+      it(`logging to console.${loggingMethodName}}`, () => {
         overrideConsoleLogger(mockLogger);
         console[loggingMethodName](...input);
         testLoggerCallCounts({ [loggingMethodName]: 1 });
