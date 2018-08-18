@@ -1,5 +1,4 @@
 import { observable, action, computed, comparer, IComputedValue } from 'mobx';
-import { Component } from 'react';
 
 /**
  * Represents the result of an input validation function where the input is determined to be valid.
@@ -52,14 +51,11 @@ export const inputInvalid: (reason: string) => ValidationResult = reason => ({
 export const alwaysValid: ValidationFunction = (value: string) => inputValid();
 
 /**
- * A base class for implementing forms with input validation logic.
- *
- * Note that this class should be marked as `abstract`, however there is a bug preventing the use of
- * decorators within abstract classes: https://github.com/babel/babel/issues/8172
+ * A class responsible for storing form input data and validation logic.
  *
  * @template I A string literal type defining the names of the form inputs in the form.
  */
-export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P, S> {
+export class ValidatedFormStore<I extends string> {
   /**
    * Maps each form input to its validation function, wrapped in a MobX computed value.
    */
@@ -88,11 +84,9 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
    * @param inputs.validation A ValidationFunction called each time the input needs to be validated.
    * @param inputs.initialValue The initial value of the input.
    */
-  protected constructor(
+  public constructor(
     inputs: { [key in I]: { validation: ValidationFunction; initialValue: string } },
-    props: Readonly<P>,
   ) {
-    super(props);
     for (const input of Object.keys(inputs) as I[]) {
       const validate = inputs[input].validation;
       this.inputValidationFunctions.set(
@@ -125,7 +119,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
    * Evaluates to true if all form inputs are valid, false otherwise.
    */
   @computed
-  protected get inputsValid(): boolean {
+  public get inputsValid(): boolean {
     let valid = true;
     for (const [input] of this.inputValues) {
       valid = valid && this.validateInput(input).valid;
@@ -139,7 +133,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
   /**
    * Gets the current value of the given form input.
    */
-  protected getInputValue(input: I): string {
+  public getInputValue(input: I): string {
     return this.inputValues.get(input) as string;
   }
 
@@ -147,7 +141,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
    * Sets the value of the given form input to the given string.
    */
   @action
-  protected setInputValue(input: I, value: string) {
+  public setInputValue(input: I, value: string) {
     this.inputValues.set(input, value);
     if (this.getInputError(input) !== null) {
       const result = this.validateInput(input);
@@ -165,7 +159,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
    * Gets the current error message associated with the given form input, or null if the form input
    * has no current error message.
    */
-  protected getInputError(input: I): string | null {
+  public getInputError(input: I): string | null {
     if (this.inputErrors.has(input)) {
       return this.inputErrors.get(input) as string;
     }
@@ -175,7 +169,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
   /**
    * Validates the given form input, updating its associated error message if the validation failed.
    */
-  protected updateInputError(input: I) {
+  public updateInputError(input: I) {
     const result = this.validateInput(input);
     if (!result.valid) {
       this.setInputError(input, result.reason);
@@ -185,7 +179,7 @@ export class ValidatedForm<I extends string, P = {}, S = {}> extends Component<P
   /**
    * Validates all form inputs, updating any associated error messages where validation fails.
    */
-  protected updateAllInputErrors() {
+  public updateAllInputErrors() {
     this.inputValues.forEach((value, input) => {
       this.updateInputError(input);
     });

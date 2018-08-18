@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import {
   Button,
@@ -15,11 +15,11 @@ import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
 import {
-  ValidatedForm,
+  ValidatedFormStore,
   inputValid,
   inputInvalid,
   alwaysValid,
-} from 'basic/ValidatedForm';
+} from 'frontend/ValidatedFormStore';
 import { Category } from 'model/Storybook';
 import { AddedSpec } from 'state/SpecState';
 import { isWebUri } from 'valid-url';
@@ -56,61 +56,56 @@ export interface SpecModalProps {
   readonly modalProps?: ModalProps;
 }
 
-type SpecModalInput = 'title' | 'url' | 'description';
-
 /**
  * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
-  constructor(props: Readonly<SpecModalProps>) {
-    super(
-      {
-        title: {
-          validation: title =>
-            !title ? inputInvalid('Error: Missing title') : inputValid(),
-          initialValue: '',
-        },
-        url: {
-          validation: url => {
-            if (!url) {
-              return inputInvalid('Error: URL cannot be empty');
-            } else if (!isWebUri(url)) {
-              return inputInvalid('Error: Invalid URL');
-            }
-            return inputValid();
-          },
-          initialValue: '',
-        },
-        description: {
-          validation: alwaysValid,
-          initialValue: '',
-        },
+export class SpecModal extends Component<SpecModalProps> {
+  /**
+   * Stores all form data and handles input validation logic.
+   */
+  private inputStore = new ValidatedFormStore({
+    title: {
+      validation: title => (!title ? inputInvalid('Error: Missing title') : inputValid()),
+      initialValue: '',
+    },
+    url: {
+      validation: url => {
+        if (!url) {
+          return inputInvalid('Error: URL cannot be empty');
+        } else if (!isWebUri(url)) {
+          return inputInvalid('Error: Invalid URL');
+        }
+        return inputValid();
       },
-      props,
-    );
-  }
+      initialValue: '',
+    },
+    description: {
+      validation: alwaysValid,
+      initialValue: '',
+    },
+  });
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   private onSubmitSpec = () => {
     // Validate input
-    if (!this.inputsValid) {
-      this.updateAllInputErrors();
+    if (!this.inputStore.inputsValid) {
+      this.inputStore.updateAllInputErrors();
       return;
     }
 
     // Send the request to the backend
-    const title = this.getInputValue('title');
-    const path = isWebUri(this.getInputValue('url'));
-    const description = this.getInputValue('description');
+    const title = this.inputStore.getInputValue('title');
+    const path = isWebUri(this.inputStore.getInputValue('url'));
+    const description = this.inputStore.getInputValue('description');
     this.props.onSubmitSpec({ title, path, description });
   };
 
   private onInputChange = event =>
-    this.setInputValue(event.target.id as SpecModalInput, event.target.value);
-  private onInputBlur = event => this.updateInputError(event.target.id as SpecModalInput);
+    this.inputStore.setInputValue(event.target.id, event.target.value);
+  private onInputBlur = event => this.inputStore.updateInputError(event.target.id);
 
   private onAddButtonClick = event => {
     event.preventDefault();
@@ -144,7 +139,7 @@ export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
                       Add Swagger Spec
                     </Typography>
                     <FormControl
-                      error={this.getInputError('title') !== null}
+                      error={this.inputStore.getInputError('title') !== null}
                       margin="normal"
                     >
                       <InputLabel htmlFor="title">Title</InputLabel>
@@ -152,14 +147,14 @@ export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
                         id="title"
                         onChange={this.onInputChange}
                         onBlur={this.onInputBlur}
-                        value={this.getInputValue('title')}
+                        value={this.inputStore.getInputValue('title')}
                       />
                       <FormHelperText>
-                        {this.getInputError('title') || 'E.g. Petstore'}
+                        {this.inputStore.getInputError('title') || 'E.g. Petstore'}
                       </FormHelperText>
                     </FormControl>
                     <FormControl
-                      error={this.getInputError('url') !== null}
+                      error={this.inputStore.getInputError('url') !== null}
                       margin="dense"
                     >
                       <InputLabel htmlFor="url">URL</InputLabel>
@@ -167,15 +162,15 @@ export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
                         id="url"
                         onChange={this.onInputChange}
                         onBlur={this.onInputBlur}
-                        value={this.getInputValue('url')}
+                        value={this.inputStore.getInputValue('url')}
                       />
                       <FormHelperText>
-                        {this.getInputError('url') ||
+                        {this.inputStore.getInputError('url') ||
                           'E.g. http://petstore.swagger.io/v2/swagger.json'}
                       </FormHelperText>
                     </FormControl>
                     <FormControl
-                      error={this.getInputError('description') !== null}
+                      error={this.inputStore.getInputError('description') !== null}
                       margin="dense"
                     >
                       <InputLabel htmlFor="description">Description</InputLabel>
@@ -183,11 +178,13 @@ export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
                         id="description"
                         onChange={this.onInputChange}
                         onBlur={this.onInputBlur}
-                        value={this.getInputValue('description')}
+                        value={this.inputStore.getInputValue('description')}
                         multiline
                         rowsMax={3}
                       />
-                      <FormHelperText>{this.getInputError('description')}</FormHelperText>
+                      <FormHelperText>
+                        {this.inputStore.getInputError('description')}
+                      </FormHelperText>
                     </FormControl>
                   </div>
 

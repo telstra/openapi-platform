@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import {
   Button,
@@ -17,11 +17,11 @@ import { Observer } from 'mobx-react';
 
 import { FloatingModal } from 'basic/FloatingModal';
 import {
-  ValidatedForm,
+  ValidatedFormStore,
   inputValid,
   inputInvalid,
   alwaysValid,
-} from 'basic/ValidatedForm';
+} from 'frontend/ValidatedFormStore';
 import { PLAN_TARGETS } from 'model/Plan';
 import { Category } from 'model/Storybook';
 import { AddedPlan } from 'state/PlanState';
@@ -61,66 +61,65 @@ export interface PlanModalProps {
   readonly modalProps?: ModalProps;
 }
 
-type PlanModalInput = 'target' | 'version' | 'options';
+// type PlanModalInput = 'target' | 'version' | 'options';
 
 /**
  * A modal window that allows the user to add a SDK generation Plan to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
-  constructor(props: Readonly<PlanModalProps>) {
-    super(
-      {
-        target: {
-          validation: target =>
-            !PLAN_TARGETS.includes(target)
-              ? inputInvalid('Error: Missing target')
-              : inputValid(),
-          initialValue: '',
-        },
-        version: {
-          validation: alwaysValid,
-          initialValue: '',
-        },
-        options: {
-          validation: options => {
-            try {
-              JSON.parse(options);
-              return inputValid();
-            } catch (e) {
-              return inputInvalid('Error: invalid JSON');
-            }
-          },
-          initialValue: '{}',
-        },
+export class PlanModal extends Component<PlanModalProps> {
+  /**
+   * Stores all form data and handles input validation logic.
+   */
+  private inputStore = new ValidatedFormStore({
+    target: {
+      validation: target =>
+        !PLAN_TARGETS.includes(target)
+          ? inputInvalid('Error: Missing target')
+          : inputValid(),
+      initialValue: '',
+    },
+    version: {
+      validation: alwaysValid,
+      initialValue: '',
+    },
+    options: {
+      validation: options => {
+        try {
+          JSON.parse(options);
+          return inputValid();
+        } catch (e) {
+          return inputInvalid('Error: invalid JSON');
+        }
       },
-      props,
-    );
-  }
+      initialValue: '{}',
+    },
+  });
 
   /**
    * Event fired when the user presses the 'Add' button.
    */
   private onSubmitPlan() {
     // Validate input
-    if (!this.inputsValid) {
-      this.updateAllInputErrors();
+    if (!this.inputStore.inputsValid) {
+      this.inputStore.updateAllInputErrors();
       return;
     }
 
     // Send the request to the backend.
-    const target = this.getInputValue('target');
-    const version = this.getInputValue('version');
-    const options = JSON.parse(this.getInputValue('options'));
+    const target = this.inputStore.getInputValue('target');
+    const version = this.inputStore.getInputValue('version');
+    const options = JSON.parse(this.inputStore.getInputValue('options'));
     // TODO: submittedPlan.pushPath = "";
     this.props.onSubmitPlan({ target, version, options });
   }
 
   private onInputChange = event =>
-    this.setInputValue(event.target.id as PlanModalInput, event.target.value);
-  private onInputBlur = event => this.updateInputError(event.target.id as PlanModalInput);
-  private onTargetChange = event => this.setInputValue('target', event.target.value);
-  private onTargetBlur = () => this.updateInputError('target');
+    this.inputStore.setInputValue(event.target.id, event.target.value);
+  private onInputBlur = event => this.inputStore.updateInputError(event.target.id);
+  private onTargetChange = event =>
+    this.inputStore.setInputValue('target', event.target.value);
+  private onTargetBlur = () => this.inputStore.updateInputError('target');
 
   private onAddButtonClick = event => {
     event.preventDefault();
@@ -153,14 +152,14 @@ export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
                       Add SDK Generation Plan
                     </Typography>
                     <FormControl
-                      error={this.getInputError('target') !== null}
+                      error={this.inputStore.getInputError('target') !== null}
                       margin="dense"
                     >
                       <InputLabel htmlFor="target">Target</InputLabel>
                       <Select
                         onChange={this.onTargetChange}
                         onBlur={this.onTargetBlur}
-                        value={this.getInputValue('target')}
+                        value={this.inputStore.getInputValue('target')}
                         inputProps={{
                           id: 'target',
                         }}
@@ -171,10 +170,12 @@ export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
                           </MenuItem>
                         ))}
                       </Select>
-                      <FormHelperText>{this.getInputError('target')}</FormHelperText>
+                      <FormHelperText>
+                        {this.inputStore.getInputError('target')}
+                      </FormHelperText>
                     </FormControl>
                     <FormControl
-                      error={this.getInputError('version') !== null}
+                      error={this.inputStore.getInputError('version') !== null}
                       margin="dense"
                     >
                       <InputLabel htmlFor="version">Version</InputLabel>
@@ -182,14 +183,14 @@ export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
                         id="version"
                         onChange={this.onInputChange}
                         onBlur={this.onInputBlur}
-                        value={this.getInputValue('version')}
+                        value={this.inputStore.getInputValue('version')}
                       />
                       <FormHelperText>
-                        {this.getInputError('version') || 'E.g. 1.2.34'}
+                        {this.inputStore.getInputError('version') || 'E.g. 1.2.34'}
                       </FormHelperText>
                     </FormControl>
                     <FormControl
-                      error={this.getInputError('options') !== null}
+                      error={this.inputStore.getInputError('options') !== null}
                       margin="dense"
                     >
                       <InputLabel htmlFor="options">Options</InputLabel>
@@ -198,13 +199,13 @@ export class PlanModal extends ValidatedForm<PlanModalInput, PlanModalProps> {
                         className={classes.optionsText}
                         onChange={this.onInputChange}
                         onBlur={this.onInputBlur}
-                        value={this.getInputValue('options')}
+                        value={this.inputStore.getInputValue('options')}
                         multiline
                         rows={5}
                         rowsMax={10}
                       />
                       <FormHelperText>
-                        {this.getInputError('options') ||
+                        {this.inputStore.getInputError('options') ||
                           'Target-specific options to pass to Swagger Codegen in JSON'}
                       </FormHelperText>
                     </FormControl>
