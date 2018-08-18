@@ -61,6 +61,7 @@ const frontendSettings = createBabelSettings({
         'last 1 Edge version',
         'IE 11',
         'last 1 Safari version',
+        'last 1 iOS version',
       ],
     },
   },
