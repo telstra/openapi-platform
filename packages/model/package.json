@@ -3,6 +3,7 @@
   "description": "TODO: I don't think this should be a package but we need to share types somehow. This will do, for now.",
   "version": "1.0.0-alpha.0",
   "main": "./lib/index.js",
+  "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false
 }

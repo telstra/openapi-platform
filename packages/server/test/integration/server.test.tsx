@@ -5,16 +5,16 @@ import { Spec } from '@openapi-platform/model';
 jest.mock('@openapi-platform/logger');
 jest.mock('sequelize');
 jest.mock('feathers-sequelize');
-jest.mock('../src/db/connection');
+jest.mock('../../src/db/connection');
 
-jest.mock('@openapi-platform/swagger-sdk-gen-client');
+jest.mock('@openapi-platform/openapi-sdk-gen-client');
 /*
   Have to use require syntax as es6 imports currently makes TypeScript 
   complain about missing mockImplementation, etc.
   TODO: Might be fixed in TypeScript 3? Go check
 */
 // tslint:disable:no-var-requires
-const sdkGeneration: any = require('@openapi-platform/swagger-sdk-gen-client');
+const sdkGeneration: any = require('@openapi-platform/openapi-sdk-gen-client');
 
 /*
  * Test services are registered and any hooks.

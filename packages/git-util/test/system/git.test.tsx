@@ -1,4 +1,5 @@
-jest.mock('backend/logger');
+// TODO: Methods should take logger as a parameter
+jest.mock('@openapi-platform/logger');
 // TODO: Would be really nice to have a in-memory-fs
 
 // Could put the following mocks in a __mocks__ folder but these mocks are somewhat specific to these tests
@@ -16,8 +17,8 @@ jest.mock('isomorphic-git', () => {
   return mockedGitModule;
 });
 
-jest.mock('backend/file/index', () => {
-  const actualModule = require.requireActual('backend/file/index');
+jest.mock('../../src/file/index', () => {
+  const actualModule = require.requireActual('../../src/file/index');
   const { mockFunctions } = require('jest-mock-functions');
   const mockedModule = mockFunctions(actualModule, {
     onMockedFunction: (fn, ogFn) => fn.mockImplementation((...other) => ogFn(...other)),
@@ -37,7 +38,7 @@ jest.mock('backend/file/index', () => {
  * This is actually a test to make sure the other tests are going to work.
  */
 it('temp dir actually works', async () => {
-  const { makeTempDir } = require('backend/file/index');
+  const { makeTempDir } = require('../../src/file/index');
   await expect(makeTempDir('test')).resolves.not.toBeUndefined();
 });
 

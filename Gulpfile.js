@@ -40,7 +40,7 @@ function rename(fn) {
 }
 
 function globFromPackagesDirName(dirName) {
-  return `./${dirName}/*/src/**/*.{js,jsx,ts,tsx}`;
+  return `./${dirName}/*/src/!(__mocks__)**/*.{js,jsx,ts,tsx}`;
 }
 
 function compilationLogger(rollup) {

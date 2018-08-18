@@ -18,7 +18,7 @@
     "checker": "run-s checker:*",
     "checker:types": "tsc --noEmit",
     "checker:lint": "tslint -p .",
-    "test": "yarn test:jest",
+    "test": "yarn build && yarn test:jest",
     "test:jest": "jest",
     "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
     "ci-test": "yarn checker:types && yarn test:no-system",
