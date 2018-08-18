@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -112,7 +112,7 @@ export class SpecModal extends ValidatedForm<SpecModalInput, SpecModalProps> {
     this.setInputValue(event.target.id as SpecModalInput, event.target.value);
   private onInputBlur = event => this.updateInputError(event.target.id as SpecModalInput);
 
-  private onAddButtonClick = (event: MouseEvent<HTMLElement>) => {
+  private onAddButtonClick = event => {
     event.preventDefault();
     this.onSubmitSpec();
   };
