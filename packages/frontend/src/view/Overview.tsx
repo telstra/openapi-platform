@@ -1,10 +1,12 @@
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
+import { action } from 'mobx';
 import { Observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Route } from 'react-router-dom';
 
+import { Id } from '@openapi-platform/model';
 import { state } from '../state/SpecState';
 import { AddPlanModal } from './AddPlanModal';
 import { AddSpecModal } from './AddSpecModal';
@@ -22,7 +24,9 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openAddPlanModal = () =>
     this.props.history.push(`${this.props.match.url}/plan/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
-  private expandSpec = id => (state.expandedSpecId = id);
+  private expandSpec: (id: Id | null) => void = action((id: Id | null) => {
+    state.expandedSpecId = id;
+  });
 
   public render() {
     return (
