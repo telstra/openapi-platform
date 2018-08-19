@@ -53,7 +53,15 @@ const defaultSettings = createBabelSettings({
 const frontendSettings = createBabelSettings({
   envSettings: {
     targets: {
-      browsers: ['last 2 versions'],
+      browsers: [
+        'last 2 Chrome versions',
+        'last 2 ChromeAndroid versions',
+        'last 2 Firefox versions',
+        'Firefox ESR',
+        'last 2 Edge versions',
+        'last 2 Safari version',
+        'last 2 iOS version',
+      ],
     },
   },
 });
@@ -73,7 +81,7 @@ module.exports = api => {
     ...defaultSettings,
     overrides: [
       {
-        test: 'src/frontend',
+        test: ['src/frontend', 'src/view'],
         ...frontendSettings,
       },
     ],
