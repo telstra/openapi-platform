@@ -1,3 +1,4 @@
+import { logger } from '@openapi-platform/logger';
 import convict from 'convict';
 import { join } from 'path';
 
@@ -67,4 +68,10 @@ const cwd = process.cwd();
 // TODO: We can provide more ways to specify configs in the future
 // tslint:disable:no-var-requires
 const rawConfig = require(join(cwd, 'openapi-platform.config'));
+if (!rawConfig) {
+  logger.error(
+    'You need to provide an openapi-platform.config.js configuration file in your current working directory',
+  );
+  process.exit(1);
+}
 export const config = schema.load(rawConfig);
