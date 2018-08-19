@@ -9,10 +9,10 @@ function validFullConfig(): any {
     },
     database: {
       name: 'swagger_platform',
-      host: '***REMOVED***',
+      host: 'localhost',
       port: 5432,
       username: 'swagger_platform',
-      password: '***REMOVED***',
+      password: 'test_password',
     },
   };
 }
