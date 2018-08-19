@@ -4,6 +4,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
 # Runtime data
 pids
 *.pid
@@ -53,16 +54,22 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# IntelliJ project files
+.idea
+
+# macOS
+.DS_Store
+._*
+*~
+
+# Frontend build directotry
+dist
+
+# Backend build directory
+lib
+
 # dotenv environment variables file
 .env
 
-dist
-
-.idea
-
-
-packages/*/lib/
-lib/
-
-**/openapi-platform.config.*
-openapi-platform.config.*
+# Sensitive configuration files
+openapi-platform.config*
