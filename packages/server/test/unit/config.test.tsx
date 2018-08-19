@@ -1,11 +1,11 @@
-import { parse } from '../../src/config';
+import { schema } from '../../src/config/schema';
 function validFullConfig(): any {
   return {
     env: 'development',
     server: {
       port: 8081,
       useCors: false,
-      initDummydata: false,
+      initDummyData: false,
     },
     database: {
       name: 'swagger_platform',
@@ -19,17 +19,25 @@ function validFullConfig(): any {
 describe('config validation', () => {
   describe('valid', () => {
     it('full config provided', () => {
-      parse(validFullConfig());
+      schema.load(validFullConfig());
+      schema.validate({ allowed: 'strict' });
     });
   });
   describe('invalid', () => {
-    it('empty config', () => {
-      expect(() => parse({})).toThrowError();
-    });
-    it('no database config', () => {
-      const config = validFullConfig();
-      config.database = undefined;
-      expect(() => parse(config)).toThrowError();
-    });
+    function testThrows(testCaseName, alterConfig) {
+      it(testCaseName, () => {
+        const config = validFullConfig();
+        alterConfig(config);
+        expect(() => {
+          schema.load(config);
+          schema.validate({ allowed: 'strict' });
+        }).toThrowError();
+      });
+    }
+    testThrows(
+      'database port is not a number',
+      config => (config.database.port = 'not a port'),
+    );
+    testThrows('password is not a string', config => (config.database.password = 100));
   });
 });

@@ -1,4 +1,11 @@
 import convict from 'convict';
+import yaml from 'js-yaml';
+import json5 from 'json5';
+convict.addParser([
+  { extension: 'json', parse: JSON.parse },
+  { extension: ['yaml', 'yml'], parse: yaml.safeLoad },
+  { extension: ['json5'], parse: json5.parse },
+]);
 const schema = convict({
   env: {
     env: 'NODE_ENV',
