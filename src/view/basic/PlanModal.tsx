@@ -61,8 +61,6 @@ export interface PlanModalProps {
   readonly modalProps?: ModalProps;
 }
 
-// type PlanModalInput = 'target' | 'version' | 'options';
-
 /**
  * A modal window that allows the user to add a SDK generation Plan to the dashboard.
  * Currently only supports specifying a name and URL.

@@ -34,21 +34,27 @@ export type ValidationFunction = (value: string) => ValidationResult;
 /**
  * Returns a ValidationResultOk, indicating that an input was valid.
  */
-export const inputValid: () => ValidationResult = () => ({ valid: true });
+export function inputValid(): ValidationResult {
+  return { valid: true };
+}
 
 /**
  * Returns a ValidationResult indicating that an input was invalid, along with a reason why it was
  * invalid.
  */
-export const inputInvalid: (reason: string) => ValidationResult = reason => ({
-  valid: false,
-  reason,
-});
+export function inputInvalid(reason: string): ValidationResult {
+  return {
+    valid: false,
+    reason,
+  };
+}
 
 /**
  * A ValidationFunction that always returns a ValidationResultOk.
  */
-export const alwaysValid: ValidationFunction = (value: string) => inputValid();
+export function alwaysValid() {
+  return inputValid();
+}
 
 /**
  * A class responsible for storing form input data and validation logic.

@@ -1,5 +1,5 @@
 import { client } from 'client/BackendClient';
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, runInAction } from 'mobx';
 import { HasId, Id } from 'model/Entity';
 import { Plan } from 'model/Plan';
 
@@ -37,8 +37,10 @@ export const state: PlanState = new PlanState();
 client
   .service('plans')
   .find()
-  .then(plans =>
-    plans.forEach(plan => {
-      state.plans.set(plan.id, plan);
-    }),
-  );
+  .then(plans => {
+    runInAction(() => {
+      plans.forEach(plan => {
+        state.plans.set(plan.id, plan);
+      });
+    });
+  });
