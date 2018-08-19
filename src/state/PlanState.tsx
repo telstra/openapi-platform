@@ -37,8 +37,10 @@ export const state: PlanState = new PlanState();
 client
   .service('plans')
   .find()
-  .then(action((plans: HasId<Plan>[]) => {
-    plans.forEach(plan => {
-      state.plans.set(plan.id, plan);
-    });
-  }));
+  .then(
+    action((plans: Array<HasId<Plan>>) => {
+      plans.forEach(plan => {
+        state.plans.set(plan.id, plan);
+      });
+    }),
+  );

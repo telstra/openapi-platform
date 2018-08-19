@@ -36,8 +36,10 @@ export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()
-  .then(action((specs: HasId<Spec>[]) => {
-    specs.forEach(spec => {
-      state.specs.set(spec.id, spec);
-    });
-  }));
+  .then(
+    action((specs: Array<HasId<Spec>>) => {
+      specs.forEach(spec => {
+        state.specs.set(spec.id, spec);
+      });
+    }),
+  );

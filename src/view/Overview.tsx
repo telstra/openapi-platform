@@ -6,10 +6,10 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Route } from 'react-router-dom';
 
-import { Id } from 'model/Entity';
 import { ContentContainer } from 'basic/ContentContainer';
 import { SimpleToolbar } from 'basic/SimpleToolbar';
 import { SpecList } from 'basic/SpecList';
+import { Id } from 'model/Entity';
 import { state } from 'state/SpecState';
 import { AddPlanModal } from 'view/AddPlanModal';
 import { AddSpecModal } from 'view/AddSpecModal';
