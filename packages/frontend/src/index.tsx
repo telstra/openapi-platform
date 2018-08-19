@@ -6,8 +6,8 @@ import { BrowserRouter } from 'react-router-dom';
 import 'typeface-roboto';
 import 'typeface-roboto-mono';
 
-import { Page } from './View/Page';
-import { ThemeProvider } from './View/ThemeProvider';
+import { Page } from './view/Page';
+import { ThemeProvider } from './view/ThemeProvider';
 
 jss
   .use(jssGlobal.default())
