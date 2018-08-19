@@ -58,12 +58,14 @@ const schema = convict({
       env: 'DATABASE_USERNAME',
       format: String,
       default: undefined,
+      sensitive: true,
     },
     password: {
       doc: 'The password of the PostgreSQL database to connect to.',
       env: 'DATABASE_PASSWORD',
       format: String,
       default: undefined,
+      sensitive: true,
     },
   },
 });
