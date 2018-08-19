@@ -3,7 +3,7 @@
  */
 const colors = require('colors');
 const { join, sep, resolve } = require('path');
-const { spawn } = require('child_process');
+const spawn = require('cross-spawn');
 
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
