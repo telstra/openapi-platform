@@ -1,73 +1,70 @@
-import { developmentConfig } from './development';
-import { productionConfig } from './production';
-import { testConfig } from './test';
+import convict from 'convict';
+import { join } from 'path';
 
-interface Configuration {
-  /**
-   * Frontend configuration options.
-   */
-  readonly frontend: {
-    /**
-     * The base API URL used for all requests.
-     */
-    readonly baseApiUrl: string;
-  };
+const schema = convict({
+  env: {
+    env: 'NODE_ENV',
+    format: ['production', 'development', 'test'],
+    default: 'development',
+  },
+  server: {
+    port: {
+      doc: 'The port number used for incoming connections.',
+      env: 'SERVER_PORT',
+      format: 'port',
+      default: 8080,
+    },
+    // TODO: You should be able to add this sort of stuff via some sort of hook
+    useCors: {
+      doc: 'Whether or not CORS requests should be allowed.',
+      env: 'USE_CORS',
+      format: Boolean,
+      default: true,
+    },
+    // TODO: Would like to get rid of this field in favour of adding dummy data via scripts
+    initDummyData: {
+      doc: 'Whether or not dummy data should be created for development purposes.',
+      env: 'INIT_DUMMY_DATA',
+      format: Boolean,
+      default: false,
+    },
+  },
+  database: {
+    name: {
+      doc: 'The name of the PostgreSQL database to connect to.',
+      env: 'DATABASE_NAME',
+      format: String,
+      default: undefined,
+    },
+    host: {
+      doc: 'The hostname of the PostgreSQL database to connect to.',
+      env: 'DATABASE_HOST',
+      format: '*',
+      default: undefined,
+    },
+    port: {
+      doc: 'The port of the PostgreSQL database to connect to.',
+      env: 'DATABASE_PORT',
+      default: 5432,
+      format: 'port',
+    },
+    username: {
+      doc: 'The username of the PostgreSQL database to connect to.',
+      env: 'DATABASE_USERNAME',
+      format: String,
+      default: undefined,
+    },
+    password: {
+      doc: 'The password of the PostgreSQL database to connect to.',
+      env: 'DATABASE_PASSWORD',
+      format: String,
+      default: undefined,
+    },
+  },
+});
 
-  /**
-   * Backend configuration options.
-   */
-  readonly backend: {
-    /**
-     * The port number used for incoming connections.
-     */
-    readonly port: number;
-
-    /**
-     * Whether or not CORS requests should be allowed.
-     */
-    readonly useCors: boolean;
-
-    /**
-     * Whether or not dummy data should be created for development purposes.
-     */
-    readonly initDummyData: boolean;
-
-    /**
-     * The name of the PostgreSQL database to connect to.
-     */
-    readonly databaseName: string;
-
-    /**
-     * The hostname of the PostgreSQL database to connect to.
-     */
-    readonly databaseHost: string;
-
-    /**
-     * The port of the PostgreSQL database to connect to.
-     */
-    readonly databasePort: number;
-
-    /**
-     * The username of the PostgreSQL database to connect to.
-     */
-    readonly databaseUsername: string;
-
-    /**
-     * The password of the PostgreSQL database to connect to.
-     */
-    readonly databasePassword: string;
-  };
-}
-
-let configTemp: Configuration | undefined;
-if (process.env.NODE_ENV === 'development') {
-  configTemp = developmentConfig;
-} else if (process.env.NODE_ENV === 'production') {
-  configTemp = productionConfig;
-} else if (process.env.NODE_ENV === 'test') {
-  configTemp = testConfig;
-} else {
-  throw new Error('Unknown environment type: ' + process.env.NODE_ENV);
-}
-
-export const config = configTemp as Configuration;
+const cwd = process.cwd();
+// TODO: We can provide more ways to specify configs in the future
+// tslint:disable:no-var-requires
+const rawConfig = require(join(cwd, 'openapi-platform.config'));
+export const config = schema.load(rawConfig);

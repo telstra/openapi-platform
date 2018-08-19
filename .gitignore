@@ -63,3 +63,5 @@ dist
 
 packages/*/lib/
 lib/
+
+**/openapi-platform.config.js

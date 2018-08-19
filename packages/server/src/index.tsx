@@ -22,6 +22,4 @@ async function run(port: number) {
   return app;
 }
 
-const envPort: string | undefined = process.env.PORT;
-const appPort: number = envPort ? Number.parseInt(envPort, 10) : config.backend.port;
-run(appPort);
+run(config.get('server.port'));
