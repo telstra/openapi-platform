@@ -24,7 +24,9 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openAddPlanModal = () =>
     this.props.history.push(`${this.props.match.url}/plan/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
-  private expandSpec = action((id: Id) => (state.expandedSpecId = id));
+  private expandSpec: (id: Id | null) => void = action((id: Id | null) => {
+    state.expandedSpecId = id;
+  });
 
   public render() {
     return (
