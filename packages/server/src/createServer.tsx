@@ -109,7 +109,7 @@ export async function createServer() {
   });
 
   // Enables CORS requests if configured to do so
-  if (config.backend.useCors) {
+  if (config.get('server.useCors')) {
     app.use(cors());
   }
 
@@ -118,7 +118,7 @@ export async function createServer() {
   await planModel.sync();
   await sdkModel.sync();
 
-  if (config.backend.initDummyData && (await specModel.count()) === 0) {
+  if (config.get('server.initDummyData') && (await specModel.count()) === 0) {
     // Initialise dummy data if there are no specifications
     await initDummyData(app.service('specifications'), app.service('plans'));
   }

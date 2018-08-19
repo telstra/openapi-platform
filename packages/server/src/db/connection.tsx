@@ -3,14 +3,15 @@ import Sequelize from 'sequelize';
 import { config } from '../config';
 
 export async function connectToDb() {
+  const databaseConfig = config.get('database');
   const dbConnection = new Sequelize(
-    config.backend.databaseName,
-    config.backend.databaseUsername,
-    config.backend.databasePassword,
+    databaseConfig.name,
+    databaseConfig.username,
+    databaseConfig.password,
     {
       dialect: 'postgres',
-      host: config.backend.databaseHost,
-      port: config.backend.databasePort,
+      host: databaseConfig.host,
+      port: databaseConfig.port,
       logging: logger.info,
     },
   );
