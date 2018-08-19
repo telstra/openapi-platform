@@ -8,14 +8,10 @@ export function readConfig<T>(): Config<T> {
   let parsedConfig: Config<T> | undefined;
   const extensions = ['json', 'yaml', 'yml', 'json5'];
   for (const ext of extensions) {
-    try {
-      const path = join(cwd, `openapi-platform.config.${ext}`);
-      if (pathExistsSync(path)) {
-        parsedConfig = schema.loadFile(path);
-        break;
-      }
-    } catch (err) {
-      parsedConfig = undefined;
+    const path = join(cwd, `openapi-platform.config.${ext}`);
+    if (pathExistsSync(path)) {
+      parsedConfig = schema.loadFile(path);
+      break;
     }
   }
   if (!parsedConfig) {
