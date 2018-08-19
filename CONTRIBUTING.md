@@ -9,7 +9,7 @@ The following sections outline the process all changes to the OpenAPI Platform r
 
 ## Contributor License Agreements
 
-Pull requests will be accepted from those who have filled out the appropriate [CLA](docs/contributing)
+Pull requests will be accepted from those who have filled out the appropriate [CLA](docs/contrib)
 
 This is necessary because you own the copyright to your changes, even after your contribution becomes part of this project. So this agreement simply gives us permission to use and redistribute your contributions as part of the project.
 

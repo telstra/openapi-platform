@@ -76,6 +76,11 @@ export function createPlanService(planModel) {
             description: 'Additional options for the plan',
             additionalProperties: true,
           },
+          gitinfo: {
+            type: 'object',
+            description: 'Used as a repository to push SDKs to',
+            additionalProperties: true,
+          },
           buildStatus: {
             type: 'string',
             description: 'The status of the build',

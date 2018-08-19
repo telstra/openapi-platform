@@ -4,7 +4,7 @@ Describe the big picture of your changes here to communicate why we should accep
 
 ## Types of changes
 
-What types of changes does your code introduce to Appium?
+What types of changes does your code introduce to OpenAPI Platform?
 _Put an `x` in the boxes that apply_
 
 - [ ] Bugfix (non-breaking change which fixes an issue)
@@ -15,8 +15,8 @@ _Put an `x` in the boxes that apply_
 
 _Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before merging your code._
 
-- [ ] I have read the [CONTRIBUTING](https://github.com/telstra/swagger-platform/blob/master/CONTRIBUTING.md) doc
-- [ ] I have signed and submitted the appropriate [CLA](https://github.com/telstra/swagger-platform/tree/master/docs/contributing)
+- [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) doc
+- [ ] I have signed and submitted the appropriate [CLA](../docs/contrib)
 - [ ] Lint and unit tests pass locally with my changes
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have added necessary documentation (if appropriate)
