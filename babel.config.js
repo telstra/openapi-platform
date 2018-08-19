@@ -1,87 +1,72 @@
-const paths = require('./paths');
-function createBabelPresets(options) {
-  const presets = [];
-  if (options.envSettings) {
-    presets.push(['@babel/preset-env', options.envSettings]);
-  }
-  presets.push('@babel/preset-react', '@babel/preset-typescript');
-  return presets;
-}
-
-function createBabelSettings(options) {
-  return {
-    presets: createBabelPresets(options),
-    plugins: [
-      [
-        'module-resolver',
-        {
-          root: ['.'],
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          alias: {
-            src: paths.src,
-            test: paths.test,
-            config: paths.config,
-            view: paths.view,
-            model: paths.model,
-            basic: paths.basic,
-            state: paths.state,
-            client: paths.client,
-            backend: paths.backend,
-            frontend: paths.frontend,
-          },
-        },
-      ],
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
-      [
-        '@babel/plugin-transform-runtime',
-        {
-          regenerator: true,
-        },
-      ],
-    ],
-  };
-}
-const defaultSettings = createBabelSettings({
-  envSettings: {
-    targets: {
-      node: 'current',
-    },
-  },
-});
-
-const frontendSettings = createBabelSettings({
-  envSettings: {
-    targets: {
-      browsers: [
-        'last 2 Chrome versions',
-        'last 2 ChromeAndroid versions',
-        'last 2 Firefox versions',
-        'Firefox ESR',
-        'last 2 Edge versions',
-        'last 2 Safari version',
-        'last 2 iOS version',
-      ],
-    },
-  },
-});
-
-const storyshotsSettings = createBabelSettings({
-  envSettings: {
-    targets: {
-      node: 'current',
-    },
-  },
-});
-storyshotsSettings.plugins.push('require-context-hook');
-
 module.exports = api => {
   const env = api.env();
+
+  function createBabelPresets(options) {
+    const presets = [];
+    if (options.envSettings) {
+      presets.push(['@babel/preset-env', options.envSettings]);
+    }
+    presets.push('@babel/preset-react', '@babel/preset-typescript');
+    return presets;
+  }
+
+  function createBabelSettings(options) {
+    const settings = {
+      presets: createBabelPresets(options),
+      plugins: [
+        ['@babel/plugin-proposal-decorators', { legacy: true }],
+        ['@babel/plugin-proposal-class-properties', { loose: true }],
+        [
+          '@babel/plugin-transform-runtime',
+          {
+            regenerator: true,
+          },
+        ],
+      ],
+    };
+    if (env === 'test') {
+      settings.plugins.push('babel-plugin-istanbul');
+    }
+    return settings;
+  }
+  const defaultSettings = createBabelSettings({
+    envSettings: {
+      targets: {
+        node: 'current',
+      },
+    },
+  });
+
+  const frontendSettings = createBabelSettings({
+    envSettings: {
+      targets: {
+        browsers: [
+          'last 2 Chrome versions',
+          'last 2 ChromeAndroid versions',
+          'last 2 Firefox versions',
+          'Firefox ESR',
+          'last 2 Edge versions',
+          'last 2 Safari version',
+          'last 2 iOS version',
+        ],
+      },
+    },
+  });
+
+  const storyshotsSettings = createBabelSettings({
+    envSettings: {
+      targets: {
+        node: 'current',
+      },
+    },
+  });
+  storyshotsSettings.plugins.push('require-context-hook');
+
   const config = {
     ...defaultSettings,
     overrides: [
       {
-        test: ['src/frontend', 'src/view'],
+        test: './packages/frontend/src',
         ...frontendSettings,
       },
     ],
@@ -94,7 +79,7 @@ module.exports = api => {
       aren't run through Webpack.
     */
     config.overrides.push({
-      test: ['.storybook', 'test/snapshots/storyshots.test.tsx'],
+      test: [],
       ...storyshotsSettings,
     });
   }
