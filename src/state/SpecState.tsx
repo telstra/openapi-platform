@@ -1,5 +1,5 @@
 import { client } from 'client/BackendClient';
-import { observable, computed, action, runInAction } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { HasId } from 'model/Entity';
 import { Spec } from 'model/Spec';
 
@@ -36,10 +36,8 @@ export const state: SpecState = new BasicSpecState();
 client
   .service('specifications')
   .find()
-  .then(specs => {
-    runInAction(() => {
-      specs.forEach(spec => {
-        state.specs.set(spec.id, spec);
-      });
+  .then(action((specs: HasId<Spec>[]) => {
+    specs.forEach(spec => {
+      state.specs.set(spec.id, spec);
     });
-  });
+  }));
