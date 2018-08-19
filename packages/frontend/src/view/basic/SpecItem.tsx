@@ -12,6 +12,7 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
   Table,
+  TableBody,
 } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
@@ -135,9 +136,11 @@ export class SpecItem extends Component<SpecItemProps> {
                   </div>
                 </div>
                 <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
-                  {plans.map(plan => (
-                    <PlanItem plan={plan} />
-                  ))}
+                  <TableBody>
+                    {plans.map(plan => (
+                      <PlanItem key={plan.id} plan={plan} />
+                    ))}
+                  </TableBody>
                 </Table>
                 <List>
                   <ListItem className={classes.sdkHeaderActions}>
