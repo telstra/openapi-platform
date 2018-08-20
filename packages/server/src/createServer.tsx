@@ -59,8 +59,8 @@ export async function createServer() {
         info: swaggerInfo,
       }),
     )
-    /* 
-      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI, 
+    /*
+      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI,
       once for exposing the swagger JSON schema.
     */
     .configure(
@@ -95,7 +95,7 @@ export async function createServer() {
         const sdk = await generateSdk(logger, spec, sdkConfig);
         /*
         TODO: The linkside of the info object is probably temporary.
-        Might need to consider downloading the object from 
+        Might need to consider downloading the object from
         wherever the Swagger gen API stores it.
         */
         if (sdkConfig.gitInfo) {
