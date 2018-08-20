@@ -5,10 +5,10 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
-import { state as planState, AddedPlan } from '../state/PlanState';
+import { state as sdkConfigState, AddedSdkConfig } from '../state/SdkConfigState';
 import { state as specState } from '../state/SpecState';
 import { FloatingModal } from './basic/FloatingModal';
-import { PlanModal } from './basic/PlanModal';
+import { SdkConfigModal } from './basic/SdkConfigModal';
 import { createStyled } from './createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -29,10 +29,10 @@ const Styled: any = createStyled(theme => ({
 }));
 
 /**
- * A modal window that allows the user to add a SDK Plan to the dashboard.
+ * A modal window that allows the user to add an SDK configuration to the dashboard.
  * Currently only supports specifying a target, version and options as a valid JSON.
  */
-export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSdkConfigModal extends Component<RouteComponentProps<{}>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -40,7 +40,7 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
   private showProgressIndicator: boolean = false;
 
   /**
-   * Whether or not the 'failed to add Plan' modal is open
+   * Whether or not the 'failed to add SdkConfig' modal is open
    */
   @observable
   private showErrorModal: boolean = false;
@@ -57,13 +57,16 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitPlan = async (submittedPlan: AddedPlan) => {
+  private onSubmitSdkConfig = async (submittedSdkConfig: AddedSdkConfig) => {
     this.showProgressIndicator = true;
     try {
       if (specState.expandedSpecId === null) {
         throw new Error('expandedSpecId was unexpectedly null');
       }
-      await planState.addPlan({ ...submittedPlan, specId: specState.expandedSpecId });
+      await sdkConfigState.addSdkConfig({
+        ...submittedSdkConfig,
+        specId: specState.expandedSpecId,
+      });
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -79,12 +82,12 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
         {({ classes }) => (
           <Observer>
             {() => [
-              <PlanModal
+              <SdkConfigModal
                 key={0}
                 submitButtonProps={{
                   children: 'Add',
                 }}
-                onSubmitPlan={this.onSubmitPlan}
+                onSubmitSdkConfig={this.onSubmitSdkConfig}
                 onCloseModal={this.closeModal}
                 showSubmitProgress={this.showProgressIndicator}
               />,
@@ -96,7 +99,7 @@ export class AddPlanModal extends Component<RouteComponentProps<{}>, {}> {
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the SDK Plan.</Typography>
+                  <Typography>An error occurred adding the SDK configuration.</Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>

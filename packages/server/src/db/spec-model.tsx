@@ -33,7 +33,7 @@ export function createSpecModel(dbConnection: Sequelize.Sequelize) {
 /**
  * Creates a Feathers service to access specifications, using the given database model.
  *
- * @param planModel The database model representing a specification.
+ * @param sdkConfigModel The database model representing a specification.
  * @returns The created Feathers service.
  */
 export function createSpecService(specModel) {

@@ -73,9 +73,9 @@ module.exports = api => {
     ],
   };
   if (env === 'test') {
-    /* 
-      This only exists because stories are found via require.context(...) 
-      which is only available when code run through webpack. Snapshot tests 
+    /*
+      This only exists because stories are found via require.context(...)
+      which is only available when code run through webpack. Snapshot tests
       aren't run through Webpack.
     */
     config.overrides.push({

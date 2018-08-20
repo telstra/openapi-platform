@@ -11,7 +11,7 @@ The following commands can be used to run openapi-platform locally for
 development:
  * `yarn watch` \
    Watches for any changes in the src folders of all packages.
-   If a change is detected the code is transpiled, the frontend package is rebundled and 
+   If a change is detected the code is transpiled, the frontend package is rebundled and
    the frontend & backend services are restarted.
  * `yarn watch:checker` \
    Runs the linter and TypeScript type checker on the entire codebase, watching
@@ -59,7 +59,7 @@ Storybook allows developers to see the visual appearance of various components.
 We also use Storybook examples for snapshot testing.
 
 ### How to add a component to storybook
-You will want to export a variable named `storybook` in the same file as the component you want to add to Storybook. 
+You will want to export a variable named `storybook` in the same file as the component you want to add to Storybook.
 
 E.g.
 ```tsx

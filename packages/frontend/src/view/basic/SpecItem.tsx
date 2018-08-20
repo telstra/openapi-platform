@@ -17,9 +17,9 @@ import {
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
-import { HasId, Plan, Spec } from '@openapi-platform/model';
+import { HasId, SdkConfig, Spec } from '@openapi-platform/model';
 import { createStyled } from '../createStyled';
-import { PlanItem } from './PlanItem';
+import { SdkConfigItem } from './SdkConfigItem';
 
 const Styled: any = createStyled(theme => ({
   bordered: {
@@ -74,8 +74,8 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onSpecOpen: (spec: Spec) => void;
-  onAddPlan: (event: any) => void | undefined;
-  plans?: Array<HasId<Plan>>;
+  onAddSdkConfig: (event: any) => void | undefined;
+  sdkConfigs?: Array<HasId<SdkConfig>>;
 }
 
 /**
@@ -87,7 +87,7 @@ export class SpecItem extends Component<SpecItemProps> {
     this.props.onPanelChange(this.props.spec, expanded);
 
   public render() {
-    const { spec, expanded, onAddPlan, plans = [] } = this.props;
+    const { spec, expanded, onAddSdkConfig, sdkConfigs = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -126,7 +126,7 @@ export class SpecItem extends Component<SpecItemProps> {
                 <div className={classes.sdkHeader}>
                   <div className={classes.sdkTitleSection}>
                     <Typography variant="subheading" className={classes.indent}>
-                      SDK Generation Plans
+                      SDK Configurations
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
@@ -137,16 +137,16 @@ export class SpecItem extends Component<SpecItemProps> {
                 </div>
                 <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
                   <TableBody>
-                    {plans.map(plan => (
-                      <PlanItem key={plan.id} plan={plan} />
+                    {sdkConfigs.map(sdkConfig => (
+                      <SdkConfigItem key={sdkConfig.id} sdkConfig={sdkConfig} />
                     ))}
                   </TableBody>
                 </Table>
                 <List>
                   <ListItem className={classes.sdkHeaderActions}>
                     <ListItemSecondaryAction>
-                      <Button variant="flat" color="primary" onClick={onAddPlan}>
-                        Add SDK Generation Plan
+                      <Button variant="flat" color="primary" onClick={onAddSdkConfig}>
+                        Add SDK Configuration
                       </Button>
                     </ListItemSecondaryAction>
                   </ListItem>
