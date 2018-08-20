@@ -110,7 +110,7 @@ gulp.task('build', gulp.series('transpile', 'bundle'));
 gulp.task('serve:frontend', function serveFrontend() {
   browserSync.init({
     server: {
-      baseDir: join(__diranme, 'packages/frontend/dist'),
+      baseDir: join(__dirname, 'packages/frontend/dist'),
       ws: true,
       // We need this so that routes work properly
       middleware: [historyApiFallback()],
@@ -143,14 +143,16 @@ gulp.task(
   'watch',
   gulp.series(
     'build',
-    'restart:backend',
-    gulp.parallel('serve:frontend', function watch() {
-      return gulpWatch(
-        globFromPackagesDirName(packagesDirName),
-        { debounceDelay: 200 },
-        gulp.series('build', 'restart:backend'),
-      );
-    }),
+    gulp.parallel(
+      'serve:frontend',
+      gulp.series('restart:backend', function watch() {
+        return gulpWatch(
+          globFromPackagesDirName(packagesDirName),
+          { debounceDelay: 200 },
+          gulp.series('build', 'restart:backend'),
+        );
+      }),
+    ),
   ),
 );
 
