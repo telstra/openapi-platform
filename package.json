@@ -71,6 +71,7 @@
     "gulp-babel": "^8.0.0-beta.2",
     "gulp-filter": "^5.1.0",
     "gulp-newer": "^1.4.0",
+    "gulp-plumber": "^1.2.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-watch": "^5.0.1",
     "html-webpack-plugin": "^3.0.6",

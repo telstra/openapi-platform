@@ -11,6 +11,7 @@ const babel = require('gulp-babel');
 const newer = require('gulp-newer');
 const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
+const plumber = require('gulp-plumber');
 
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -49,10 +50,18 @@ function globFromPackagesDirName(dirName) {
   ];
 }
 
-function compilationLogger(rollup) {
+function compilationLogger() {
   return through.obj(function(file, enc, callback) {
     console.log(`Compiling '${file.relative.cyan}'`);
     callback(null, file);
+  });
+}
+
+function errorLogger() {
+  return plumber({
+    errorHandler(err) {
+      console.error(err.stack);
+    },
   });
 }
 
@@ -68,6 +77,7 @@ function buildBabel(exclude) {
   }
 
   return stream
+    .pipe(errorLogger())
     .pipe(newer({ dest: packagesDir, map: swapSrcWithLib }))
     .pipe(compilationLogger())
     .pipe(sourcemaps.init())
@@ -87,6 +97,7 @@ function buildBundle(packageName) {
   const packageDir = join(packagesDir, packageName);
   const stream = gulp.src(packageDir, 'src', 'index.tsx');
   return stream
+    .pipe(errorLogger())
     .pipe(createWebpackStream(packageDir))
     .pipe(gulp.dest(join(packageDir, 'dist')));
 }
@@ -107,7 +118,7 @@ gulp.task(
 
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
-gulp.task('serve:frontend', function serveFrontend() {
+gulp.task('serve:frontend', function serveFrontend(done) {
   browserSync.init({
     server: {
       baseDir: join(__dirname, 'packages/frontend/dist'),
@@ -116,15 +127,16 @@ gulp.task('serve:frontend', function serveFrontend() {
       middleware: [historyApiFallback()],
     },
   });
+  done();
 });
 
-gulp.task('restart:backend', function startBackend() {
+gulp.task('restart:backend', function startBackend(done) {
   if (backendNode) {
     backendNode.kill();
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn('node', [join(__dirname, './packages/server/lib/index.js')], {
+  backendNode = spawn('node', [join(__dirname, 'packages/server/lib/index.js')], {
     stdio: 'inherit',
     env: backendEnv,
   });
@@ -134,29 +146,29 @@ gulp.task('restart:backend', function startBackend() {
       console.log('Error detected, waiting for changes...'.red);
     }
   });
+  done();
 });
+
+gulp.task(
+  'watch-no-init-build',
+  gulp.parallel(
+    'serve:frontend',
+    gulp.series('restart:backend', function watch() {
+      return gulpWatch(
+        globFromPackagesDirName(packagesDirName),
+        { debounceDelay: 200 },
+        gulp.series('build', 'restart:backend'),
+      );
+    }),
+  ),
+);
 
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
-gulp.task(
-  'watch',
-  gulp.series(
-    'build',
-    gulp.parallel(
-      'serve:frontend',
-      gulp.series('restart:backend', function watch() {
-        return gulpWatch(
-          globFromPackagesDirName(packagesDirName),
-          { debounceDelay: 200 },
-          gulp.series('build', 'restart:backend'),
-        );
-      }),
-    ),
-  ),
-);
+gulp.task('watch', gulp.series('build', 'watch-no-init-build'));
 
-gulp.task('default', gulp.series('build'));
+gulp.task('default', gulp.series('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
