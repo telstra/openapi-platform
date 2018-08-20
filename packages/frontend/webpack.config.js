@@ -61,16 +61,6 @@ module.exports = env => {
       }),
       new HotModuleReplacementPlugin(),
     ],
-    devServer: {
-      hot: true,
-      https: false,
-      open: true,
-      overlay: true,
-      port: 3000,
-      progress: true,
-      historyApiFallback: true,
-      stats,
-    },
     stats,
   };
 };
