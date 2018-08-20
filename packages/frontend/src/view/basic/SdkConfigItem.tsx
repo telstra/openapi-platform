@@ -6,14 +6,14 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
-import { Plan, BuildStatus } from '@openapi-platform/model';
+import { SdkConfig, BuildStatus } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';
 import { client } from '@openapi-platform/server-client';
 import { createStyled } from '../createStyled';
 import { BuildStatusChip } from './BuildStatusChip';
 
 const Styled: any = createStyled(theme => ({
-  planItemRow: {
+  sdkConfigItemRow: {
     '& > td': {
       border: 'none',
       padding: [0, theme.spacing.unit],
@@ -25,7 +25,7 @@ const Styled: any = createStyled(theme => ({
       },
     },
   },
-  planStatus: {
+  sdkConfigStatus: {
     textAlign: 'center',
   },
   // TODO: Regularly used classes like this should be defined somewhere else
@@ -35,15 +35,15 @@ const Styled: any = createStyled(theme => ({
   },
 }));
 
-export interface PlanItemProps extends React.DOMAttributes<HTMLDivElement> {
-  plan: HasId<Plan>;
+export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
+  sdkConfig: HasId<SdkConfig>;
 }
 
 /**
- * Very basic information about a SDK.
+ * Very basic information about an SDK configuration.
  * For use in lists, grids, etc.
  */
-export class PlanItem extends Component<PlanItemProps> {
+export class SdkConfigItem extends Component<SdkConfigItemProps> {
   @observable
   private latestSdkUrl?: string;
 
@@ -51,49 +51,53 @@ export class PlanItem extends Component<PlanItemProps> {
   public createSdk = async () => {
     const sdk: HasId<Sdk> = await client
       .service('sdks')
-      .create({ planId: this.props.plan.id });
+      .create({ sdkConfigId: this.props.sdkConfig.id });
     // TODO: Need to get this from the actual backend
-    this.props.plan.buildStatus = BuildStatus.Success;
+    this.props.sdkConfig.buildStatus = BuildStatus.Success;
     this.latestSdkUrl = sdk.path;
   };
 
   public render() {
-    const { plan } = this.props;
+    const { sdkConfig } = this.props;
     return (
       <Styled>
         {({ classes }) => (
           <Observer>
             {() => (
-              <TableRow classes={{ root: classes.planItemRow }}>
+              <TableRow classes={{ root: classes.sdkConfigItemRow }}>
                 <TableCell>
-                  <Typography className={classes.planTitle}>{plan.target}</Typography>
+                  <Typography className={classes.sdkConfigTitle}>
+                    {sdkConfig.target}
+                  </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography
-                    className={classes.planVersion}
+                    className={classes.sdkConfigVersion}
                     variant="body1"
                     color="textSecondary"
                   >
-                    {plan.version}
+                    {sdkConfig.version}
                   </Typography>
                 </TableCell>
-                <TableCell classes={{ root: classes.planStatus }}>
-                  <div className={classes.planStatus}>
-                    <BuildStatusChip buildStatus={plan.buildStatus} />
+                <TableCell classes={{ root: classes.sdkConfigStatus }}>
+                  <div className={classes.sdkConfigStatus}>
+                    <BuildStatusChip buildStatus={sdkConfig.buildStatus} />
                   </div>
                 </TableCell>
                 <TableCell numeric>
-                  <div className={classes.planActions}>
+                  <div className={classes.sdkConfigActions}>
                     {this.latestSdkUrl ? (
                       <IconButton href={this.latestSdkUrl}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
                     <Button
-                      disabled={plan.buildStatus === BuildStatus.Running}
+                      disabled={sdkConfig.buildStatus === BuildStatus.Running}
                       onClick={this.createSdk}
                     >
-                      {plan.buildStatus === BuildStatus.Running ? 'Running...' : 'Run'}
+                      {sdkConfig.buildStatus === BuildStatus.Running
+                        ? 'Running...'
+                        : 'Run'}
                     </Button>
                   </div>
                 </TableCell>

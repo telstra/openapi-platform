@@ -2,16 +2,16 @@ import { GitInfo } from './GitInfo';
 import { Id } from './Id';
 
 /**
- * Represents a plan, used to define how an SDK should be built for a specification.
+ * Represents an SDK configuration, used to define how an SDK should be built from a specification.
  */
-export interface Plan {
+export interface SdkConfig {
   /**
-   * The ID of the Spec this Plan is for.
+   * The ID of the Spec this SdkConfig is for.
    */
   specId: Id;
 
   /**
-   * The target language of the SDK to build. Must be one of the values in PLAN_TARGETS.
+   * The target language of the SDK to build. Must be one of the values in SDK_CONFIG_TARGETS.
    */
   target: string;
 
@@ -39,7 +39,7 @@ export interface Plan {
 }
 
 /**
- * Represents the different possible build statuses of a plan.
+ * Represents the different possible build statuses of an SDK configuration.
  */
 export enum BuildStatus {
   NotRun = 'NOT_RUN',
@@ -52,9 +52,9 @@ export const hasValidBuildStatus = buildStatus =>
   Object.values(BuildStatus).includes(buildStatus);
 
 /**
- * An array of supported plan target languages.
+ * An array of supported SDK configuration target languages.
  */
-export const PLAN_TARGETS = [
+export const SDK_CONFIG_TARGETS = [
   'ada',
   'akka-scala',
   'android',

@@ -1,11 +1,11 @@
 import { BuildStatus } from '@openapi-platform/model';
-export async function initDummyData(specs, plans): Promise<void> {
+export async function initDummyData(specs, sdkConfigs): Promise<void> {
   // TODO: Shouldn't the params be typed?
-  const addToSpec = async (spec, ...specPlans) => {
-    for (const specPlan of specPlans) {
-      await plans.create({
+  const addToSpec = async (spec, ...specSdkConfigs) => {
+    for (const specSdkConfig of specSdkConfigs) {
+      await sdkConfigs.create({
         specId: spec.id,
-        ...specPlan,
+        ...specSdkConfig,
       });
     }
   };

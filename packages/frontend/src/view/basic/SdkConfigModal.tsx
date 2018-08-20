@@ -15,8 +15,8 @@ import { ButtonProps } from '@material-ui/core/Button';
 import { ModalProps } from '@material-ui/core/Modal';
 import { Observer } from 'mobx-react';
 
-import { PLAN_TARGETS } from '@openapi-platform/model';
-import { AddedPlan } from '../../state/PlanState';
+import { SDK_CONFIG_TARGETS } from '@openapi-platform/model';
+import { AddedSdkConfig } from '../../state/SdkConfigState';
 import { Category } from '../../Storybook';
 import {
   ValidatedFormStore,
@@ -51,10 +51,10 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export type OnCloseModal = () => void;
-export type OnSubmitPlan = (plan: AddedPlan) => void;
-export interface PlanModalProps {
+export type OnSubmitSdkConfig = (sdkConfig: AddedSdkConfig) => void;
+export interface SdkConfigModalProps {
   readonly onCloseModal: OnCloseModal;
-  readonly onSubmitPlan: OnSubmitPlan;
+  readonly onSubmitSdkConfig: OnSubmitSdkConfig;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -62,17 +62,17 @@ export interface PlanModalProps {
 }
 
 /**
- * A modal window that allows the user to add a SDK generation Plan to the dashboard.
+ * A modal window that allows the user to add an SDK configuration to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class PlanModal extends Component<PlanModalProps> {
+export class SdkConfigModal extends Component<SdkConfigModalProps> {
   /**
    * Stores all form data and handles input validation logic.
    */
   private inputStore = new ValidatedFormStore({
     target: {
       validation: target =>
-        !PLAN_TARGETS.includes(target)
+        !SDK_CONFIG_TARGETS.includes(target)
           ? inputInvalid('Error: Missing target')
           : inputValid(),
       initialValue: '',
@@ -97,7 +97,7 @@ export class PlanModal extends Component<PlanModalProps> {
   /**
    * Event fired when the user presses the 'Add' button.
    */
-  private onSubmitPlan() {
+  private onSubmitSdkConfig() {
     // Validate input
     if (!this.inputStore.inputsValid) {
       this.inputStore.updateAllInputErrors();
@@ -108,8 +108,8 @@ export class PlanModal extends Component<PlanModalProps> {
     const target = this.inputStore.getInputValue('target');
     const version = this.inputStore.getInputValue('version');
     const options = JSON.parse(this.inputStore.getInputValue('options'));
-    // TODO: submittedPlan.pushPath = "";
-    this.props.onSubmitPlan({ target, version, options });
+    // TODO: submittedSdkConfig.pushPath = "";
+    this.props.onSubmitSdkConfig({ target, version, options });
   }
 
   private onInputChange = event =>
@@ -121,7 +121,7 @@ export class PlanModal extends Component<PlanModalProps> {
 
   private onAddButtonClick = event => {
     event.preventDefault();
-    this.onSubmitPlan();
+    this.onSubmitSdkConfig();
   };
 
   public render() {
@@ -147,7 +147,7 @@ export class PlanModal extends Component<PlanModalProps> {
                 <form>
                   <div className={classes.modalContent}>
                     <Typography variant="title" className={classes.title}>
-                      Add SDK Generation Plan
+                      Add SDK Configuration
                     </Typography>
                     <FormControl
                       error={this.inputStore.getInputError('target') !== null}
@@ -162,7 +162,7 @@ export class PlanModal extends Component<PlanModalProps> {
                           id: 'target',
                         }}
                       >
-                        {PLAN_TARGETS.map(target => (
+                        {SDK_CONFIG_TARGETS.map(target => (
                           <MenuItem key={target} value={target}>
                             {target}
                           </MenuItem>
@@ -239,12 +239,12 @@ export class PlanModal extends Component<PlanModalProps> {
   }
 }
 
-export const storybook: Category<PlanModalProps> = {
-  Component: PlanModal,
+export const storybook: Category<SdkConfigModalProps> = {
+  Component: SdkConfigModal,
   stories: {
     Submit: {
       onCloseModal: () => {},
-      onSubmitPlan: () => {},
+      onSubmitSdkConfig: () => {},
       showSubmitProgress: false,
       submitButtonProps: {
         children: 'Submit',

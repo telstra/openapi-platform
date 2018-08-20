@@ -1,13 +1,13 @@
 import { Id } from './Id';
 
 /**
- * Represents an SDK that has been built from a plan for a specification.
+ * Represents an SDK that has been built from an SDK configuration for a specification.
  */
 export interface Sdk {
   /**
-   * The ID of the plan the SDK was built for.
+   * The ID of the SDK configuration the SDK was built for.
    */
-  planId: Id;
+  sdkConfigId: Id;
 
   /**
    * A URL to a download link for the SDK.
