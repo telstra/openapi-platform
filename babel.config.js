@@ -1,3 +1,4 @@
+const { join } = require('path');
 module.exports = api => {
   const env = api.env();
 
@@ -66,12 +67,11 @@ module.exports = api => {
     ...defaultSettings,
     overrides: [
       {
-        test: './packages/frontend/src',
+        test: join(__dirname, 'packages/frontend/src'),
         ...frontendSettings,
       },
     ],
   };
-
   if (env === 'test') {
     /* 
       This only exists because stories are found via require.context(...) 
@@ -79,7 +79,10 @@ module.exports = api => {
       aren't run through Webpack.
     */
     config.overrides.push({
-      test: [],
+      test: [
+        join(__dirname, 'packages/frontend/.storybook'),
+        join(__dirname, 'packages/frontend/test/snapshots/storyshots.test.tsx'),
+      ],
       ...storyshotsSettings,
     });
   }

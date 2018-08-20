@@ -16,6 +16,7 @@ const Styled: any = createStyled(theme => ({
   navPaper: {
     overflowX: 'hidden',
     position: 'relative',
+    height: '100vh',
   },
   navPaperClosed: {
     width: theme.spacing.unit * 7,
