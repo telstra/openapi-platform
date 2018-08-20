@@ -1,7 +1,10 @@
 import { createMount } from '@material-ui/core/test-utils';
 import initStoryshots from '@storybook/addon-storyshots';
+import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
 // Required because Storybook uses require.context but this file is not run through Webpack
 import { join } from 'path';
+
+registerRequireContextHook();
 
 initStoryshots({
   configPath: join(__dirname, '../../.storybook'),

@@ -78,7 +78,8 @@ function buildBabel(exclude) {
 }
 
 function createWebpackStream(packageDir) {
-  const webpackConfig = require(join(packageDir, 'webpack.config'));
+  const createWebpackConfig = require(join(packageDir, 'webpack.config'));
+  const webpackConfig = createWebpackConfig({ NODE_ENV: process.env.NODE_ENV });
   return webpackStream(webpackConfig, webpack);
 }
 
@@ -109,7 +110,7 @@ gulp.task('build', gulp.series('transpile', 'bundle'));
 gulp.task('serve:frontend', function serveFrontend() {
   browserSync.init({
     server: {
-      baseDir: './packages/frontend/dist',
+      baseDir: join(__diranme, 'packages/frontend/dist'),
       ws: true,
       // We need this so that routes work properly
       middleware: [historyApiFallback()],
@@ -123,7 +124,7 @@ gulp.task('restart:backend', function startBackend() {
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn('node', ['./packages/server/lib/index.js'], {
+  backendNode = spawn('node', [join(__dirname, './packages/server/lib/index.js')], {
     stdio: 'inherit',
     env: backendEnv,
   });
