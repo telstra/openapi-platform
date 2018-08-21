@@ -5,6 +5,7 @@
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,
+  "sideEffects": false,
   "dependencies": {
     "node-fetch": "^2.1.2"
   }

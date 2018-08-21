@@ -5,6 +5,7 @@
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,
+  "sideEffects": false,
   "dependencies": {
     "isomorphic-git": "^0.22.3",
     "mz": "^2.7.0",

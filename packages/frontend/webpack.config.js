@@ -1,6 +1,9 @@
 const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { HotModuleReplacementPlugin } = require('webpack');
+
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const stats = {
   colors: true,
   reasons: true,
@@ -60,6 +63,11 @@ module.exports = env => {
         template: join(__dirname, 'public', 'index.html'),
       }),
       new HotModuleReplacementPlugin(),
+      new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        analyzerMode: 'static',
+        reportFilename: join(__dirname, 'stats/bundle.html'),
+      }),
     ],
     stats,
   };
