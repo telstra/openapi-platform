@@ -37,11 +37,7 @@ module.exports = api => {
       },
     },
   });
-
-  const config = {
-    ...defaultSettings,
-    overrides: [],
-  };
+  const overrides = [];
   if (env === 'test') {
     /*
       This only exists because stories are found via require.context(...)
@@ -56,7 +52,7 @@ module.exports = api => {
       },
     });
     storyshotsSettings.plugins.push('require-context-hook');
-    config.overrides.push({
+    overrides.push({
       test: [
         join(__dirname, 'packages/frontend/.storybook'),
         join(__dirname, 'packages/frontend/test/snapshots/storyshots.test.tsx'),
@@ -81,11 +77,14 @@ module.exports = api => {
         },
       },
     });
-    config.overrides.push({
+    overrides.push({
       test: join(__dirname, 'packages/frontend/src'),
       ...frontendSettings,
     });
   }
-
+  const config = {
+    ...defaultSettings,
+    overrides,
+  };
   return config;
 };
