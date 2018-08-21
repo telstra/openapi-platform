@@ -75,10 +75,10 @@ export function createSdkConfigService(sdkConfigModel) {
           },
           options: {
             type: 'object',
-            description: 'Additional options for the plan',
+            description: 'Options to pass to OpenAPI Generator when generating an SDK',
             additionalProperties: true,
           },
-          gitinfo: {
+          gitInfo: {
             type: 'object',
             description: 'Used as a repository to push SDKs to',
             additionalProperties: true,
