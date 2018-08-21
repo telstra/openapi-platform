@@ -2,14 +2,14 @@ import sequelize from 'feathers-sequelize';
 import Sequelize from 'sequelize';
 
 /**
- * Creates a Sequelize database model for storing a plan.
+ * Creates a Sequelize database model for storing an SDK configuration.
  *
  * @param dbConnection The Sequelize connection to create the model for.
  * @returns The created Sequelize model.
  */
-export function createPlanModel(dbConnection: Sequelize.Sequelize) {
+export function createSdkConfigModel(dbConnection: Sequelize.Sequelize) {
   return dbConnection.define(
-    'plans',
+    'sdk_configs',
     {
       specId: {
         type: Sequelize.INTEGER,
@@ -43,25 +43,27 @@ export function createPlanModel(dbConnection: Sequelize.Sequelize) {
 }
 
 /**
- * Creates a Feathers service to access plans, using the given database model.
+ * Creates a Feathers service to access SDK configuration, using the given database model.
  *
- * @param planModel The database model representing a plan.
+ * @param sdkConfigModel The database model representing an SDK configuration.
  * @returns The created Feathers service.
  */
-export function createPlanService(planModel) {
+export function createSdkConfigService(sdkConfigModel) {
   const service = sequelize({
-    Model: planModel,
+    Model: sdkConfigModel,
   });
   service.docs = {
-    description: 'The plans used for generating SDKs according to a given specification',
+    description:
+      'The SDK configurations used for generating SDKs according to a given ' +
+      'specification',
     definitions: {
-      plans: {
+      sdkConfigs: {
         type: 'object',
         properties: {
           specId: {
             type: 'integer',
             format: 'int64',
-            description: 'ID of the specification associated with the plan',
+            description: 'ID of the specification associated with the SDK configuration',
           },
           target: {
             type: 'string',
@@ -88,7 +90,7 @@ export function createPlanService(planModel) {
         },
         additionalProperties: true,
       },
-      'plans list': {
+      'sdkConfigs list': {
         type: 'array',
         items: {
           $ref: '#definitions/plans',

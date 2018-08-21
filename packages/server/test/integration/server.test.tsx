@@ -1,7 +1,7 @@
-import { Plan, BuildStatus } from '@openapi-platform/model';
+import { SdkConfig, BuildStatus } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
 import { createServer } from '../../src/createServer';
-
+jest.mock('../../src/config/readConfig');
 jest.mock('@openapi-platform/logger');
 jest.mock('sequelize');
 jest.mock('feathers-sequelize');
@@ -9,7 +9,7 @@ jest.mock('../../src/db/connection');
 
 jest.mock('@openapi-platform/openapi-sdk-gen-client');
 /*
-  Have to use require syntax as es6 imports currently makes TypeScript 
+  Have to use require syntax as es6 imports currently makes TypeScript
   complain about missing mockImplementation, etc.
   TODO: Might be fixed in TypeScript 3? Go check
 */
@@ -36,19 +36,19 @@ describe('test server', () => {
     });
   });
 
-  describe('test plans service', () => {
+  describe('test SDK configuration service', () => {
     let createdSpecId: number;
-    let planData: Plan;
+    let sdkConfigData: SdkConfig;
     const specData: Spec = {
       title: 'title',
       description: 'desc',
       path: 'path',
     };
     beforeEach(async () => {
-      // Need a spec to add plans to.
+      // Need a spec to add SDK configurations to.
       const createdSpec = await app.service('specifications').create(specData);
       createdSpecId = createdSpec.id;
-      planData = {
+      sdkConfigData = {
         specId: createdSpecId,
         target: 'java is ew',
         version: 'v1.0.0',
@@ -57,27 +57,29 @@ describe('test server', () => {
       };
     });
 
-    it('plans service registered', () => {
-      const s = app.service('plans');
+    it('SDK configuration service registered', () => {
+      const s = app.service('sdkConfigs');
       expect(s).toEqual(expect.anything());
     });
 
-    it('plan created', async () => {
-      const createdPlan = await app.service('plans').create(planData);
-      const retrievedPlan = await app.service('plans').get(createdPlan.id);
+    it('SDK configuration created', async () => {
+      const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
+      const retrievedSdkConfig = await app.service('sdkConfigs').get(createdSdkConfig.id);
       const basicFields = ['specId', 'target', 'version', 'buildStatus'];
       // Compare the objects, need to do it this way because objects are stored as strings.
       basicFields.forEach(key => {
-        expect(planData[key]).toBe(createdPlan[key]);
-        expect(planData[key]).toBe(retrievedPlan[key]);
+        expect(sdkConfigData[key]).toBe(createdSdkConfig[key]);
+        expect(sdkConfigData[key]).toBe(retrievedSdkConfig[key]);
       });
-      expect(planData.options).toEqual(createdPlan.options);
+      expect(sdkConfigData.options).toEqual(createdSdkConfig.options);
     });
 
-    it('plan created hook sets buildStatus to BuildStatus.NotRun', async () => {
-      const { buildStatus, ...planDataWithoutBuildStatus } = planData;
-      const createdPlan = await app.service('plans').create(planDataWithoutBuildStatus);
-      const bs = (await app.service('plans').get(createdPlan.id)).buildStatus;
+    it('SDK configuration created hook sets buildStatus to BuildStatus.NotRun', async () => {
+      const { buildStatus, ...sdkConfigDataWithoutBuildStatus } = sdkConfigData;
+      const createdSdkConfig = await app
+        .service('sdkConfigs')
+        .create(sdkConfigDataWithoutBuildStatus);
+      const bs = (await app.service('sdkConfigs').get(createdSdkConfig.id)).buildStatus;
       expect(bs).toEqual(BuildStatus.NotRun);
     });
   });
@@ -89,10 +91,10 @@ describe('test server', () => {
     });
 
     describe('test creating/generating sdks', () => {
-      // A spec and plan need to be created before a SDK can be.
+      // A specification and SDK configuration need to be created before an SDK can be.
       // TODO: Should there be a model for SDK?
 
-      it('create a sdk success', async () => {
+      it('create an sdk success', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
@@ -101,7 +103,7 @@ describe('test server', () => {
         };
         const createdSpec = await app.service('specifications').create(specData);
 
-        const planData: Plan = {
+        const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
@@ -111,12 +113,12 @@ describe('test server', () => {
             additionalProp2: 'string',
           },
         };
-        const createdPlan = await app.service('plans').create(planData);
+        const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
 
-        const sdkData = { planId: createdPlan.id };
+        const sdkData = { sdkConfigId: createdSdkConfig.id };
 
         const expectedGenerationResponse = {
-          planId: 1,
+          sdkConfigId: 1,
           path: 'base-url-here/download/unique-download-hash-here',
         };
 
@@ -128,8 +130,8 @@ describe('test server', () => {
         const createdSdk = await app.service('sdks').create(sdkData);
 
         expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
-        // SDK created for the right plan.
-        expect(createdSdk.planId).toBe(createdPlan.id);
+        // SDK created for the right SDK configuration.
+        expect(createdSdk.sdkConfigId).toBe(createdSdkConfig.id);
         // SDK created & stored in memory.
         const retrievedSdk = await app.service('sdks').get(createdSdk.id);
         // Check return link, it is called path in the sdk model.
@@ -139,7 +141,7 @@ describe('test server', () => {
         expect(createdSdk.id).toBe(retrievedSdk.id);
       });
 
-      it('create a sdk error, bad options', async () => {
+      it('create an sdk error, bad options', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
@@ -148,7 +150,7 @@ describe('test server', () => {
         };
         const createdSpec = await app.service('specifications').create(specData);
 
-        const planData: Plan = {
+        const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
@@ -156,9 +158,9 @@ describe('test server', () => {
           buildStatus: BuildStatus.NotRun,
         };
 
-        const createdPlan = await app.service('plans').create(planData);
+        const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
 
-        const sdkData = { planId: createdPlan.id };
+        const sdkData = { sdkConfigId: createdSdkConfig.id };
 
         sdkGeneration.generateSdk.mockImplementation(async () => {
           const swaggerCodegenMalformedOptionsResponse = {
@@ -174,7 +176,7 @@ describe('test server', () => {
         expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
       });
 
-      it('create a sdk error, invalid path', async () => {
+      it('create an sdk error, invalid path', async () => {
         const specData: Spec = {
           title: 'Dummy specification title',
           description: 'A description of my specification',
@@ -182,16 +184,16 @@ describe('test server', () => {
         };
         const createdSpec = await app.service('specifications').create(specData);
 
-        const planData: Plan = {
+        const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           buildStatus: BuildStatus.NotRun,
         };
 
-        const createdPlan = await app.service('plans').create(planData);
+        const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
 
-        const sdkData = { planId: createdPlan.id };
+        const sdkData = { sdkConfigId: createdSdkConfig.id };
         sdkGeneration.generateSdk.mockImplementation(async () => {
           const swaggerCodegenInvalidSpecificationResponse = {
             code: 1,

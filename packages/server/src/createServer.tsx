@@ -12,7 +12,7 @@ import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 
 import { connectToDb } from './db/connection';
-import { createPlanModel, createPlanService } from './db/plan-model';
+import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 
@@ -26,9 +26,9 @@ export async function createServer() {
   const specModel = createSpecModel(dbConnection);
   const specService = createSpecService(specModel);
 
-  // Define database model for plans
-  const planModel = createPlanModel(dbConnection);
-  const planService = createPlanService(planModel);
+  // Define database model for SDK configurations
+  const sdkConfigModel = createSdkConfigModel(dbConnection);
+  const sdkConfigService = createSdkConfigService(sdkConfigModel);
 
   // Define database model for SDKs
   const sdkModel = createSdkModel(dbConnection);
@@ -59,8 +59,8 @@ export async function createServer() {
         info: swaggerInfo,
       }),
     )
-    /* 
-      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI, 
+    /*
+      TODO: At the moment we need to use feathers-swagger twice, once to use Swagger UI,
       once for exposing the swagger JSON schema.
     */
     .configure(
@@ -72,11 +72,11 @@ export async function createServer() {
     )
     .get('/', (req, res) => res.redirect('/docs'))
     .use('/specifications', specService)
-    .use('/plans', planService)
+    .use('/sdkConfigs', sdkConfigService)
     .use('/sdks', sdkService)
     .use(express.errorHandler());
 
-  app.service('plans').hooks({
+  app.service('sdkConfigs').hooks({
     before: {
       async create(context) {
         await specService.get(context.data.specId, {});
@@ -90,37 +90,37 @@ export async function createServer() {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const plan = await planService.get(context.data.planId, {});
-        const spec = await specService.get(plan.specId, {});
-        const sdk = await generateSdk(logger, spec, plan);
+        const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
+        const spec = await specService.get(sdkConfig.specId, {});
+        const sdk = await generateSdk(logger, spec, sdkConfig);
         /*
         TODO: The linkside of the info object is probably temporary.
-        Might need to consider downloading the object from 
+        Might need to consider downloading the object from
         wherever the Swagger gen API stores it.
         */
-        if (plan.gitInfo) {
-          await updateRepoWithNewSdk(plan.gitInfo, sdk.path);
+        if (sdkConfig.gitInfo) {
+          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path);
         }
         context.data.path = sdk.path;
-        context.data.planId = plan.id;
+        context.data.sdkConfigId = sdkConfig.id;
         return context;
       },
     },
   });
 
   // Enables CORS requests if configured to do so
-  if (config.backend.useCors) {
+  if (config.get('server.useCors')) {
     app.use(cors());
   }
 
   // TODO: Use migrations instead of sync to create tables
   await specModel.sync();
-  await planModel.sync();
+  await sdkConfigModel.sync();
   await sdkModel.sync();
 
-  if (config.backend.initDummyData && (await specModel.count()) === 0) {
+  if (config.get('server.initDummyData') && (await specModel.count()) === 0) {
     // Initialise dummy data if there are no specifications
-    await initDummyData(app.service('specifications'), app.service('plans'));
+    await initDummyData(app.service('specifications'), app.service('sdkConfigs'));
   }
   return app;
 }

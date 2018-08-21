@@ -11,7 +11,7 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
   return dbConnection.define(
     'sdks',
     {
-      planId: {
+      sdkConfigId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -42,10 +42,10 @@ export function createSdkService(sdkModel) {
       sdks: {
         type: 'object',
         properties: {
-          planId: {
+          sdkConfigId: {
             type: 'integer',
             format: 'int64',
-            description: 'ID of the plan to generate the SDK for',
+            description: 'ID of the SDK configuration to generate the SDK for',
           },
           path: {
             type: 'string',

@@ -23,51 +23,44 @@ const stats = {
   children: false,
 };
 
-module.exports = {
-  name: 'Frontend',
-  target: 'web',
-  entry: join(__dirname, 'src', 'index.tsx'),
-  output: {
-    filename: 'index.js',
-    publicPath: '/',
-  },
-  mode: 'development',
-  module: {
-    rules: [
-      {
-        test: /\.tsx$/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.css$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-      },
-      {
-        test: /\.(svg|tff|woff2?)$/,
-        loader: 'file-loader',
-      },
+module.exports = env => {
+  const isProduction = env.NODE_ENV === 'production';
+  return {
+    name: 'Frontend',
+    target: 'web',
+    entry: join(__dirname, 'src', 'index.tsx'),
+    output: {
+      filename: 'index.js',
+      publicPath: '/',
+    },
+    mode: isProduction ? 'production' : 'development',
+    module: {
+      rules: [
+        {
+          test: /\.tsx$/,
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.css$/,
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        },
+        {
+          test: /\.(svg|tff|woff2?)$/,
+          loader: 'file-loader',
+        },
+      ],
+    },
+    devtool: 'cheap-module-source-map',
+    resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: `OpenAPI Platform${isProduction ? '' : ' (Developer mode)'}`,
+        template: join(__dirname, 'public', 'index.html'),
+      }),
+      new HotModuleReplacementPlugin(),
     ],
-  },
-  devtool: 'cheap-module-source-map',
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: 'OpenAPI Platform',
-      template: join(__dirname, 'public', 'index.html'),
-    }),
-    new HotModuleReplacementPlugin(),
-  ],
-  devServer: {
-    hot: true,
-    https: false,
-    open: true,
-    overlay: true,
-    port: 3000,
-    progress: true,
-    historyApiFallback: true,
     stats,
-  },
-  stats,
+  };
 };

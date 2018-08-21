@@ -9,18 +9,27 @@
     "storybook": "start-storybook -p 9001"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "^4.0.0-alpha.14",
-    "@storybook/addon-actions": "^4.0.0-alpha.14",
-    "@storybook/addon-backgrounds": "^4.0.0-alpha.14",
-    "@storybook/addon-knobs": "^4.0.0-alpha.14",
-    "@storybook/addon-options": "^4.0.0-alpha.14",
-    "@storybook/addon-storyshots": "^4.0.0-alpha.14",
-    "@storybook/addon-viewport": "^4.0.0-alpha.14",
-    "@storybook/addons": "^4.0.0-alpha.14",
-    "@storybook/cli": "^4.0.0-alpha.14",
-    "@storybook/react": "^4.0.0-alpha.14"   
+    "@storybook/addon-a11y": "^4.0.0-alpha.16",
+    "@storybook/addon-actions": "^4.0.0-alpha.16",
+    "@storybook/addon-backgrounds": "^4.0.0-alpha.16",
+    "@storybook/addon-knobs": "^4.0.0-alpha.16",
+    "@storybook/addon-options": "^4.0.0-alpha.16",
+    "@storybook/addon-storyshots": "^4.0.0-alpha.16",
+    "@storybook/addon-viewport": "^4.0.0-alpha.16",
+    "@storybook/addons": "^4.0.0-alpha.16",
+    "@storybook/cli": "^4.0.0-alpha.16",
+    "@storybook/react": "^4.0.0-alpha.16"
   },
   "dependencies": {
+    "@material-ui/core": "^1.4.3",
+    "@material-ui/icons": "^2.0.1",
+    "@types/jss": "^9.5.3",
+    "@types/material-ui": "^0.21.3",
+    "@types/react": "^16.4.6",
+    "@types/react-dom": "^16.0.6",
+    "@types/react-router": "^4.0.28",
+    "@types/valid-url": "^1.0.2",
+    "classnames": "^2.2.5",
     "jss": "^9.8.7",
     "jss-global": "^3.0.0",
     "mobx": "^5.0.3",
@@ -32,15 +41,6 @@
     "react-router-dom": "^4.3.1",
     "typeface-roboto": "^0.0.54",
     "typeface-roboto-mono": "^0.0.54",
-    "valid-url": "^1.0.9",
-    "@material-ui/core": "^1.4.3",
-    "@material-ui/icons": "^2.0.1",
-    "@types/react": "^16.4.6",
-    "@types/react-dom": "^16.0.6",
-    "@types/react-router": "^4.0.28",
-    "@types/valid-url": "^1.0.2",
-    "@types/jss": "^9.5.3",
-    "@types/material-ui": "^0.21.3",
-    "classnames": "^2.2.5"
+    "valid-url": "^1.0.9"
   }
 }

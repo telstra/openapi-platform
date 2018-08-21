@@ -8,7 +8,7 @@ import { Route } from 'react-router-dom';
 
 import { Id } from '@openapi-platform/model';
 import { state } from '../state/SpecState';
-import { AddPlanModal } from './AddPlanModal';
+import { AddSdkConfigModal } from './AddSdkConfigModal';
 import { AddSpecModal } from './AddSpecModal';
 import { ContentContainer } from './basic/ContentContainer';
 import { SimpleToolbar } from './basic/SimpleToolbar';
@@ -21,8 +21,8 @@ import { SpecList } from './basic/SpecList';
 export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private onSearch = event => {};
   private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
-  private openAddPlanModal = () =>
-    this.props.history.push(`${this.props.match.url}/plan/add`);
+  private openAddSdkConfigModal = () =>
+    this.props.history.push(`${this.props.match.url}/sdkConfig/add`);
   private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
   private expandSpec: (id: Id | null) => void = action((id: Id | null) => {
     state.expandedSpecId = id;
@@ -51,14 +51,15 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               onSpecExpanded={this.expandSpec}
               // Go to the Spec viewing route when you select a Spec
               onSpecSelected={this.goToSpec}
-              // Open a modal to add a plan when the 'Add SDK Generation Plan' button is clicked
-              onAddPlan={this.openAddPlanModal}
+              // Open a modal to add an SDK configuration when the 'Add SDK Configuration' button is
+              // clicked
+              onAddSdkConfig={this.openAddSdkConfigModal}
             />
             <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
             <Route
               exact
-              path={`${this.props.match.url}/plan/add`}
-              component={AddPlanModal}
+              path={`${this.props.match.url}/sdkConfig/add`}
+              component={AddSdkConfigModal}
             />
           </ContentContainer>,
         ]}
