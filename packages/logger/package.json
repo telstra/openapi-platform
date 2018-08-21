@@ -5,6 +5,7 @@
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,
+  "sideEffects": false,
   "dependencies": {
     "colors": "^1.2.5",
     "morgan": "^1.9.0",

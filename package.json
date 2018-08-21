@@ -88,6 +88,7 @@
     "tslint-react": "^3.5.1",
     "typescript": "^3.0.1",
     "webpack": "^4.1.1",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
     "webpack-stream": "^5.1.1"
   },

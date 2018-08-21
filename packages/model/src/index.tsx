@@ -4,7 +4,7 @@ export {
   BuildStatus,
   hasValidBuildStatus,
   SDK_CONFIG_TARGETS,
-} from './SdkCOnfig';
+} from './SdkConfig';
 export { Profile } from './Profile';
 export { Sdk } from './Sdk';
 export { Spec } from './Spec';
