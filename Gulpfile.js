@@ -151,10 +151,14 @@ gulp.task('restart:backend', function startBackend(done) {
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn('node', [join(__dirname, 'packages/server/lib/index.js')], {
-    stdio: 'inherit',
-    env: backendEnv,
-  });
+  backendNode = spawn(
+    'node',
+    [join(__dirname, 'packages/server/bin/openapi-platform-server.js')],
+    {
+      stdio: 'inherit',
+      env: backendEnv,
+    },
+  );
 
   backendNode.on('close', function(code) {
     if (code === 8) {
