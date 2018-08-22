@@ -8403,10 +8403,6 @@ no-case@^2.2.0:
   dependencies:
     lower-case "^1.1.1"
 
-node-config@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/node-config/-/node-config-0.0.2.tgz#46b40dcfbcb0e66d46a15f81b54eac2130fb150d"
-
 node-dir@0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/node-dir/-/node-dir-0.1.8.tgz#55fb8deb699070707fb67f91a460f0448294c77d"

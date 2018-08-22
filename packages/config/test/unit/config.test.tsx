@@ -1,4 +1,4 @@
-import { schema } from '../../src/config/schema';
+import { schema } from '../../src/schema';
 function validFullConfig(): any {
   return {
     env: 'development',

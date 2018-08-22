@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { schema } from '../../src/config/schema';
+import { schema } from '../../src/schema';
 describe('config parsing compatible file formats', () => {
   const extensions = ['json', 'json5', 'yml', 'yaml'];
   for (const ext of extensions) {
