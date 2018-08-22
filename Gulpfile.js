@@ -126,12 +126,20 @@ gulp.task(
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
 gulp.task('serve:frontend', function serveFrontend(done) {
+  const { readConfig } = require('@openapi-platform/config');
+  const openapiPlatformConfig = readConfig();
+  const uiPort = openapiPlatformConfig.get('ui.port');
   browserSync.init({
+    port: uiPort,
     server: {
       baseDir: join(__dirname, 'packages/frontend/dist'),
       ws: true,
       // We need this so that routes work properly
       middleware: [historyApiFallback()],
+    },
+    ui: {
+      // Keep in mind that 'uiPort', from the context of OpenAPI Platform, is the frontend web app
+      port: uiPort + 1,
     },
   });
   done();

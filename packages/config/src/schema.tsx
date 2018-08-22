@@ -12,6 +12,14 @@ export const schema = convict({
     format: ['production', 'development', 'test'],
     default: 'development',
   },
+  ui: {
+    port: {
+      doc: 'The port number used for hosting the frontend web app',
+      env: 'UI_PORT',
+      format: 'port',
+      default: 3000,
+    },
+  },
   server: {
     port: {
       doc: 'The port number used for incoming connections.',
