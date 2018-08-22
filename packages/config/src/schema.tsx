@@ -6,7 +6,7 @@ convict.addParser([
   { extension: ['yaml', 'yml'], parse: yaml.safeLoad },
   { extension: ['json5'], parse: json5.parse },
 ]);
-const schema = convict({
+export const schema = convict({
   env: {
     env: 'NODE_ENV',
     format: ['production', 'development', 'test'],
@@ -69,4 +69,3 @@ const schema = convict({
     },
   },
 });
-export { schema };

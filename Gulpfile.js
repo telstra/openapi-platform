@@ -1,6 +1,8 @@
 /**
  * Inspiration for this file taken from https://github.com/babel/babel/blob/master/Gulpfile.js
  */
+require('source-map-support/register');
+
 const colors = require('colors');
 const { join, sep, resolve } = require('path');
 const spawn = require('cross-spawn');

@@ -27,7 +27,7 @@ const stats = {
 };
 
 module.exports = ({
-  API_PROTCOL = 'http',
+  API_PROTOCOL = 'http',
   API_HOST = 'localhost',
   API_PORT = 8080,
   NODE_ENV,
@@ -74,7 +74,7 @@ module.exports = ({
         reportFilename: join(__dirname, 'stats/bundle.html'),
       }),
       new DefinePlugin({
-        API_URL: `${PROTOCOL}://${HOST}:${PORT}`,
+        API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
       }),
     ],
     stats,

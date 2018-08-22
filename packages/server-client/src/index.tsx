@@ -2,7 +2,7 @@ import feathers from '@feathersjs/client';
 import io from 'socket.io-client';
 
 // TODO: Fill this in at some point
-export interface BackendClient {
+export interface ServerClient {
   [key: string]: any;
 }
 
@@ -11,8 +11,8 @@ export interface BackendClient {
  * It's intended that the frontend uses this to communicate to the backend.
  * Right now just wraps a feathers app.
  */
-export function createBackendClient(): BackendClient {
-  const socket = io('http://localhost:8080', {
+export function createServerClient(url): ServerClient {
+  const socket = io(url, {
     transports: ['websocket'],
   });
   const app = feathers();
@@ -20,5 +20,3 @@ export function createBackendClient(): BackendClient {
   // TODO: Actually wrap client rather than just returning client
   return app;
 }
-
-export const client = createBackendClient();
