@@ -18,5 +18,5 @@ export function createServerClient(url): ServerClient {
   const app = feathers();
   app.configure(feathers.socketio(socket));
   // TODO: Actually wrap client rather than just returning client
-  return app;
+  return { client: app, socket };
 }
