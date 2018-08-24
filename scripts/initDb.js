@@ -1,6 +1,8 @@
 const { createServerClient } = require('@openapi-platform/server-client');
 const { readConfig } = require('@openapi-platform/config');
 
+const { addDummyData } = require('./addDummyData');
+
 async function clearDatabase(client) {
   const serviceNames = ['specifications', 'sdks', 'sdkConfigs'];
   for (const serviceName of serviceNames) {
@@ -14,7 +16,9 @@ async function clearDatabase(client) {
   }
 }
 
-async function insertSampleData(client) {}
+async function insertSampleData(client) {
+  await initDummyData(client.service('specifications'), client.service('sdkConfigs'));
+}
 
 async function run() {
   const config = readConfig();
@@ -39,7 +43,7 @@ async function run() {
 
     if (clear) {
       console.log('Resetting Database.');
-      await clearDatabase(client);
+      //await clearDatabase(client);
       console.log('Done.');
     }
 

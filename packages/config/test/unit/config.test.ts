@@ -5,7 +5,6 @@ function validFullConfig(): any {
     server: {
       port: 8081,
       useCors: false,
-      initDummyData: false,
     },
     database: {
       name: 'swagger_platform',

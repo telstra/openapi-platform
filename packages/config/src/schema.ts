@@ -34,13 +34,6 @@ export const schema = convict({
       format: Boolean,
       default: true,
     },
-    // TODO: Would like to get rid of this field in favour of adding dummy data via scripts
-    initDummyData: {
-      doc: 'Whether or not dummy data should be created for development purposes.',
-      env: 'INIT_DUMMY_DATA',
-      format: Boolean,
-      default: false,
-    },
   },
   database: {
     name: {
