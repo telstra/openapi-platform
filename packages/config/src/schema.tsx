@@ -10,6 +10,7 @@ export const schema = convict({
   env: {
     env: 'NODE_ENV',
     format: ['production', 'development', 'test'],
+    arg: 'env',
     default: 'development',
   },
   ui: {
@@ -24,6 +25,7 @@ export const schema = convict({
     port: {
       doc: 'The port number used for incoming connections.',
       env: 'SERVER_PORT',
+      arg: 'server-port',
       format: 'port',
       default: 8080,
     },
@@ -31,6 +33,7 @@ export const schema = convict({
     useCors: {
       doc: 'Whether or not CORS requests should be allowed.',
       env: 'USE_CORS',
+      arg: 'use-cors',
       format: Boolean,
       default: true,
     },
@@ -38,6 +41,7 @@ export const schema = convict({
     initDummyData: {
       doc: 'Whether or not dummy data should be created for development purposes.',
       env: 'INIT_DUMMY_DATA',
+      arg: 'init-dummy-data',
       format: Boolean,
       default: false,
     },
@@ -45,25 +49,29 @@ export const schema = convict({
   database: {
     name: {
       doc: 'The name of the PostgreSQL database to connect to.',
-      env: 'DATABASE_NAME',
+      env: 'DB_NAME',
+      arg: 'db-name',
       format: String,
       default: undefined,
     },
     host: {
       doc: 'The hostname of the PostgreSQL database to connect to.',
-      env: 'DATABASE_HOST',
+      env: 'DB_HOST',
+      arg: 'db-host',
       format: '*',
       default: undefined,
     },
     port: {
       doc: 'The port of the PostgreSQL database to connect to.',
-      env: 'DATABASE_PORT',
+      env: 'DB_PORT',
+      arg: 'db-port',
       default: 5432,
       format: 'port',
     },
     username: {
       doc: 'The username of the PostgreSQL database to connect to.',
       env: 'DATABASE_USERNAME',
+      arg: 'db-username',
       format: String,
       default: undefined,
       sensitive: true,
@@ -71,6 +79,7 @@ export const schema = convict({
     password: {
       doc: 'The password of the PostgreSQL database to connect to.',
       env: 'DATABASE_PASSWORD',
+      arg: 'db-password',
       format: String,
       default: undefined,
       sensitive: true,
