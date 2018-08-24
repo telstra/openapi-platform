@@ -7,6 +7,9 @@
   "scripts": {
     "storybook": "start-storybook -p 9001"
   },
+  "bin": {
+    "openapi-platform-frontend": "./bin/openapi-platform-frontend.js"
+  },
   "devDependencies": {
     "@storybook/addon-a11y": "^4.0.0-alpha.16",
     "@storybook/addon-actions": "^4.0.0-alpha.16",

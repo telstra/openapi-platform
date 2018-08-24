@@ -30,7 +30,8 @@ module.exports = ({
   API_PROTOCOL = 'http',
   API_HOST = 'localhost',
   API_PORT = 8080,
-  NODE_ENV,
+  NODE_ENV = 'development',
+  OUTPUT_PATH = join(__dirname, 'dist')
 }) => {
   const isProduction = NODE_ENV === 'production';
   return {
@@ -39,6 +40,7 @@ module.exports = ({
     entry: join(__dirname, 'src', 'index.tsx'),
     output: {
       filename: 'index.js',
+      path: OUTPUT_PATH,
       publicPath: '/',
     },
     mode: isProduction ? 'production' : 'development',
