@@ -6,7 +6,7 @@
   "license": "Apache-2",
   "private": false,
   "bin": {
-    "openapi-platform-server": "node ./bin/openapi-platform-server.js"
+    "openapi-platform-server": "./bin/openapi-platform-server.js"
   },
   "dependencies": {
     "@feathersjs/errors": "^3.3.0",
