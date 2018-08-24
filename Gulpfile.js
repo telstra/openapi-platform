@@ -68,7 +68,7 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
-function buildBabel(exclude) {
+function buildBabel(exclude = []) {
   let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
 
   if (exclude) {
@@ -110,7 +110,7 @@ function buildBundle(packageName) {
 }
 
 gulp.task('transpile', function transpile() {
-  return buildBabel([frontendPackageName]);
+  return buildBabel();
 });
 
 gulp.task(

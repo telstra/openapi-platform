@@ -31,13 +31,13 @@ module.exports = ({
   API_HOST = 'localhost',
   API_PORT = 8080,
   NODE_ENV = 'development',
-  OUTPUT_PATH = join(__dirname, 'dist')
+  OUTPUT_PATH = join(__dirname, 'dist'),
 }) => {
   const isProduction = NODE_ENV === 'production';
   return {
     name: 'Frontend',
     target: 'web',
-    entry: join(__dirname, 'src', 'index.tsx'),
+    entry: join(__dirname, 'lib', 'index.js'),
     output: {
       filename: 'index.js',
       path: OUTPUT_PATH,
@@ -47,10 +47,6 @@ module.exports = ({
     module: {
       rules: [
         {
-          test: /\.tsx$/,
-          loader: 'babel-loader',
-        },
-        {
           test: /\.css$/,
           use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
         },
@@ -59,10 +55,6 @@ module.exports = ({
           loader: 'file-loader',
         },
       ],
-    },
-    devtool: 'cheap-module-source-map',
-    resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     plugins: [
       new HtmlWebpackPlugin({
