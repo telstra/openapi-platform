@@ -8,7 +8,7 @@ import { Observer } from 'mobx-react';
 import { HasId } from '@openapi-platform/model';
 import { SdkConfig, BuildStatus } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';
-import { client } from '@openapi-platform/server-client';
+import { client } from '../../client';
 import { createStyled } from '../createStyled';
 import { BuildStatusChip } from './BuildStatusChip';
 

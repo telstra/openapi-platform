@@ -1,6 +1,8 @@
 /**
  * Inspiration for this file taken from https://github.com/babel/babel/blob/master/Gulpfile.js
  */
+require('source-map-support/register');
+
 const colors = require('colors');
 const { join, sep, resolve } = require('path');
 const spawn = require('cross-spawn');
@@ -88,8 +90,13 @@ function buildBabel(exclude) {
 }
 
 function createWebpackStream(packageDir) {
+  const { readConfig } = require('@openapi-platform/config');
+  const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
-  const webpackConfig = createWebpackConfig({ NODE_ENV: process.env.NODE_ENV });
+  const webpackConfig = createWebpackConfig({
+    NODE_ENV: process.env.NODE_ENV,
+    API_PORT: openapiPlatformConfig.get('server.port'),
+  });
   return webpackStream(webpackConfig, webpack);
 }
 
@@ -119,12 +126,20 @@ gulp.task(
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
 gulp.task('serve:frontend', function serveFrontend(done) {
+  const { readConfig } = require('@openapi-platform/config');
+  const openapiPlatformConfig = readConfig();
+  const uiPort = openapiPlatformConfig.get('ui.port');
   browserSync.init({
+    port: uiPort,
     server: {
       baseDir: join(__dirname, 'packages/frontend/dist'),
       ws: true,
       // We need this so that routes work properly
       middleware: [historyApiFallback()],
+    },
+    ui: {
+      // Keep in mind that 'uiPort', from the context of OpenAPI Platform, is the frontend web app
+      port: uiPort + 1,
     },
   });
   done();

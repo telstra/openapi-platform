@@ -1,4 +1,5 @@
-import { schema } from '../schema';
+const { schema } = require.requireActual('@openapi-platform/config');
+export { schema };
 /**
  * Just provides a consistent config for tests to use
  */
