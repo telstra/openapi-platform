@@ -49,7 +49,7 @@ async function run() {
 
     if (clear) {
       console.log('Resetting Database.');
-      //await clearDatabase(client);
+      await clearDatabase(client);
       console.log('Done.');
     }
 
