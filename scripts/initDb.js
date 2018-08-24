@@ -1,3 +1,9 @@
+/*
+Script for adding sample data to the database.
+Also option to clear data from db.
+Requires openapi-platform server to be running.
+*/
+
 const { createServerClient } = require('@openapi-platform/server-client');
 const { readConfig } = require('@openapi-platform/config');
 
