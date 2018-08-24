@@ -1,7 +1,7 @@
 const { join } = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { HotModuleReplacementPlugin } = require('webpack');
+const { HotModuleReplacementPlugin, DefinePlugin } = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const stats = {
@@ -26,8 +26,13 @@ const stats = {
   children: false,
 };
 
-module.exports = env => {
-  const isProduction = env.NODE_ENV === 'production';
+module.exports = ({
+  API_PROTOCOL = 'http',
+  API_HOST = 'localhost',
+  API_PORT = 8080,
+  NODE_ENV,
+}) => {
+  const isProduction = NODE_ENV === 'production';
   return {
     name: 'Frontend',
     target: 'web',
@@ -67,6 +72,9 @@ module.exports = env => {
         openAnalyzer: false,
         analyzerMode: 'static',
         reportFilename: join(__dirname, 'stats/bundle.html'),
+      }),
+      new DefinePlugin({
+        API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
       }),
     ],
     stats,

@@ -6,11 +6,19 @@ convict.addParser([
   { extension: ['yaml', 'yml'], parse: yaml.safeLoad },
   { extension: ['json5'], parse: json5.parse },
 ]);
-const schema = convict({
+export const schema = convict({
   env: {
     env: 'NODE_ENV',
     format: ['production', 'development', 'test'],
     default: 'development',
+  },
+  ui: {
+    port: {
+      doc: 'The port number used for hosting the frontend web app',
+      env: 'UI_PORT',
+      format: 'port',
+      default: 3000,
+    },
   },
   server: {
     port: {
@@ -69,4 +77,3 @@ const schema = convict({
     },
   },
 });
-export { schema };

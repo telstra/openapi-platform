@@ -1,7 +1,7 @@
 import { observable, computed, action } from 'mobx';
 
 import { HasId, Id, SdkConfig } from '@openapi-platform/model';
-import { client } from '@openapi-platform/server-client';
+import { client } from '../client';
 
 class SdkConfigState {
   @observable

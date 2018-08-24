@@ -2,7 +2,7 @@ import { Config } from 'convict';
 import { pathExistsSync } from 'fs-extra';
 import { join } from 'path';
 import { schema } from './schema';
-
+export { schema };
 export function readConfig<T>(): Config<T> {
   const cwd = process.cwd();
   let parsedConfig: Config<T> | undefined;
