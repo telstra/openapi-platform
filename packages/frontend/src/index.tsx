@@ -1,30 +1,12 @@
-import jss from 'jss';
-import * as jssGlobal from 'jss-global';
-import React from 'react';
-import { render } from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import 'typeface-roboto';
-import 'typeface-roboto-mono';
+import { readConfig } from '@openapi-platform/config';
+import webpack from 'webpack';
+import createWebpackConfig from '../webpack.config';
 
-import { Page } from './view/Page';
-import { ThemeProvider } from './view/ThemeProvider';
-
-jss
-  .use(jssGlobal.default())
-  .createStyleSheet({
-    // TODO: Cast this to any since the @types/jss seemed to not like this type for some reason
-    '@global': {
-      body: {
-        margin: 0,
-      },
-    } as any,
-  })
-  .attach();
-render(
-  <ThemeProvider>
-    <BrowserRouter>
-      <Page />
-    </BrowserRouter>
-  </ThemeProvider>,
-  document.getElementById('root'),
-);
+export function build() {
+  const openapiConfig = readConfig();
+  const webpackConfig = createWebpackConfig({
+    API_PORT: openapiConfig.get('server.port'),
+    NODE_ENV: openapiConfig.get('env'),
+  });
+  webpack(webpackConfig);
+}

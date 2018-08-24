@@ -37,7 +37,7 @@ module.exports = ({
   return {
     name: 'Frontend',
     target: 'web',
-    entry: join(__dirname, 'lib', 'index.js'),
+    entry: join(__dirname, 'lib', 'webapp.js'),
     output: {
       filename: 'index.js',
       path: OUTPUT_PATH,
