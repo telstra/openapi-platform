@@ -3,7 +3,7 @@
   "description": "Config parser, let's you read openapi-platform.config.zzz config files",
   "version": "1.0.0-alpha.0",
   "main": "./lib/index.js",
-  "types": "./src/index.tsx",
+  "types": "./src/index.ts",
   "license": "Apache-2",
   "private": false,
   "sideEffects": false,
