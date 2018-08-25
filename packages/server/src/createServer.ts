@@ -17,7 +17,6 @@ import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 
 import { config } from './config';
-import { initDummyData } from './initDummyData';
 
 export async function createServer() {
   const dbConnection: Sequelize.Sequelize = await connectToDb();
@@ -118,9 +117,5 @@ export async function createServer() {
   await sdkConfigModel.sync();
   await sdkModel.sync();
 
-  if (config.get('server.initDummyData') && (await specModel.count()) === 0) {
-    // Initialise dummy data if there are no specifications
-    await initDummyData(app.service('specifications'), app.service('sdkConfigs'));
-  }
   return app;
 }

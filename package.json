@@ -23,7 +23,8 @@
     "test": "yarn transpile && yarn test:jest",
     "test:jest": "jest",
     "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
-    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system"
+    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system",
+    "init-db": "node ./scripts/initDb.js"
   },
   "husky": {
     "hooks": {
@@ -118,5 +119,6 @@
       "email": "mail@patrickshaw.me",
       "url": "https://github.com/PatrickShaw"
     }
-  ]
+  ],
+  "dependencies": {}
 }

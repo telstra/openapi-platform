@@ -9,7 +9,6 @@ export function readConfig() {
     server: {
       port: 8080,
       useCors: false,
-      initDummyData: false,
     },
     database: {
       name: 'test_name',
