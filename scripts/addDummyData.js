@@ -1,5 +1,5 @@
-import { BuildStatus } from '@openapi-platform/model';
-export async function initDummyData(specs, sdkConfigs): Promise<void> {
+const { BuildStatus } = require('@openapi-platform/model');
+async function addDummyData(specs, sdkConfigs) {
   // TODO: Shouldn't the params be typed?
   const addToSpec = async (spec, ...specSdkConfigs) => {
     for (const specSdkConfig of specSdkConfigs) {
@@ -110,3 +110,4 @@ export async function initDummyData(specs, sdkConfigs): Promise<void> {
     },
   );
 }
+module.exports = { addDummyData };

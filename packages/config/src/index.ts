@@ -1,11 +1,10 @@
-import { Config } from 'convict';
 import { pathExistsSync } from 'fs-extra';
 import { join } from 'path';
 import { schema } from './schema';
 export { schema };
-export function readConfig<T>(): Config<T> {
+export function readConfig() {
   const cwd = process.cwd();
-  let parsedConfig: Config<T> | undefined;
+  let parsedConfig;
   const extensions = ['json', 'yaml', 'yml', 'json5'];
   for (const ext of extensions) {
     const path = join(cwd, `openapi-platform.config.${ext}`);
