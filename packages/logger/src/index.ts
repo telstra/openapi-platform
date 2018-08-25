@@ -5,6 +5,34 @@ import { createLogger, format, transports } from 'winston';
 
 const logLevel: string = process.env.LOG_LEVEL || 'debug';
 
+const openapiPlatformErrors = format(info => {
+  if (info instanceof Error) {
+    /*
+        TODO: Winston 3.0.0 removes .message for errors for some reason. 
+        Using a workaround found here: https://github.com/winstonjs/winston/issues/1243 to preserve the message
+      */
+
+    if (info.stack) {
+      info.errorMessage = info.stack;
+    } else {
+      info.errorMessage = info.message;
+    }
+  }
+  return info;
+});
+
+const openapiPlatformObjects = format((info, options) => {
+  // TODO: Remove the any type when winston types gets fixed
+  const message: any = info.message;
+  if (
+    !(info instanceof Error) &&
+    (message instanceof Object || Array.isArray(info.message))
+  ) {
+    info.message = util.inspect(info.message, { colors: options.colors });
+  }
+  return info;
+});
+
 // Adds a timestamp to the logger information
 const openapiPlatformTimestamp = format(info => {
   info.timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
@@ -19,18 +47,8 @@ const openapiPlatformAlign = format(info => {
 });
 
 // Colorizes/formats javascript objects and timestamps
-const openapiPlatformFormatter = format((info, options) => {
-  if (info.timestamp) {
-    info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
-  }
-  // TODO: Remove this cast to any once the type definitions for Winston are fixed
-  const message: any = info.message;
-  if (
-    !(message instanceof Error) &&
-    (message instanceof Object || Array.isArray(message))
-  ) {
-    info.message = util.inspect(info.message, { colors: options.colors });
-  }
+const openapiPlatformColorize = format(info => {
+  info.timestamp = colors.gray(info.timestamp);
   return info;
 });
 
@@ -38,7 +56,7 @@ const openapiPlatformFormatter = format((info, options) => {
 const openapiPlatformPrinter = format.printf(info => {
   const timestamp = info.timestamp ? `${info.timestamp} ` : '';
   return `${timestamp}${info.level}${info.levelPadding ? info.levelPadding : ' '}${
-    info.message
+    info.errorMessage ? info.errorMessage : info.message
   }`;
 });
 
@@ -64,7 +82,7 @@ export function openapiLogger(options: LoggerOptions = {}) {
   if (timestamp) {
     formatters.push(openapiPlatformTimestamp());
   }
-  formatters.push(openapiPlatformAlign());
+  formatters.push(openapiPlatformErrors(), openapiPlatformAlign());
 
   const transporters: any[] = [];
   if (useConsole) {
@@ -73,7 +91,8 @@ export function openapiLogger(options: LoggerOptions = {}) {
         level: logLevel,
         format: format.combine(
           format.colorize(),
-          openapiPlatformFormatter({ colors: true }),
+          openapiPlatformColorize(),
+          openapiPlatformObjects({ colors: true }),
           openapiPlatformPrinter,
         ),
       }),
@@ -85,7 +104,10 @@ export function openapiLogger(options: LoggerOptions = {}) {
       new transports.File({
         filename: logPath,
         level: logLevel,
-        format: openapiPlatformPrinter,
+        format: format.combine(
+          openapiPlatformObjects({ colors: false }),
+          openapiPlatformPrinter,
+        ),
       }),
     );
   }
@@ -94,7 +116,10 @@ export function openapiLogger(options: LoggerOptions = {}) {
       new transports.File({
         filename: errorLogPath,
         level: 'error',
-        format: openapiPlatformPrinter,
+        format: format.combine(
+          openapiPlatformObjects({ colors: false }),
+          openapiPlatformPrinter,
+        ),
       }),
     );
   }

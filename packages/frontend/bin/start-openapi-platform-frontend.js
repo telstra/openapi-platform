@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+require('source-map-support/register');
+
 const { join } = require('path');
 const { build } = require('../lib/index');
 
