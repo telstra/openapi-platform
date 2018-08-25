@@ -1,12 +1,13 @@
 import 'source-map-support/register';
 
 import {
-  logger,
   overrideConsoleLogger,
   overrideUtilInspectStyle,
 } from '@openapi-platform/logger';
+
 import { config } from './config';
 import { createServer } from './createServer';
+import { logger } from './logger';
 export async function run() {
   const port = config.get('server.port');
   // Overriding logger used in non testing environments, logging in tests just go to stdout.

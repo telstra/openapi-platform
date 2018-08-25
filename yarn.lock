@@ -12317,7 +12317,7 @@ webpack-stream@^5.1.1:
     vinyl "^2.1.0"
     webpack "^4.7.0"
 
-webpack@^4.1.1, webpack@^4.16.4, webpack@^4.7.0:
+webpack@^4.1.1, webpack@^4.16.4, webpack@^4.17.1, webpack@^4.7.0:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.17.1.tgz#0f026e3d823f3fc604f811ed3ea8f0d9b267fb1e"
   dependencies:

@@ -1,5 +1,7 @@
-// TODO: Methods should take logger as a parameter
+import { openapiLogger } from '@openapi-platform/logger';
 jest.mock('@openapi-platform/logger');
+const logger = openapiLogger();
+
 // TODO: Would be really nice to have a in-memory-fs
 
 // Could put the following mocks in a __mocks__ folder but these mocks are somewhat specific to these tests
@@ -57,6 +59,7 @@ describe('git', () => {
           },
         },
         "This SDK URL shouldn't be used",
+        { logger },
       );
     });
   });

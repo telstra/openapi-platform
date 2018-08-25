@@ -6,7 +6,6 @@ import { move } from 'fs-extra';
 import globby from 'globby';
 import git from 'isomorphic-git';
 
-import { logger } from '@openapi-platform/logger';
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 
@@ -54,7 +53,12 @@ async function extractSdkArchiveFileToDir(extractToDir: string, archiveFilePath:
  * Tries to put the files of a remotely stored sdk ZIP file into a locally stored
  * repository.
  */
-export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
+export async function migrateSdkIntoLocalRepo(
+  repoDir: string,
+  remoteSdkUrl: string,
+  options,
+) {
+  const { logger } = options;
   logger.verbose(`Deleting all files ${repoDir}`);
   await deleteAllFilesInLocalRepo(repoDir);
   /*
@@ -84,7 +88,13 @@ export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
   }
 }
 
-export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: string) {
+export async function updateRepoWithNewSdk(
+  gitInfo: GitInfo,
+  remoteSdkUrl: string,
+  options,
+) {
+  // TODO: Rather than taking a logger, just provide callbacks
+  const { logger } = options;
   const repoDir = await makeTempDir('repo');
   try {
     /*
@@ -106,7 +116,7 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: strin
       ...gitInfo.auth,
     });
 
-    await migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl);
+    await migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl, options);
     const addedPaths = await getAllStageableFilepathsInRepo(repoDir);
     logger.verbose(`Staging ${addedPaths.length} paths`);
     for (const addedPath of addedPaths) {

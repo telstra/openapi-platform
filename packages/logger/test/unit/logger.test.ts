@@ -1,5 +1,6 @@
 import { mockFunctions } from 'jest-mock-functions';
-import { logger, overrideConsoleLogger } from '../../src';
+import { openapiLogger, overrideConsoleLogger } from '../../src';
+const logger = openapiLogger();
 const mockLogger: any = mockFunctions({ ...logger });
 
 /**

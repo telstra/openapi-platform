@@ -20,7 +20,9 @@ const openapiPlatformAlign = format(info => {
 
 // Colorizes/formats javascript objects and timestamps
 const openapiPlatformFormatter = format((info, options) => {
-  info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
+  if (info.timestamp) {
+    info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
+  }
   // TODO: Remove this cast to any once the type definitions for Winston are fixed
   const message: any = info.message;
   if (
@@ -34,41 +36,74 @@ const openapiPlatformFormatter = format((info, options) => {
 
 // Specifies the order in which all the information is printed out
 const openapiPlatformPrinter = format.printf(info => {
-  return `${info.timestamp} ${info.level}${info.levelPadding ? info.levelPadding : ' '}${
+  const timestamp = info.timestamp ? `${info.timestamp} ` : '';
+  return `${timestamp}${info.level}${info.levelPadding ? info.levelPadding : ' '}${
     info.message
   }`;
 });
 
-const logger = createLogger({
-  format: format.combine(
-    format.splat(),
-    openapiPlatformTimestamp(),
-    openapiPlatformAlign(),
-  ),
-  transports: [
-    new transports.Console({
-      level: logLevel,
-      format: format.combine(
-        format.colorize(),
-        openapiPlatformFormatter({ colors: true }),
-        openapiPlatformPrinter,
-      ),
-    }),
-    // Note that we don't want color codes in our file logs (looks incredibly confusing and ugly)
-    new transports.File({
-      filename: 'openapi-platform.error.log',
-      level: 'error',
-      format: openapiPlatformPrinter,
-    }),
-    new transports.File({
-      filename: 'openapi-platform.log',
-      level: logLevel,
-      format: openapiPlatformPrinter,
-    }),
-  ],
-});
+export interface LoggerOptions {
+  // True if you want timestamps added to your logged output
+  timestamp?: boolean;
+  // True if you want to log to the console
+  useConsole?: boolean;
+  // Only errors will be logged here
+  errorLogPath?: string;
+  // Anything logged writes to here
+  logPath?: string;
+}
 
-export { logger };
+export function openapiLogger(options: LoggerOptions = {}) {
+  const {
+    timestamp = true,
+    useConsole = true,
+    errorLogPath = 'openapi-platform.error.log',
+    logPath = 'openapi-platform.log',
+  } = options;
+  const formatters = [format.splat()];
+  if (timestamp) {
+    formatters.push(openapiPlatformTimestamp());
+  }
+  formatters.push(openapiPlatformAlign());
+
+  const transporters: any[] = [];
+  if (useConsole) {
+    transporters.push(
+      new transports.Console({
+        level: logLevel,
+        format: format.combine(
+          format.colorize(),
+          openapiPlatformFormatter({ colors: true }),
+          openapiPlatformPrinter,
+        ),
+      }),
+    );
+  }
+  if (logPath) {
+    // Note that we don't want color codes in our file logs (looks incredibly confusing and ugly)
+    transporters.push(
+      new transports.File({
+        filename: logPath,
+        level: logLevel,
+        format: openapiPlatformPrinter,
+      }),
+    );
+  }
+  if (errorLogPath) {
+    transporters.push(
+      new transports.File({
+        filename: errorLogPath,
+        level: 'error',
+        format: openapiPlatformPrinter,
+      }),
+    );
+  }
+  const logger = createLogger({
+    format: format.combine(...formatters),
+    transports: transporters,
+  });
+  return logger;
+}
 
 /**
  * Replaces the console.log type methods with our own logger methods.

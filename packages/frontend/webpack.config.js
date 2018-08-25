@@ -31,16 +31,37 @@ module.exports = ({
   API_HOST = 'localhost',
   API_PORT = 8080,
   NODE_ENV = 'development',
-  OUTPUT_PATH = join(__dirname, 'dist'),
+  OUTPUT_PATH = __dirname,
+  DIST_DIRNAME = 'dist',
+  STATS_DIRNAME = 'stats',
 }) => {
   const isProduction = NODE_ENV === 'production';
+  const plugins = [
+    new HtmlWebpackPlugin({
+      title: `OpenAPI Platform${isProduction ? '' : ' (Developer mode)'}`,
+      template: join(__dirname, 'public', 'index.html'),
+    }),
+    new HotModuleReplacementPlugin(),
+    new DefinePlugin({
+      API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
+    }),
+  ];
+  if (STATS_DIRNAME) {
+    plugins.push(
+      new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        analyzerMode: 'static',
+        reportFilename: join(OUTPUT_PATH, STATS_DIRNAME, 'bundle.html'),
+      }),
+    );
+  }
   return {
     name: 'Frontend',
     target: 'web',
-    entry: join(__dirname, 'lib', 'webapp.js'),
+    entry: '@openapi-platform/frontend-dist',
     output: {
       filename: 'index.js',
-      path: OUTPUT_PATH,
+      path: join(OUTPUT_PATH, DIST_DIRNAME),
       publicPath: '/',
     },
     mode: isProduction ? 'production' : 'development',
@@ -56,21 +77,7 @@ module.exports = ({
         },
       ],
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        title: `OpenAPI Platform${isProduction ? '' : ' (Developer mode)'}`,
-        template: join(__dirname, 'public', 'index.html'),
-      }),
-      new HotModuleReplacementPlugin(),
-      new BundleAnalyzerPlugin({
-        openAnalyzer: false,
-        analyzerMode: 'static',
-        reportFilename: join(__dirname, 'stats/bundle.html'),
-      }),
-      new DefinePlugin({
-        API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
-      }),
-    ],
+    plugins,
     stats,
   };
 };
