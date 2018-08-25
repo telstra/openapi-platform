@@ -3,24 +3,30 @@ import { openapiLogger } from '@openapi-platform/logger';
 import webpack from 'webpack';
 import createWebpackConfig from '../webpack.config';
 
-export function build({ ...webpackOptions }) {
+export async function build({ ...webpackOptions } = {}) {
   const logger = openapiLogger();
   logger.info('Bundling frontend app...');
 
   const openapiConfig = readConfig();
   const webpackConfig = createWebpackConfig({
+    OUTPUT_PATH: process.cwd(),
+    STATS_DIRNAME: null,
     API_PORT: openapiConfig.get('server.port'),
     NODE_ENV: openapiConfig.get('env'),
     ...webpackOptions,
   });
 
-  webpack(webpackConfig, error => {
-    if (error) {
-      logger.error('An error occurred when configuring webpack compiler...');
-      logger.error(error);
-      return;
-    } else {
-      logger.info('Webpack configuration complete');
+  return await new Promise((resolve, reject) => {
+    try {
+      webpack(webpackConfig, error => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    } catch (err) {
+      reject(err);
     }
   });
 }

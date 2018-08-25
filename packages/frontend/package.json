@@ -8,7 +8,8 @@
   "private": false,
   "sideEffects": false,
   "bin": {
-    "openapi-platform-frontend": "./bin/openapi-platform-frontend.js"
+    "start-openapi-platform-frontend": "./bin/start-openapi-platform-frontend.js",
+    "build-openapi-platform-frontend": "./bin/build-openapi-platform-frontend.js"
   },
   "dependencies": {
     "@openapi-platform/config": "1.0.0-alpha.0",
