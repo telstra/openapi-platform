@@ -1,10 +1,9 @@
 import { readConfig } from '@openapi-platform/config';
-import { openapiLogger } from '@openapi-platform/logger';
 import webpack from 'webpack';
 import createWebpackConfig from '../webpack.config';
+import { logger } from './logger';
 
 export async function build({ ...webpackOptions } = {}) {
-  const logger = openapiLogger();
   logger.info('Bundling frontend app...');
 
   const openapiConfig = readConfig();

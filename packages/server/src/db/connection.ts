@@ -13,7 +13,7 @@ export async function connectToDb() {
       dialect: 'postgres',
       host: databaseConfig.host,
       port: databaseConfig.port,
-      logging: logger.info,
+      logging: logger.verbose,
     },
   );
 

@@ -6,10 +6,9 @@ const { build } = require('../lib/index');
 
 const express = require('express');
 
-const { openapiLogger } = require('@openapi-platform/logger');
 const { readConfig } = require('@openapi-platform/config');
 
-const logger = openapiLogger();
+const { logger } = require('../lib/logger');
 
 build({
   OUTPUT_PATH: __dirname,
