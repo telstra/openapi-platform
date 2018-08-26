@@ -64,7 +64,7 @@ export const schema = convict({
       },
       error: {
         path: logPath({
-          default: './openapi-platform-server.log',
+          default: './openapi-platform-server.error.log',
           env: 'ERROR_LOG_PATH',
           arg: 'error-log-path',
         }),
