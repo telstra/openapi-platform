@@ -1,6 +1,5 @@
 import { openapiLogger } from '@openapi-platform/logger';
 jest.mock('@openapi-platform/logger');
-const logger = openapiLogger();
 
 // TODO: Would be really nice to have a in-memory-fs
 
@@ -11,9 +10,9 @@ jest.mock('isomorphic-git', () => {
   const mockedGitModule = mockFunctions(actualModule, {
     onMockedFunction: (fn, ogFn) => fn.mockImplementation((...other) => ogFn(...other)),
   });
-  mockedGitModule.clone = jest.fn().mockImplementation(options => {
+  mockedGitModule.clone = jest.fn().mockImplementation((...options) => {
     // We don't want to clone a real repo, just pretend the init-ed one is cloned from somewhere
-    return actualModule.init(options);
+    return actualModule.init(...options);
   });
   mockedGitModule.push = jest.fn().mockResolvedValue(Promise.resolve());
   return mockedGitModule;
@@ -36,6 +35,7 @@ jest.mock('../../src/file/index', () => {
   return mockedModule;
 });
 
+const logger = openapiLogger();
 /**
  * This is actually a test to make sure the other tests are going to work.
  */

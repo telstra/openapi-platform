@@ -1336,6 +1336,10 @@
   version "10.7.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.7.1.tgz#b704d7c259aa40ee052eec678758a68d07132a2e"
 
+"@types/node@^10.9.2":
+  version "10.9.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.9.2.tgz#f0ab8dced5cd6c56b26765e1c0d9e4fdcc9f2a00"
+
 "@types/prop-types@*":
   version "15.5.5"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.5.tgz#17038dd322c2325f5da650a94d5f9974943625e3"
@@ -7131,9 +7135,11 @@ jest-message-util@^23.4.0:
     slash "^1.0.0"
     stack-utils "^1.0.1"
 
-jest-mock-functions@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-1.2.2.tgz#1bf2e2d544c894dd56db2b932d34d2d909eb10f8"
+jest-mock-functions@1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-1.2.5.tgz#0f34d395f242cd4add1885ca4a064d7079005f1d"
+  dependencies:
+    "@types/node" "^10.9.2"
 
 jest-mock@^23.2.0:
   version "23.2.0"

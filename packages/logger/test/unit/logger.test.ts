@@ -1,7 +1,7 @@
 import { mockFunctions } from 'jest-mock-functions';
 import { openapiLogger, overrideConsoleLogger } from '../../src';
 const logger = openapiLogger();
-const mockLogger: any = mockFunctions({ ...logger });
+const mockLogger: any = mockFunctions(logger, { recursive: true });
 
 /**
  * Checks which logging methods in the custom logger were actually called

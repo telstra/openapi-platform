@@ -6,5 +6,5 @@ export const {
   overrideUtilInspectStyle,
 } = mockFunctions(actualModule);
 openapiLogger.mockImplementation((...options) => {
-  return mockFunctions({ ...actualModule.openapiLogger(...options) });
+  return mockFunctions(actualModule.openapiLogger(...options), { recursive: true });
 });
