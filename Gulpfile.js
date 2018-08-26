@@ -153,7 +153,7 @@ gulp.task('restart:backend', function startBackend(done) {
   backendEnv.NODE_ENV = 'development';
   backendNode = spawn(
     'node',
-    [join(__dirname, 'packages/server/bin/openapi-platform-server.js')],
+    [join(__dirname, 'packages/server/bin/start-openapi-platform-server.js')],
     {
       stdio: 'inherit',
       env: backendEnv,
