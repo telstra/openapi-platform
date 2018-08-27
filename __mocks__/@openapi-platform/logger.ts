@@ -8,11 +8,9 @@ export const {
   overrideUtilInspectStyle,
 } = mockFunctions(actualModule);
 openapiLogger.mockImplementation(() => {
-  const actualLogger = actualModule.openapiLogger();
-  const mockedLogger = mockFunctions({
-    ...actualLogger,
+  const mockedLogger = mockFunctions(actualModule.openapiLogger(), {
+    recursive: { classInstances: true },
   });
-  mockedLogger.exceptions.handle = jest.fn();
   mockedLogger.add = jest.fn().mockImplementation(() => mockedLogger);
   return mockedLogger;
 });

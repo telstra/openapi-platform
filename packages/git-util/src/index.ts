@@ -4,7 +4,7 @@ import { join, relative } from 'path';
 import AdmZip from 'adm-zip';
 import { move } from 'fs-extra';
 import globby from 'globby';
-import git from 'isomorphic-git';
+import { clone, push, add, listFiles, commit } from 'isomorphic-git';
 
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
@@ -33,7 +33,7 @@ export async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
 }
 
 async function deleteAllFilesInLocalRepo(dir) {
-  const filePaths = await git.listFiles({ fs: oldFs, dir });
+  const filePaths = await listFiles({ fs: oldFs, dir });
   const fullFilePaths = filePaths.map(path => join(dir, path));
   await deletePaths(fullFilePaths);
 }
@@ -105,7 +105,7 @@ export async function updateRepoWithNewSdk(
     */
     // TODO: Should also be able to configure which branch to checkout, maybe?
     logger.verbose(`Cloning ${remoteSdkUrl} into ${repoDir}`);
-    await git.clone({
+    await clone({
       ref: gitInfo.branch,
       dir: repoDir,
       // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
@@ -122,14 +122,14 @@ export async function updateRepoWithNewSdk(
     for (const addedPath of addedPaths) {
       const relativeFilePath = relative(repoDir, addedPath);
       // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
-      await git.add({
+      await add({
         fs: oldFs,
         dir: repoDir,
         filepath: relativeFilePath,
       });
     }
     logger.verbose(`Committing changes...`);
-    await git.commit({
+    await commit({
       fs: oldFs,
       dir: repoDir,
       // TODO: This should be configurable
@@ -142,7 +142,7 @@ export async function updateRepoWithNewSdk(
     });
 
     logger.verbose(`Pushing commits...`);
-    await git.push({
+    await push({
       fs: oldFs,
       dir: repoDir,
       ...gitInfo.auth,
