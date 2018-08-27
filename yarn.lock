@@ -7135,9 +7135,9 @@ jest-message-util@^23.4.0:
     slash "^1.0.0"
     stack-utils "^1.0.1"
 
-jest-mock-functions@1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-1.2.5.tgz#0f34d395f242cd4add1885ca4a064d7079005f1d"
+jest-mock-functions@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-3.0.1.tgz#3e0afede533d3a32257a83f804aabb88bf389bba"
   dependencies:
     "@types/node" "^10.9.2"
 
