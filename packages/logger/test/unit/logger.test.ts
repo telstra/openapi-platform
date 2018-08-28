@@ -1,6 +1,6 @@
 import { mockFunctions } from 'jest-mock-functions';
-import { openapiLogger, overrideConsoleLogger , consoleTransport} from '../../src';
 import MockDate from 'mockdate';
+import { openapiLogger, overrideConsoleLogger , consoleTransport} from '../../src';
 
 const mockLogger: any = mockFunctions(openapiLogger(), { recursive: true });
 const loggingMethods = ['error', 'debug', 'info'];
@@ -60,11 +60,11 @@ MockDate.set(adjustedTime);
 
 // replace stdout.write so we can capture output
 let lastMessage = '';
-const old_write = process.stdout.write;
+// const oldWrite = process.stdout.write; //use this if needing to replace stdout
 process.stdout.write = (function(write) {
-  return function(string, encoding, fd) {
+  return function(lastString, encoding, fd) {
     write.apply(process.stdout, arguments);
-    lastMessage = string.strip.trim();
+    lastMessage = lastString.strip.trim();
   };
 })(process.stdout.write);
 
@@ -80,9 +80,9 @@ for (let i = 0; i < loggerNames.length; i++) {
   const testLogger = loggers[i];
 
   function formatExpected(expectedString) {
-    const prefix: String = '2018-05-03 12:34:56 ';
-    const padding: String = ' '.repeat(9 - name.length);
-    const output: String = (prefix + name + padding + expectedString).strip.trim();
+    const prefix: string = '2018-05-03 12:34:56 ';
+    const padding: string = ' '.repeat(9 - name.length);
+    const output: string = (prefix + name + padding + expectedString).strip.trim();
     return output;
   }
 
