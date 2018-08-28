@@ -1,5 +1,6 @@
 import { mockFunctions } from 'jest-mock-functions';
 import { openapiLogger, overrideConsoleLogger } from '../../src';
+import { testCases } from './testCases';
 
 const mockLogger: any = mockFunctions(openapiLogger(), { recursive: true });
 // Logging methods that console and logger share in common
@@ -39,14 +40,7 @@ function testConsoleInput(...input) {
 }
 // TODO: Might be nice if we test the actual stuff that ends up being logged too
 describe('console logs to custom logger', () => {
-  testConsoleInput(undefined);
-  testConsoleInput('a message :)', 'a message :)');
-  testConsoleInput('a');
-  testConsoleInput(['test', 'test2', 'test3']);
-  testConsoleInput('this', 'is', 'a', 'test');
-  testConsoleInput({ also: 'a', test: ':D' });
-  testConsoleInput(0);
-  testConsoleInput(() => {});
-  testConsoleInput(/reaewr/g);
-  testConsoleInput(new Error('message goes here'));
+  for (const testCase of testCases) {
+    testConsoleInput(testCase.input);
+  }
 });
