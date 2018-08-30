@@ -23,7 +23,7 @@ async function clearDatabase(client) {
 }
 
 async function insertSampleData(client) {
-  await initDummyData(client.service('specifications'), client.service('sdkConfigs'));
+  await addDummyData(client.service('specifications'), client.service('sdkConfigs'));
 }
 
 async function run() {
