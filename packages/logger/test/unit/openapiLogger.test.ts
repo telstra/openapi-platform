@@ -3,6 +3,7 @@ import MockDate from 'mockdate';
 import { openapiLogger, consoleTransport } from '../../src/index';
 import { testCases } from './testCases';
 
+// We're removing color codes from logging
 jest.mock('winston', () => {
   const { mockFormatter } = require('./mockFormatter');
   const actualModule = require.requireActual('winston');

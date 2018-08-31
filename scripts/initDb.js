@@ -1,29 +1,32 @@
 /*
-Script for adding sample data to the database.
-Also option to clear data from db.
-Requires openapi-platform server to be running.
+  Script for adding sample data to the database.
+  Also option to clear data from db.
+  Requires openapi-platform server to be running.
 */
 
 const { createServerClient } = require('@openapi-platform/server-client');
 const { readConfig } = require('@openapi-platform/config');
-
+const { openapiLogger, consoleTransport } = require('@openapi-platform/logger');
 const { addDummyData } = require('./addDummyData');
+
+// TODO: Make this configurable
+const logger = openapiLogger().add(consoleTransport({ level: 'verbose' }));
 
 async function clearDatabase(client) {
   const serviceNames = ['specifications', 'sdks', 'sdkConfigs'];
   for (const serviceName of serviceNames) {
     const service = client.service(serviceName);
     const documents = await service.find();
-    for (const document of documents) {
-      console.log(`removing id: ${document.id}`);
-      console.log(document);
-      await service.remove(document.id);
+    for (const doc of documents) {
+      logger.verbose(`removing id: ${doc.id}`);
+      logger.verbose(doc);
+      await service.remove(doc.id);
     }
   }
 }
 
 async function insertSampleData(client) {
-  await initDummyData(client.service('specifications'), client.service('sdkConfigs'));
+  await addDummyData(client.service('specifications'), client.service('sdkConfigs'));
 }
 
 async function run() {
@@ -48,18 +51,18 @@ async function run() {
     });
 
     if (clear) {
-      console.log('Resetting Database.');
+      logger.info('Resetting Database.');
       await clearDatabase(client);
-      console.log('Done.');
+      logger.info('Done.');
     }
 
     if (populate) {
-      console.log('Populating database with sample data.');
+      logger.info('Populating database with sample data.');
       await insertSampleData(client);
-      console.log('Done.');
+      logger.info('Done.');
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   } finally {
     socket.disconnect();
   }
