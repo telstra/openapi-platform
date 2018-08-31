@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 require('source-map-support/register');
 
-const logger = require('../lib/logger');
 const { build } = require('../lib/index');
+const logger = require('../lib/logger');
 
+// TODO: path needs to be configurable via arguments
 build()
   .then(() => {
     logger.info('Webpack configuration complete');
