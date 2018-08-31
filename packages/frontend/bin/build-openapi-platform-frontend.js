@@ -3,9 +3,11 @@ require('source-map-support/register');
 
 const { openapiLogger } = require('@openapi-platform/logger');
 
-const logger = openapiLogger();
 const { build } = require('../lib/index');
-// TODO: path needs to be configurable
+
+const logger = openapiLogger();
+
+// TODO: path needs to be configurable via arguments
 build()
   .then(() => {
     logger.info('Webpack configuration complete');

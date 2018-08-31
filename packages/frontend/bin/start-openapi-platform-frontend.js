@@ -7,12 +7,10 @@ const { openapiLogger } = require('@openapi-platform/logger');
 
 const logger = openapiLogger();
 
-// TODO: path needs to be configurable
-build({
-  OUTPUT_PATH: __dirname,
-})
+// TODO: path needs to be configurable via arguments
+build()
   .then(serve)
-  .then((port) => {
+  .then(port => {
     logger.info(`Serving frontend on port ${port}`);
   })
   .catch(err => {

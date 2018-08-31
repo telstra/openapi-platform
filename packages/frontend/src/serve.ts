@@ -1,19 +1,18 @@
-import { join } from 'path';
-
+import history from 'connect-history-api-fallback';
 import express from 'express';
+
 import { readConfig } from '@openapi-platform/config';
 
-export async function serve({ bundleDir = join(__dirname, 'dist')}) {
+export async function serve(bundlePath: string) {
   const config = readConfig();
   /* 
     Note that if people want to customize this 
     they can just use build-openapi-platform-frontend
   */
-  const app = express();
-  
-  // TODO: If the bundle output changes, this will break. Needs to be refactored.
-  app.use('/', express.static(bundleDir));
-  
+  const app = express()
+    .use(history())
+    .use('/', express.static(bundlePath));
+
   const port = config.get('ui.port');
   return await new Promise((resolve, reject) => {
     try {
@@ -21,7 +20,7 @@ export async function serve({ bundleDir = join(__dirname, 'dist')}) {
       app.listen(port, () => {
         resolve(port);
       });
-    } catch(err) {
+    } catch (err) {
       reject(err);
     }
   });
