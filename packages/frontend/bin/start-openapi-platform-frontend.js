@@ -17,9 +17,9 @@ build({
   .then(() => {
     const config = readConfig();
     /* 
-    Note that if people want to customize this 
-    they can just use build-openapi-platform-frontend
-  */
+      Note that if people want to customize this 
+      they can just use build-openapi-platform-frontend
+    */
     const app = express();
 
     // TODO: If the bundle output changes, this will break. Needs to be refactored.

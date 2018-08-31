@@ -8,9 +8,9 @@ const logLevel: string = process.env.LOG_LEVEL || 'debug';
 const openapiPlatformErrors = format(info => {
   if (info instanceof Error) {
     /*
-        TODO: Winston 3.0.0 removes .message for errors for some reason. 
-        Using a workaround found here: https://github.com/winstonjs/winston/issues/1243 to preserve the message
-      */
+      TODO: Winston 3.0.0 removes .message for errors for some reason. 
+      Using a workaround found here: https://github.com/winstonjs/winston/issues/1243 to preserve the message
+    */
 
     if (info.stack) {
       info.errorMessage = info.stack;

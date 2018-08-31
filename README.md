@@ -19,4 +19,4 @@ yarn add global @openapi-platform/frontend @openapi-platform/server
 2. Run `start-openapi-platform-frontend`
 
 ## Configuration
-You can create a config file called `openapi-platform.config.xxx` where xxx is a `json`, `yaml` or `json5` extension.
+You can create a config file in your current working directory called `openapi-platform.config.xxx` where xxx is a `json`, `yaml` or `json5`. 
