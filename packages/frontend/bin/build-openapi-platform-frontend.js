@@ -5,6 +5,7 @@ const { openapiLogger } = require('@openapi-platform/logger');
 
 const logger = openapiLogger();
 const { build } = require('../lib/index');
+// TODO: path needs to be configurable
 build()
   .then(() => {
     logger.info('Webpack configuration complete');

@@ -11,6 +11,7 @@ const { readConfig } = require('@openapi-platform/config');
 
 const logger = openapiLogger();
 
+// TODO: Webpack output
 build({
   OUTPUT_PATH: __dirname,
 })
