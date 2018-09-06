@@ -43,7 +43,7 @@ export async function createServer() {
     .use(
       morgan('dev', {
         stream: {
-          write: message => logger.info(message),
+          write: message => logger.verbose(message),
         },
       }),
     )

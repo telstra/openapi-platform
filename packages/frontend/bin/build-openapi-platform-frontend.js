@@ -1,11 +1,8 @@
 #!/usr/bin/env node
 require('source-map-support/register');
 
-const { openapiLogger } = require('@openapi-platform/logger');
-
 const { build } = require('../lib/index');
-
-const logger = openapiLogger();
+const logger = require('../lib/logger');
 
 // TODO: path needs to be configurable via arguments
 build()

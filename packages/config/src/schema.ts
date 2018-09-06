@@ -6,6 +6,22 @@ convict.addParser([
   { extension: ['yaml', 'yml'], parse: yaml.safeLoad },
   { extension: ['json5'], parse: json5.parse },
 ]);
+
+function logLevel(options) {
+  return {
+    doc: 'The level of logging to be recorded',
+    format: ['error', 'info', 'verbose', 'debug', 'silly'],
+    ...options,
+  };
+}
+
+function logPath(options) {
+  return {
+    doc: 'Where the logs will be recorded to',
+    ...options,
+  };
+}
+
 export const schema = convict({
   env: {
     env: 'NODE_ENV',
@@ -22,6 +38,38 @@ export const schema = convict({
     },
   },
   server: {
+    log: {
+      /*
+        TODO: Rather than having a config for this we could probably allow have hooks 
+        to add loggers straight into winston
+      */
+      console: {
+        level: logLevel({
+          default: 'info',
+          env: 'CONSOLE_LOG_LEVEL',
+          arg: 'console-log-level',
+        }),
+      },
+      file: {
+        level: logLevel({
+          default: 'verbose',
+          env: 'FILE_LOG_LEVEL',
+          arg: 'file-log-level',
+        }),
+        path: {
+          default: './openapi-platform-server.log',
+          env: 'FILE_LOG_PATH',
+          arg: 'file-log-path',
+        },
+      },
+      error: {
+        path: logPath({
+          default: './openapi-platform-server.error.log',
+          env: 'ERROR_LOG_PATH',
+          arg: 'error-log-path',
+        }),
+      },
+    },
     port: {
       doc: 'The port number used for incoming connections.',
       env: 'SERVER_PORT',

@@ -2,10 +2,7 @@
 require('source-map-support/register');
 
 const { build, serve } = require('../lib/index');
-
-const { openapiLogger } = require('@openapi-platform/logger');
-
-const logger = openapiLogger();
+const { logger } = require('../lib/logger');
 
 // TODO: path needs to be configurable via arguments
 build()
