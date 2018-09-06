@@ -27,15 +27,16 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
 
-  private renderSpecList: (props: RouteComponentProps<{ id?: string }>) => ReactNode = ({
-    match,
-    ...rest
-  }) => (
+  private renderSpecList: (
+    props: RouteComponentProps<{ specId?: string }>,
+  ) => ReactNode = ({ match, ...rest }) => (
     <Observer>
       {() => (
         <SpecList
           specs={state.specList}
-          expandedSpecId={match && match.params.id ? parseInt(match.params.id, 10) : null}
+          expandedSpecId={
+            match && match.params.specId ? parseInt(match.params.specId, 10) : null
+          }
           // Expands/collapses a Spec
           onSpecExpanded={this.expandSpec}
           // open a modal the edit the current spec
@@ -65,18 +66,18 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
           />,
           <ContentContainer key={1}>
             <Route
-              path={`${this.props.match.url}/:id(\\d+)`}
+              path={`${this.props.match.url}/:specId(\\d+)`}
               children={this.renderSpecList}
             />
             <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
             <Route
               exact
-              path={`${this.props.match.url}/:id(\\d+)/edit`}
+              path={`${this.props.match.url}/:specId(\\d+)/edit`}
               component={AddSpecModal}
             />
             <Route
               exact
-              path={`${this.props.match.url}/:id(\\d+)/sdk-configs/add`}
+              path={`${this.props.match.url}/:specId(\\d+)/sdk-configs/add`}
               component={AddSdkConfigModal}
             />
           </ContentContainer>,

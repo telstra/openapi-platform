@@ -32,7 +32,7 @@ const Styled: any = createStyled(theme => ({
  * Currently only supports specifying a target, version and options as a valid JSON.
  */
 export class AddSdkConfigModal extends Component<
-  RouteComponentProps<{ id: string }>,
+  RouteComponentProps<{ specId: string }>,
   {}
 > {
   /**
@@ -48,7 +48,7 @@ export class AddSdkConfigModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.goBack();
+    this.props.history.push('/');
   };
 
   private closeErrorModal = () => {
@@ -64,7 +64,7 @@ export class AddSdkConfigModal extends Component<
     try {
       await sdkConfigState.addSdkConfig({
         ...submittedSdkConfig,
-        specId: parseInt(this.props.match.params.id, 10),
+        specId: parseInt(this.props.match.params.specId, 10),
       });
       this.closeModal();
     } catch (e) {

@@ -32,7 +32,10 @@ const Styled: any = createStyled(theme => ({
  * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>, {}> {
+export class AddSpecModal extends Component<
+  RouteComponentProps<{ specId?: string }>,
+  {}
+> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -46,7 +49,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.goBack();
+    this.props.history.push('/');
   };
 
   private closeErrorModal = () => {
@@ -60,9 +63,9 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
   private onSubmitSpec = async (submittedSpec: Spec) => {
     this.showProgressIndicator = true;
     try {
-      if (this.props.match.params.id) {
+      if (this.props.match.params.specId) {
         await specState.updateSpec(
-          parseInt(this.props.match.params.id, 10),
+          parseInt(this.props.match.params.specId, 10),
           submittedSpec,
         );
       } else {
@@ -80,7 +83,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
   public render() {
     const {
       match: {
-        params: { id: specId },
+        params: { specId },
       },
     } = this.props;
     return (
