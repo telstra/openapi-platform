@@ -94,7 +94,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
                   specId ? specState.specs.get(parseInt(specId, 10)) : undefined
                 }
                 titleProps={{
-                  children: specId ? 'Edit Swagger Spec' : 'Add Swagger Spec',
+                  children: specId ? 'Edit Specification' : 'Add Specification',
                 }}
                 submitButtonProps={{
                   children: specId ? 'Save' : 'Add',
