@@ -23,7 +23,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openEditSpecModal = (spec: HasId<Spec>) =>
     this.props.history.push(`${this.props.match.url}/${spec.id}/edit`);
   private openAddSdkConfigModal = (spec: HasId<Spec>) =>
-    this.props.history.push(`${this.props.match.url}/${spec.id}/add-sdk-config`);
+    this.props.history.push(`${this.props.match.url}/${spec.id}/sdk-configs/add`);
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
 
@@ -76,7 +76,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
             />
             <Route
               exact
-              path={`${this.props.match.url}/:id(\\d+)/add-sdk-config`}
+              path={`${this.props.match.url}/:id(\\d+)/sdk-configs/add`}
               component={AddSdkConfigModal}
             />
           </ContentContainer>,
