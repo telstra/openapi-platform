@@ -48,7 +48,9 @@ export class AddSdkConfigModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.push('..');
+    const lastSlash = this.props.match.url.lastIndexOf('/');
+    const secondLastSlash = this.props.match.url.lastIndexOf('/', lastSlash - 1);
+    this.props.history.push(this.props.match.url.slice(0, secondLastSlash));
   };
 
   private closeErrorModal = () => {

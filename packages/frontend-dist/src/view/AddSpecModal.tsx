@@ -49,7 +49,8 @@ export class AddSpecModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.push('.');
+    const lastSlash = this.props.match.url.lastIndexOf('/');
+    this.props.history.push(this.props.match.url.slice(0, lastSlash));
   };
 
   private closeErrorModal = () => {
