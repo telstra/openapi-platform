@@ -48,7 +48,7 @@ export class AddSdkConfigModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.push('/');
+    this.props.history.push('..');
   };
 
   private closeErrorModal = () => {
