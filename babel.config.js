@@ -86,13 +86,13 @@ module.exports = api => {
   const overrides = [
     {
       test: [
-        join(__dirname, 'packages/frontend/.storybook'),
-        join(__dirname, 'packages/frontend/test/snapshots/storyshots.test.tsx'),
+        join(__dirname, 'packages/frontend-dist/.storybook'),
+        join(__dirname, 'packages/frontend-dist/test/snapshots/storyshots.test.tsx'),
       ],
       ...storyshotsSettings,
     },
     {
-      test: join(__dirname, 'packages/frontend/src'),
+      test: join(__dirname, 'packages/frontend-dist/src'),
       ...frontendSettings,
     },
   ];

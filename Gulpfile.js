@@ -68,7 +68,7 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
-function buildBabel(exclude) {
+function buildBabel(exclude = []) {
   let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
 
   if (exclude) {
@@ -110,7 +110,7 @@ function buildBundle(packageName) {
 }
 
 gulp.task('transpile', function transpile() {
-  return buildBabel([frontendPackageName]);
+  return buildBabel();
 });
 
 gulp.task(
@@ -151,10 +151,14 @@ gulp.task('restart:backend', function startBackend(done) {
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn('node', [join(__dirname, 'packages/server/lib/index.js')], {
-    stdio: 'inherit',
-    env: backendEnv,
-  });
+  backendNode = spawn(
+    'node',
+    [join(__dirname, 'packages/server/bin/start-openapi-platform-server.js')],
+    {
+      stdio: 'inherit',
+      env: backendEnv,
+    },
+  );
 
   backendNode.on('close', function(code) {
     if (code === 8) {

@@ -7,9 +7,9 @@ import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
-import { logger } from '@openapi-platform/logger';
 import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
+import { logger } from './logger';
 
 import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
@@ -98,7 +98,7 @@ export async function createServer() {
         wherever the Swagger gen API stores it.
         */
         if (sdkConfig.gitInfo) {
-          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path);
+          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, { logger });
         }
         context.data.path = sdk.path;
         context.data.sdkConfigId = sdkConfig.id;

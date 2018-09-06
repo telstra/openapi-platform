@@ -4,9 +4,8 @@ import { join, relative } from 'path';
 import AdmZip from 'adm-zip';
 import { move } from 'fs-extra';
 import globby from 'globby';
-import git from 'isomorphic-git';
+import { clone, push, add, listFiles, commit } from 'isomorphic-git';
 
-import { logger } from '@openapi-platform/logger';
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 
@@ -34,7 +33,7 @@ export async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
 }
 
 async function deleteAllFilesInLocalRepo(dir) {
-  const filePaths = await git.listFiles({ fs: oldFs, dir });
+  const filePaths = await listFiles({ fs: oldFs, dir });
   const fullFilePaths = filePaths.map(path => join(dir, path));
   await deletePaths(fullFilePaths);
 }
@@ -54,7 +53,12 @@ async function extractSdkArchiveFileToDir(extractToDir: string, archiveFilePath:
  * Tries to put the files of a remotely stored sdk ZIP file into a locally stored
  * repository.
  */
-export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
+export async function migrateSdkIntoLocalRepo(
+  repoDir: string,
+  remoteSdkUrl: string,
+  options,
+) {
+  const { logger } = options;
   logger.verbose(`Deleting all files ${repoDir}`);
   await deleteAllFilesInLocalRepo(repoDir);
   /*
@@ -84,7 +88,13 @@ export async function migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl: string) {
   }
 }
 
-export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: string) {
+export async function updateRepoWithNewSdk(
+  gitInfo: GitInfo,
+  remoteSdkUrl: string,
+  options,
+) {
+  // TODO: Rather than taking a logger, just provide callbacks
+  const { logger } = options;
   const repoDir = await makeTempDir('repo');
   try {
     /*
@@ -95,7 +105,7 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: strin
     */
     // TODO: Should also be able to configure which branch to checkout, maybe?
     logger.verbose(`Cloning ${remoteSdkUrl} into ${repoDir}`);
-    await git.clone({
+    await clone({
       ref: gitInfo.branch,
       dir: repoDir,
       // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
@@ -106,20 +116,20 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: strin
       ...gitInfo.auth,
     });
 
-    await migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl);
+    await migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl, options);
     const addedPaths = await getAllStageableFilepathsInRepo(repoDir);
     logger.verbose(`Staging ${addedPaths.length} paths`);
     for (const addedPath of addedPaths) {
       const relativeFilePath = relative(repoDir, addedPath);
       // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
-      await git.add({
+      await add({
         fs: oldFs,
         dir: repoDir,
         filepath: relativeFilePath,
       });
     }
     logger.verbose(`Committing changes...`);
-    await git.commit({
+    await commit({
       fs: oldFs,
       dir: repoDir,
       // TODO: This should be configurable
@@ -132,7 +142,7 @@ export async function updateRepoWithNewSdk(gitInfo: GitInfo, remoteSdkUrl: strin
     });
 
     logger.verbose(`Pushing commits...`);
-    await git.push({
+    await push({
       fs: oldFs,
       dir: repoDir,
       ...gitInfo.auth,

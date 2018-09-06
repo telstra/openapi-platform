@@ -1,6 +1,7 @@
-import { logger } from '@openapi-platform/logger';
 import Sequelize from 'sequelize';
+
 import { config } from '../config';
+import { logger } from '../logger';
 
 export async function connectToDb() {
   const databaseConfig = config.get('database');
