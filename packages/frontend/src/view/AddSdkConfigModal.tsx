@@ -6,7 +6,6 @@ import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
 import { state as sdkConfigState, AddedSdkConfig } from '../state/SdkConfigState';
-import { state as specState } from '../state/SpecState';
 import { FloatingModal } from './basic/FloatingModal';
 import { SdkConfigModal } from './basic/SdkConfigModal';
 import { createStyled } from './createStyled';
@@ -32,7 +31,10 @@ const Styled: any = createStyled(theme => ({
  * A modal window that allows the user to add an SDK configuration to the dashboard.
  * Currently only supports specifying a target, version and options as a valid JSON.
  */
-export class AddSdkConfigModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSdkConfigModal extends Component<
+  RouteComponentProps<{ id: string }>,
+  {}
+> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -46,7 +48,7 @@ export class AddSdkConfigModal extends Component<RouteComponentProps<{}>, {}> {
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.push('/');
+    this.props.history.goBack();
   };
 
   private closeErrorModal = () => {
@@ -60,12 +62,9 @@ export class AddSdkConfigModal extends Component<RouteComponentProps<{}>, {}> {
   private onSubmitSdkConfig = async (submittedSdkConfig: AddedSdkConfig) => {
     this.showProgressIndicator = true;
     try {
-      if (specState.expandedSpecId === null) {
-        throw new Error('expandedSpecId was unexpectedly null');
-      }
       await sdkConfigState.addSdkConfig({
         ...submittedSdkConfig,
-        specId: specState.expandedSpecId,
+        specId: parseInt(this.props.match.params.id, 10),
       });
       this.closeModal();
     } catch (e) {

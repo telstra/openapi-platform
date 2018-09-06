@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 
 import {
   Button,
-  IconButton,
   Typography,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -67,14 +65,19 @@ const Styled: any = createStyled(theme => ({
     borderCollapse: 'separate',
     padding: [theme.spacing.unit / 2, 0],
   },
+  footer: {
+    display: 'flex',
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+  },
 }));
 
 export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
-  spec: Spec;
+  spec: HasId<Spec>;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  onSpecOpen: (spec: Spec) => void;
-  onAddSdkConfig: (event: any) => void | undefined;
+  onEditSpec: (spec: HasId<Spec>) => void;
+  onAddSdkConfig: (spec: HasId<Spec>) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
 }
 
@@ -86,8 +89,12 @@ export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
     this.props.onPanelChange(this.props.spec, expanded);
 
+  private onEditSpec = () => this.props.onEditSpec(this.props.spec);
+
+  private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
+
   public render() {
-    const { spec, expanded, onAddSdkConfig, sdkConfigs = [] } = this.props;
+    const { spec, expanded, sdkConfigs = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -116,11 +123,6 @@ export class SpecItem extends Component<SpecItemProps> {
                 <List className={classes.bordered} dense>
                   <ListItem>
                     <ListItemText primary={spec.path} />
-                    <ListItemSecondaryAction>
-                      <IconButton aria-label="Edit">
-                        <Icons.Edit />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                   </ListItem>
                 </List>
                 <div className={classes.sdkHeader}>
@@ -142,15 +144,14 @@ export class SpecItem extends Component<SpecItemProps> {
                     ))}
                   </TableBody>
                 </Table>
-                <List>
-                  <ListItem className={classes.sdkHeaderActions}>
-                    <ListItemSecondaryAction>
-                      <Button variant="flat" color="primary" onClick={onAddSdkConfig}>
-                        Add SDK Configuration
-                      </Button>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
+                <div className={classNames(classes.footer, classes.sdkHeaderActions)}>
+                  <Button variant="flat" color="primary" onClick={this.onEditSpec}>
+                    Edit
+                  </Button>
+                  <Button variant="flat" color="primary" onClick={this.onAddSdkConfig}>
+                    Add SDK Configuration
+                  </Button>
+                </div>
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>

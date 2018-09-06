@@ -38,7 +38,13 @@ export interface AddedSdkConfig {
 export const state: SdkConfigState = new SdkConfigState();
 client
   .service('sdkConfigs')
-  .find()
+  .find({
+    query: {
+      $sort: {
+        createdAt: 1,
+      },
+    },
+  })
   .then(
     action((sdkConfigs: Array<HasId<SdkConfig>>) => {
       sdkConfigs.forEach(sdkConfig => {

@@ -11,10 +11,11 @@ import {
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
 import { ModalProps } from '@material-ui/core/Modal';
+import { TypographyProps } from '@material-ui/core/Typography';
 import { Observer } from 'mobx-react';
 
+import { Spec } from '@openapi-platform/model';
 import { isWebUri } from 'valid-url';
-import { AddedSpec } from '../../state/SpecState';
 import { Category } from '../../Storybook';
 import {
   ValidatedFormStore,
@@ -46,10 +47,12 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export type OnCloseModal = () => void;
-export type OnSubmitSpec = (spec: AddedSpec) => void;
+export type OnSubmitSpec = (spec: Spec) => void;
 export interface SpecModalProps {
+  readonly initialSpec?: Spec;
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSpec: OnSubmitSpec;
+  readonly titleProps?: TypographyProps;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
@@ -67,7 +70,7 @@ export class SpecModal extends Component<SpecModalProps> {
   private inputStore = new ValidatedFormStore({
     title: {
       validation: title => (!title ? inputInvalid('Error: Missing title') : inputValid()),
-      initialValue: '',
+      initialValue: this.props.initialSpec ? this.props.initialSpec.title : '',
     },
     url: {
       validation: url => {
@@ -78,11 +81,14 @@ export class SpecModal extends Component<SpecModalProps> {
         }
         return inputValid();
       },
-      initialValue: '',
+      initialValue: this.props.initialSpec ? this.props.initialSpec.path : '',
     },
     description: {
       validation: alwaysValid,
-      initialValue: '',
+      initialValue:
+        this.props.initialSpec && this.props.initialSpec.description
+          ? this.props.initialSpec.description
+          : '',
     },
   });
 
@@ -116,6 +122,7 @@ export class SpecModal extends Component<SpecModalProps> {
     const {
       onCloseModal,
       modalProps,
+      titleProps,
       cancelButtonProps,
       showSubmitProgress,
       submitButtonProps,
@@ -135,9 +142,11 @@ export class SpecModal extends Component<SpecModalProps> {
               >
                 <form>
                   <div className={classes.modalContent}>
-                    <Typography variant="title" className={classes.title}>
-                      Add Swagger Spec
-                    </Typography>
+                    <Typography
+                      variant="title"
+                      className={classes.title}
+                      {...titleProps}
+                    />
                     <FormControl
                       error={this.inputStore.getInputError('title') !== null}
                       margin="normal"
