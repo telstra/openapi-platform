@@ -6,10 +6,27 @@ convict.addParser([
   { extension: ['yaml', 'yml'], parse: yaml.safeLoad },
   { extension: ['json5'], parse: json5.parse },
 ]);
+
+function logLevel(options) {
+  return {
+    doc: 'The level of logging to be recorded',
+    format: ['error', 'info', 'verbose', 'debug', 'silly'],
+    ...options,
+  };
+}
+
+function logPath(options) {
+  return {
+    doc: 'Where the logs will be recorded to',
+    ...options,
+  };
+}
+
 export const schema = convict({
   env: {
     env: 'NODE_ENV',
     format: ['production', 'development', 'test'],
+    arg: 'env',
     default: 'development',
   },
   ui: {
@@ -21,9 +38,42 @@ export const schema = convict({
     },
   },
   server: {
+    log: {
+      /*
+        TODO: Rather than having a config for this we could probably allow have hooks 
+        to add loggers straight into winston
+      */
+      console: {
+        level: logLevel({
+          default: 'info',
+          env: 'CONSOLE_LOG_LEVEL',
+          arg: 'console-log-level',
+        }),
+      },
+      file: {
+        level: logLevel({
+          default: 'verbose',
+          env: 'FILE_LOG_LEVEL',
+          arg: 'file-log-level',
+        }),
+        path: {
+          default: './openapi-platform-server.log',
+          env: 'FILE_LOG_PATH',
+          arg: 'file-log-path',
+        },
+      },
+      error: {
+        path: logPath({
+          default: './openapi-platform-server.error.log',
+          env: 'ERROR_LOG_PATH',
+          arg: 'error-log-path',
+        }),
+      },
+    },
     port: {
       doc: 'The port number used for incoming connections.',
       env: 'SERVER_PORT',
+      arg: 'server-port',
       format: 'port',
       default: 8080,
     },
@@ -31,6 +81,7 @@ export const schema = convict({
     useCors: {
       doc: 'Whether or not CORS requests should be allowed.',
       env: 'USE_CORS',
+      arg: 'use-cors',
       format: Boolean,
       default: true,
     },
@@ -38,25 +89,29 @@ export const schema = convict({
   database: {
     name: {
       doc: 'The name of the PostgreSQL database to connect to.',
-      env: 'DATABASE_NAME',
+      env: 'DB_NAME',
+      arg: 'db-name',
       format: String,
       default: undefined,
     },
     host: {
       doc: 'The hostname of the PostgreSQL database to connect to.',
-      env: 'DATABASE_HOST',
+      env: 'DB_HOST',
+      arg: 'db-host',
       format: '*',
       default: undefined,
     },
     port: {
       doc: 'The port of the PostgreSQL database to connect to.',
-      env: 'DATABASE_PORT',
+      env: 'DB_PORT',
+      arg: 'db-port',
       default: 5432,
       format: 'port',
     },
     username: {
       doc: 'The username of the PostgreSQL database to connect to.',
       env: 'DATABASE_USERNAME',
+      arg: 'db-username',
       format: String,
       default: undefined,
       sensitive: true,
@@ -64,6 +119,7 @@ export const schema = convict({
     password: {
       doc: 'The password of the PostgreSQL database to connect to.',
       env: 'DATABASE_PASSWORD',
+      arg: 'db-password',
       format: String,
       default: undefined,
       sensitive: true,

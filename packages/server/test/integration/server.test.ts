@@ -3,6 +3,7 @@ import { Spec } from '@openapi-platform/model';
 import { createServer } from '../../src/createServer';
 jest.mock('@openapi-platform/config');
 jest.mock('@openapi-platform/logger');
+
 jest.mock('sequelize');
 jest.mock('feathers-sequelize');
 jest.mock('../../src/db/connection');

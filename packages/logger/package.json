@@ -7,10 +7,11 @@
   "private": false,
   "sideEffects": false,
   "dependencies": {
+    "@types/morgan": "^1.7.35",
     "colors": "^1.2.5",
-    "morgan": "^1.9.0",
-    "winston": "^3.0.0",
+    "mockdate": "^2.0.2",
     "moment": "^2.22.1",
-    "@types/morgan": "^1.7.35"
+    "morgan": "^1.9.0",
+    "winston": "^3.0.0"
   }
 }

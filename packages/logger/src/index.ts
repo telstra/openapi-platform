@@ -1,74 +1,59 @@
-import colors from 'colors';
-import moment from 'moment';
 import util from 'util';
 import { createLogger, format, transports } from 'winston';
 
-const logLevel: string = process.env.LOG_LEVEL || 'debug';
+import { Format } from 'logform';
+import * as opFormatters from './formatters';
 
-// Adds a timestamp to the logger information
-const openapiPlatformTimestamp = format(info => {
-  info.timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-  return info;
-});
+export interface LoggerOptions {
+  // True if you want timestamps added to your logged output
+  timestamp?: boolean;
+}
 
-// Aligns all the information before the message section of the log
-const openapiPlatformAlign = format(info => {
-  const messageIndentation = 9;
-  info.levelPadding = ' '.repeat(messageIndentation - info.level.length);
-  return info;
-});
+export interface TransportOptions {
+  level?: string;
+  colors?: boolean;
+}
 
-// Colorizes/formats javascript objects and timestamps
-const openapiPlatformFormatter = format((info, options) => {
-  info.timestamp = options.colors ? colors.gray(info.timestamp) : info.timestamp;
-  // TODO: Remove this cast to any once the type definitions for Winston are fixed
-  const message: any = info.message;
-  if (
-    !(message instanceof Error) &&
-    (message instanceof Object || Array.isArray(message))
-  ) {
-    info.message = util.inspect(info.message, { colors: options.colors });
+export interface FileTransportOptions extends TransportOptions {
+  path?: string;
+}
+
+export interface FormatOptions {
+  colors?: boolean;
+}
+
+export function consoleTransport(options: TransportOptions = {}) {
+  return new transports.Console({
+    level: options.level,
+    format: format.combine(
+      format.colorize(),
+      opFormatters.colorize(),
+      opFormatters.objects({ colors: true }),
+      opFormatters.printer,
+    ),
+  });
+}
+
+export function fileTransport(options: FileTransportOptions = {}) {
+  return new transports.File({
+    filename: options.path,
+    level: options.level,
+    format: format.combine(opFormatters.objects({ colors: false }), opFormatters.printer),
+  });
+}
+
+export function openapiLogger(options: LoggerOptions = {}) {
+  const { timestamp = true } = options;
+  const formatters: Format[] = [];
+  if (timestamp) {
+    formatters.push(opFormatters.timestamp());
   }
-  return info;
-});
-
-// Specifies the order in which all the information is printed out
-const openapiPlatformPrinter = format.printf(info => {
-  return `${info.timestamp} ${info.level}${info.levelPadding ? info.levelPadding : ' '}${
-    info.message
-  }`;
-});
-
-const logger = createLogger({
-  format: format.combine(
-    format.splat(),
-    openapiPlatformTimestamp(),
-    openapiPlatformAlign(),
-  ),
-  transports: [
-    new transports.Console({
-      level: logLevel,
-      format: format.combine(
-        format.colorize(),
-        openapiPlatformFormatter({ colors: true }),
-        openapiPlatformPrinter,
-      ),
-    }),
-    // Note that we don't want color codes in our file logs (looks incredibly confusing and ugly)
-    new transports.File({
-      filename: 'openapi-platform.error.log',
-      level: 'error',
-      format: openapiPlatformPrinter,
-    }),
-    new transports.File({
-      filename: 'openapi-platform.log',
-      level: logLevel,
-      format: openapiPlatformPrinter,
-    }),
-  ],
-});
-
-export { logger };
+  formatters.push(opFormatters.errors(), opFormatters.align());
+  const logger = createLogger({
+    format: format.combine(...formatters),
+  });
+  return logger;
+}
 
 /**
  * Replaces the console.log type methods with our own logger methods.
