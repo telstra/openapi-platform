@@ -32,7 +32,7 @@ const Styled: any = createStyled(theme => ({
  * Currently only supports specifying a target, version and options as a valid JSON.
  */
 export class AddSdkConfigModal extends Component<
-  RouteComponentProps<{ specId: string }>,
+  RouteComponentProps<{ specId: string; sdkConfigId?: string }>,
   {}
 > {
   /**
@@ -48,9 +48,17 @@ export class AddSdkConfigModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
+    // TODO: This might need to get refactored.
     const lastSlash = this.props.match.url.lastIndexOf('/');
     const secondLastSlash = this.props.match.url.lastIndexOf('/', lastSlash - 1);
-    this.props.history.push(this.props.match.url.slice(0, secondLastSlash));
+    if (this.props.match.params.sdkConfigId) {
+      // If editing, we need to go up 3 times
+      const thirdLastSlash = this.props.match.url.lastIndexOf('/', secondLastSlash - 1);
+      this.props.history.push(this.props.match.url.slice(0, thirdLastSlash));
+    } else {
+      // Otherwise, go up 2 times.
+      this.props.history.push(this.props.match.url.slice(0, secondLastSlash));
+    }
   };
 
   private closeErrorModal = () => {
@@ -64,10 +72,16 @@ export class AddSdkConfigModal extends Component<
   private onSubmitSdkConfig = async (submittedSdkConfig: AddedSdkConfig) => {
     this.showProgressIndicator = true;
     try {
-      await sdkConfigState.addSdkConfig({
-        ...submittedSdkConfig,
-        specId: parseInt(this.props.match.params.specId, 10),
-      });
+      // @ts-ignore
+      const sdkConfigId = parseInt(this.props.match.params.sdkConfigId, 10);
+      if (this.props.match.params.sdkConfigId) {
+        await sdkConfigState.updateSdkConfig(sdkConfigId, submittedSdkConfig);
+      } else {
+        await sdkConfigState.addSdkConfig({
+          ...submittedSdkConfig,
+          specId: parseInt(this.props.match.params!.specId, 10),
+        });
+      }
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -78,6 +92,11 @@ export class AddSdkConfigModal extends Component<
   };
 
   public render() {
+    const {
+      match: {
+        params: { sdkConfigId },
+      },
+    } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -86,7 +105,17 @@ export class AddSdkConfigModal extends Component<
               <SdkConfigModal
                 key={0}
                 submitButtonProps={{
-                  children: 'Add',
+                  children: sdkConfigId ? 'Update' : 'Add',
+                }}
+                initialSdkConfig={
+                  sdkConfigId
+                    ? sdkConfigState.sdkConfigs.get(parseInt(sdkConfigId, 10))
+                    : undefined
+                }
+                titleProps={{
+                  children: sdkConfigId
+                    ? 'Update SDK Configuration'
+                    : 'Add SDK Configuration',
                 }}
                 onSubmitSdkConfig={this.onSubmitSdkConfig}
                 onCloseModal={this.closeModal}
@@ -100,7 +129,10 @@ export class AddSdkConfigModal extends Component<
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the SDK configuration.</Typography>
+                  <Typography>
+                    An error occurred {sdkConfigId ? 'updating' : 'adding'} the
+                    specification.
+                  </Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>
