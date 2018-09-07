@@ -1,7 +1,7 @@
 const { join } = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { HotModuleReplacementPlugin } = require('webpack');
+const { HotModuleReplacementPlugin, DefinePlugin } = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const stats = {
@@ -26,23 +26,47 @@ const stats = {
   children: false,
 };
 
-module.exports = env => {
-  const isProduction = env.NODE_ENV === 'production';
+module.exports = ({
+  API_PROTOCOL = 'http',
+  API_HOST = 'localhost',
+  API_PORT = 8080,
+  NODE_ENV = 'development',
+  OUTPUT_PATH = __dirname,
+  DIST_DIRNAME = 'dist',
+  STATS_DIRNAME = 'stats',
+}) => {
+  const isProduction = NODE_ENV === 'production';
+  const plugins = [
+    new HtmlWebpackPlugin({
+      title: `OpenAPI Platform${isProduction ? '' : ' (Developer mode)'}`,
+      template: join(__dirname, 'public', 'index.html'),
+    }),
+    new HotModuleReplacementPlugin(),
+    new DefinePlugin({
+      API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
+    }),
+  ];
+  if (STATS_DIRNAME) {
+    plugins.push(
+      new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        analyzerMode: 'static',
+        reportFilename: join(OUTPUT_PATH, STATS_DIRNAME, 'bundle.html'),
+      }),
+    );
+  }
   return {
     name: 'Frontend',
     target: 'web',
-    entry: join(__dirname, 'src', 'index.tsx'),
+    entry: '@openapi-platform/frontend-dist',
     output: {
       filename: 'index.js',
+      path: join(OUTPUT_PATH, DIST_DIRNAME),
       publicPath: '/',
     },
     mode: isProduction ? 'production' : 'development',
     module: {
       rules: [
-        {
-          test: /\.tsx$/,
-          loader: 'babel-loader',
-        },
         {
           test: /\.css$/,
           use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
@@ -53,22 +77,7 @@ module.exports = env => {
         },
       ],
     },
-    devtool: 'cheap-module-source-map',
-    resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    },
-    plugins: [
-      new HtmlWebpackPlugin({
-        title: `OpenAPI Platform${isProduction ? '' : ' (Developer mode)'}`,
-        template: join(__dirname, 'public', 'index.html'),
-      }),
-      new HotModuleReplacementPlugin(),
-      new BundleAnalyzerPlugin({
-        openAnalyzer: false,
-        analyzerMode: 'static',
-        reportFilename: join(__dirname, 'stats/bundle.html'),
-      }),
-    ],
+    plugins,
     stats,
   };
 };

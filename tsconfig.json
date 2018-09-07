@@ -14,5 +14,11 @@
     "jsx": "preserve",
     "baseUrl": "./",
   },
-  "exclude": ["node_modules", "build", "dist"]
+  "exclude": [
+    "node_modules", 
+    "**/node_modules",
+    "build",
+    "lib", 
+    "dist"
+  ]
 }
