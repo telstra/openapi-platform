@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import {
   Button,
+  IconButton,
   Typography,
   List,
   ListItem,
@@ -9,6 +10,8 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  ExpansionPanelActions,
+  Divider,
   Table,
   TableBody,
 } from '@material-ui/core';
@@ -64,11 +67,6 @@ const Styled: any = createStyled(theme => ({
   sdkList: {
     borderCollapse: 'separate',
     padding: [theme.spacing.unit / 2, 0],
-  },
-  footer: {
-    display: 'flex',
-    flexGrow: 1,
-    justifyContent: 'flex-end',
   },
 }));
 
@@ -132,9 +130,15 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
-                    <Button variant="flat" color="primary">
+                    <Button variant="flat" color="primary" size="small">
                       Run all
                     </Button>
+                    <IconButton
+                      aria-label="Add SDK Configuration"
+                      onClick={this.onAddSdkConfig}
+                    >
+                      <Icons.Add />
+                    </IconButton>
                   </div>
                 </div>
                 <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
@@ -144,16 +148,14 @@ export class SpecItem extends Component<SpecItemProps> {
                     ))}
                   </TableBody>
                 </Table>
-                <div className={classNames(classes.footer, classes.sdkHeaderActions)}>
-                  <Button variant="flat" color="primary" onClick={this.onEditSpec}>
-                    Edit
-                  </Button>
-                  <Button variant="flat" color="primary" onClick={this.onAddSdkConfig}>
-                    Add SDK Configuration
-                  </Button>
-                </div>
               </div>
             </ExpansionPanelDetails>
+            <Divider />
+            <ExpansionPanelActions>
+              <Button size="small" color="primary" onClick={this.onEditSpec}>
+                Edit
+              </Button>
+            </ExpansionPanelActions>
           </ExpansionPanel>
         )}
       </Styled>
