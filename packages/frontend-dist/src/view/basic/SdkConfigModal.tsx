@@ -98,7 +98,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
       },
       initialValue:
         this.props.initialSdkConfig && this.props.initialSdkConfig.options
-          ? this.props.initialSdkConfig.options
+          ? JSON.stringify(this.props.initialSdkConfig.options, null, 2)
           : '{}',
     },
   });
