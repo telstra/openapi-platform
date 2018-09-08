@@ -92,6 +92,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                       </IconButton>
                     ) : null}
                     <Button
+                      size="small"
                       disabled={sdkConfig.buildStatus === BuildStatus.Running}
                       onClick={this.createSdk}
                     >

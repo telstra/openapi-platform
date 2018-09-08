@@ -7,10 +7,11 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  ExpansionPanelActions,
+  Divider,
   Table,
   TableBody,
 } from '@material-ui/core';
@@ -70,11 +71,11 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
-  spec: Spec;
+  spec: HasId<Spec>;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  onSpecOpen: (spec: Spec) => void;
-  onAddSdkConfig: (event: any) => void | undefined;
+  onEditSpec: (spec: HasId<Spec>) => void;
+  onAddSdkConfig: (spec: HasId<Spec>) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
 }
 
@@ -86,8 +87,12 @@ export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
     this.props.onPanelChange(this.props.spec, expanded);
 
+  private onEditSpec = () => this.props.onEditSpec(this.props.spec);
+
+  private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
+
   public render() {
-    const { spec, expanded, onAddSdkConfig, sdkConfigs = [] } = this.props;
+    const { spec, expanded, sdkConfigs = [] } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -116,11 +121,6 @@ export class SpecItem extends Component<SpecItemProps> {
                 <List className={classes.bordered} dense>
                   <ListItem>
                     <ListItemText primary={spec.path} />
-                    <ListItemSecondaryAction>
-                      <IconButton aria-label="Edit">
-                        <Icons.Edit />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                   </ListItem>
                 </List>
                 <div className={classes.sdkHeader}>
@@ -130,9 +130,15 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
-                    <Button variant="flat" color="primary">
+                    <Button variant="flat" color="primary" size="small">
                       Run all
                     </Button>
+                    <IconButton
+                      aria-label="Add SDK Configuration"
+                      onClick={this.onAddSdkConfig}
+                    >
+                      <Icons.Add />
+                    </IconButton>
                   </div>
                 </div>
                 <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
@@ -142,17 +148,14 @@ export class SpecItem extends Component<SpecItemProps> {
                     ))}
                   </TableBody>
                 </Table>
-                <List>
-                  <ListItem className={classes.sdkHeaderActions}>
-                    <ListItemSecondaryAction>
-                      <Button variant="flat" color="primary" onClick={onAddSdkConfig}>
-                        Add SDK Configuration
-                      </Button>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
               </div>
             </ExpansionPanelDetails>
+            <Divider />
+            <ExpansionPanelActions>
+              <Button size="small" color="primary" onClick={this.onEditSpec}>
+                Edit
+              </Button>
+            </ExpansionPanelActions>
           </ExpansionPanel>
         )}
       </Styled>
