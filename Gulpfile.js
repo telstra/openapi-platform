@@ -14,6 +14,11 @@ const newer = require('gulp-newer');
 const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 const plumber = require('gulp-plumber');
+const gulpTypescript = require('gulp-typescript');
+const typescript = gulpTypescript.createProject(
+  'tsconfig.json',
+  gulpTypescript.reporter.fullReporter(),
+);
 
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -68,8 +73,20 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
+function packagesStream() {
+  return gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+}
+
+function checkTypes() {
+  let stream = packagesStream();
+  return stream.pipe(typescript()).on(
+    'error',
+    () => {}, // As per https://github.com/ivogabe/gulp-typescript
+  );
+}
+
 function buildBabel(exclude = []) {
-  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+  let stream = packagesStream();
 
   if (exclude) {
     // We need to exclude things that get bundled
@@ -107,6 +124,14 @@ function buildBundle(packageName) {
     .pipe(errorLogger())
     .pipe(createWebpackStream(packageDir))
     .pipe(gulp.dest(join(packageDir, 'dist')));
+}
+
+function watchPackages(task) {
+  return gulpWatch(
+    globFromPackagesDirName(packagesDirName),
+    { debounceDelay: 200 },
+    task,
+  );
 }
 
 gulp.task('transpile', function transpile() {
@@ -173,13 +198,18 @@ gulp.task(
   gulp.parallel(
     'serve:frontend',
     gulp.series('restart:backend', function watch() {
-      return gulpWatch(
-        globFromPackagesDirName(packagesDirName),
-        { debounceDelay: 200 },
-        gulp.series('build', 'restart:backend'),
-      );
+      return watchPackages(gulp.series('build', 'restart:backend'));
     }),
   ),
+);
+
+gulp.task('check:types', checkTypes);
+
+gulp.task(
+  'watch:checker',
+  gulp.series('check:types', function startWatchChecker() {
+    return watchPackages(gulp.series('check:types'));
+  }),
 );
 
 /**
