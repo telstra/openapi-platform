@@ -3,7 +3,7 @@
  */
 require('source-map-support/register');
 
-const colors = require('colors');
+require('colors');
 const { join, sep, resolve } = require('path');
 const spawn = require('cross-spawn');
 
@@ -11,14 +11,14 @@ const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const newer = require('gulp-newer');
-const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 const plumber = require('gulp-plumber');
+const gulpTslint = require('gulp-tslint');
 const gulpTypescript = require('gulp-typescript');
-const typescript = gulpTypescript.createProject(
-  'tsconfig.json',
-  gulpTypescript.reporter.fullReporter(),
-);
+
+const tslint = require('tslint');
+
+const tsProject = gulpTypescript.createProject('tsconfig.json');
 
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -78,11 +78,25 @@ function packagesStream() {
 }
 
 function checkTypes() {
-  let stream = packagesStream();
-  return stream.pipe(typescript()).on(
-    'error',
-    () => {}, // As per https://github.com/ivogabe/gulp-typescript
-  );
+  const stream = packagesStream();
+  return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
+}
+
+function runLinter({ fix }) {
+  const stream = packagesStream();
+  return stream
+    .pipe(
+      gulpTslint({
+        fix,
+        formatter: 'stylish',
+        tslint,
+      }),
+    )
+    .pipe(
+      gulpTslint.report({
+        summarizeFailureOutput: true,
+      }),
+    );
 }
 
 function buildBabel(exclude = []) {
@@ -126,10 +140,10 @@ function buildBundle(packageName) {
     .pipe(gulp.dest(join(packageDir, 'dist')));
 }
 
-function watchPackages(task) {
-  return gulpWatch(
+function watchPackages(task, options) {
+  return gulp.watch(
     globFromPackagesDirName(packagesDirName),
-    { debounceDelay: 200 },
+    { delay: 200, ...options },
     task,
   );
 }
@@ -203,21 +217,28 @@ gulp.task(
   ),
 );
 
-gulp.task('check:types', checkTypes);
+gulp.task('format:lint', function formatLint() {
+  return runLinter({ fix: true });
+});
 
-gulp.task(
-  'watch:checker',
-  gulp.series('check:types', function startWatchChecker() {
-    return watchPackages(gulp.series('check:types'));
-  }),
-);
+gulp.task('checker:lint', function checkLint() {
+  return runLinter({ fix: false });
+});
+
+gulp.task('checker:types', checkTypes);
+
+gulp.task('checker', gulp.series('checker:types', 'checker:lint'));
+
+gulp.task('watch:checker', function startWatchChecker() {
+  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
+});
 
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
 gulp.task('watch', gulp.series('build', 'watch-no-init-build'));
 
-gulp.task('default', gulp.series('watch'));
+gulp.task('default', gulp.task('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
