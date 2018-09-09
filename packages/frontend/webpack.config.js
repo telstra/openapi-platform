@@ -26,16 +26,8 @@ const stats = {
   children: false,
 };
 
-module.exports = ({
-  apiUrl,
-  env = 'development',
-  output = {}
-}) => {
-  const {
-    path = __dirname,
-    distDirName = 'dist',
-    statsDirName = 'stats',
-  } = output;
+module.exports = ({ apiUrl, env = 'development', output = {} }) => {
+  const { path = __dirname, distDirName = 'dist', statsDirName = 'stats' } = output;
   const isProduction = env === 'production';
   const plugins = [
     new HtmlWebpackPlugin({
@@ -44,7 +36,7 @@ module.exports = ({
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({
-      API_URL: apiUrl,
+      API_URL: JSON.stringify(apiUrl),
     }),
   ];
   if (statsDirName) {

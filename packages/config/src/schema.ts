@@ -30,16 +30,24 @@ export const schema = convict({
     default: 'development',
   },
   ui: {
+    protocol: {
+      env: 'UI_PROTOCOL',
+      arg: 'ui-protocol',
+      format: ['http', 'https'],
+      default: 'http',
+    },
     host: {
       doc: 'The host used for hosting the frontend web app',
       env: 'UI_HOST',
       format: '*',
-      default: '127.0.0.1'
+      arg: 'ui-host',
+      default: 'localhost',
     },
     port: {
       doc: 'The port number used for hosting the frontend web app',
       env: 'UI_PORT',
       format: 'port',
+      arg: 'ui-port',
       default: 3000,
     },
   },
@@ -75,6 +83,18 @@ export const schema = convict({
           arg: 'error-log-path',
         }),
       },
+    },
+    protocol: {
+      env: 'SERVER_PROTOCOL',
+      arg: 'server-protocol',
+      format: ['http', 'https'],
+      default: 'http',
+    },
+    host: {
+      doc: 'The accepted address for connects to the server',
+      default: 'localhost',
+      env: 'SERVER_HOST',
+      arg: 'server-host',
     },
     port: {
       doc: 'The port number used for incoming connections.',
