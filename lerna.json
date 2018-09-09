@@ -2,7 +2,7 @@
   "lerna": "3.2.1",
   "version": "1.0.0-alpha.0",
   "changelog": {
-    "repo": "PatrickShaw/by-example",
+    "repo": "telstra/opeanpi-platform",
     "cacheDir": ".changelog"
   },
   "packages": [
