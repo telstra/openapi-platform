@@ -1,19 +1,19 @@
 import webpack from 'webpack';
 
-import { readConfig } from '@openapi-platform/config';
+import { uiUrl } from '@openapi-platform/config';
 
 import createWebpackConfig from '../webpack.config';
 import { logger } from './logger';
+import { config } from './config';
 
 export async function build({ ...webpackOptions } = {}) {
   logger.info('Bundling frontend app...');
 
-  const openapiConfig = readConfig();
   const webpackInputs = {
     OUTPUT_PATH: process.cwd(),
     STATS_DIRNAME: null,
-    API_PORT: openapiConfig.get('server.port'),
-    NODE_ENV: openapiConfig.get('env'),
+    API_URL: uiUrl(config),
+    NODE_ENV: config.get('env'),
     ...webpackOptions,
   };
   const webpackConfig = createWebpackConfig(webpackInputs);

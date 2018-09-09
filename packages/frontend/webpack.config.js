@@ -27,9 +27,7 @@ const stats = {
 };
 
 module.exports = ({
-  API_PROTOCOL = 'http',
-  API_HOST = 'localhost',
-  API_PORT = 8080,
+  API_URL,
   NODE_ENV = 'development',
   OUTPUT_PATH = __dirname,
   DIST_DIRNAME = 'dist',
@@ -43,7 +41,7 @@ module.exports = ({
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({
-      API_URL: `"${API_PROTOCOL}://${API_HOST}:${API_PORT}"`,
+      API_URL,
     }),
   ];
   if (STATS_DIRNAME) {

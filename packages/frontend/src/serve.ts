@@ -1,10 +1,9 @@
 import history from 'connect-history-api-fallback';
 import express from 'express';
 
-import { readConfig } from '@openapi-platform/config';
+import { config } from './config';
 
 export async function serve(bundlePath: string) {
-  const config = readConfig();
   /* 
     Note that if people want to customize this 
     they can just use build-openapi-platform-frontend

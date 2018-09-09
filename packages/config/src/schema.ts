@@ -30,6 +30,12 @@ export const schema = convict({
     default: 'development',
   },
   ui: {
+    host: {
+      doc: 'The host used for hosting the frontend web app',
+      env: 'UI_HOST',
+      format: '*',
+      default: '127.0.0.1'
+    },
     port: {
       doc: 'The port number used for hosting the frontend web app',
       env: 'UI_PORT',
@@ -77,6 +83,7 @@ export const schema = convict({
       format: 'port',
       default: 8080,
     },
+
     // TODO: You should be able to add this sort of stuff via some sort of hook
     useCors: {
       doc: 'Whether or not CORS requests should be allowed.',
