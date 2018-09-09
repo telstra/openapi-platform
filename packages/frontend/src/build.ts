@@ -3,16 +3,16 @@ import webpack from 'webpack';
 import { uiUrl } from '@openapi-platform/config';
 
 import createWebpackConfig from '../webpack.config';
-import { logger } from './logger';
 import { config } from './config';
+import { logger } from './logger';
 
 export async function build({ ...webpackOptions } = {}) {
   logger.info('Bundling frontend app...');
 
   const webpackInputs = {
     output: {
-      path:process.cwd(),
-      statsDirName: null
+      path: process.cwd(),
+      statsDirName: null,
     },
     apiUrl: uiUrl(config),
     env: config.get('env'),

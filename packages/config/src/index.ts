@@ -9,7 +9,9 @@ export { schema };
  * @param prefix The sub config that you want the url fields to be taken from E.g. 'server' or 'ui'
  */
 function urlFromConfig(config, prefix: string): string {
-  return `${config.get(`${prefix}.protocol`)}://${config.get(`${prefix}.host`)}:${config.get(`${prefix}.port`)}`;
+  return `${config.get(`${prefix}.protocol`)}://${config.get(
+    `${prefix}.host`,
+  )}:${config.get(`${prefix}.port`)}`;
 }
 
 export function serverUrl(config): string {

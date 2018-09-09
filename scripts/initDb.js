@@ -5,7 +5,7 @@
 */
 
 const { createServerClient } = require('@openapi-platform/server-client');
-const { readConfig } = require('@openapi-platform/config');
+const { readConfig, serverUrl } = require('@openapi-platform/config');
 const { openapiLogger, consoleTransport } = require('@openapi-platform/logger');
 const { addDummyData } = require('./addDummyData');
 
@@ -32,7 +32,7 @@ async function insertSampleData(client) {
 async function run() {
   const config = readConfig();
   const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
+    serverUrl(config),
   );
   try {
     let clear = true;
