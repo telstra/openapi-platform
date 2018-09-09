@@ -241,9 +241,9 @@ gulp.task(
   'watch:frontend',
   gulp.series(
     'serve:frontend',
-    function watchFrontend() {
+    function watchReloadBrowser() {
       return watchPackages(
-        gulp.task(reloadBrowser),
+        gulp.series(reloadBrowser),
         undefined,
         'dist'
       );
@@ -255,7 +255,7 @@ gulp.task(
   'watch:server',
   function watchServer() {
     return watchPackages(
-      gulp.series('restart:server'),
+      gulp.task('restart:server'),
       undefined,
       'lib'
     );
