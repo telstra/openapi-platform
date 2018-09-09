@@ -15,7 +15,12 @@ async function createItem(serviceName, data) {
   const { client, socket } = createServerClient(
     `http://localhost:${config.get('server.port')}`,
   );
-  const response = await client.service(serviceName).create(data);
+  const response = await client
+    .service(serviceName)
+    .create(data)
+    .catch(err => {
+      logger.error('Unable to connect to server');
+    });
   socket.disconnect();
   return response;
 }

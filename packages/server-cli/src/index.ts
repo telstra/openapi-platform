@@ -1,11 +1,9 @@
 import program from 'commander';
 
-import packageJson from '../package';
-
 program
-  .version(packageJson.version)
+  .version('1.0.0-alpha.0')
   .command('add [type]', 'Add an item')
-  .command('list [type]', 'List items in db')
+  .command('list [type] [filters...]', 'List items in db')
   .command('remove [type]', 'Remove items from db')
   .command('build [SDK]', 'Runs the build process for an SDK');
 
