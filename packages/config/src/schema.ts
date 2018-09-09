@@ -50,6 +50,15 @@ export const schema = convict({
       arg: 'ui-port',
       default: 3000,
     },
+    apiBaseUrl: {
+      get default() {
+        return `${process.env.SERVER_PROTOCOL}://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`
+      },
+      doc: 'The target API URL used by the web app to communicate with the server',
+      env: 'API_BASE_URL',
+      format: String,
+      arg: 'ui-api-base-url'
+    }
   },
   server: {
     log: {

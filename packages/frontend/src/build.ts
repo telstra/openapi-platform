@@ -14,7 +14,7 @@ export async function build({ ...webpackOptions } = {}) {
       path: process.cwd(),
       statsDirName: null,
     },
-    apiUrl: uiUrl(config),
+    baseApiUrl: config.get('ui.baseApiUrl'),
     env: config.get('env'),
     ...webpackOptions,
   };

@@ -36,7 +36,7 @@ module.exports = ({ apiUrl, env = 'development', output = {} }) => {
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({
-      API_URL: JSON.stringify(apiUrl),
+      API_BASE_URL: JSON.stringify(apiUrl),
     }),
   ];
   if (statsDirName) {
