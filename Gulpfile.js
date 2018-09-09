@@ -50,11 +50,19 @@ function rename(fn) {
   });
 }
 
-function globFromPackagesDirName(dirName) {
+function globFolderFromPackagesDirName(dirName, folderName) {
   return [
-    `./${dirName}/*/src/**/*.{js,jsx,ts,tsx}`,
-    `!./${dirName}/*/src/**/__mocks__/*.{js,ts,tsx,jsx}`,
+    `./${dirName}/*/${folderName}/**/*.{js,jsx,ts,tsx}`,
+    `!./${dirName}/*/${folderName}/**/__mocks__/*.{js,ts,tsx,jsx}`,
   ];
+}
+
+function globSrcFromPackagesDirName(dirName) {
+  return globFolderFromPackagesDirName(dirName, 'src')
+}
+
+function globLibFromPackagesDirName(dirName) {
+  return globFolderFromPackagesDirName(dirName, 'lib');
 }
 
 function compilationLogger() {
@@ -74,7 +82,7 @@ function errorLogger() {
 
 const packagesDir = join(__dirname, packagesDirName);
 function packagesStream() {
-  return gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+  return gulp.src(globSrcFromPackagesDirName(packagesDirName), { base: packagesDir });
 }
 
 function checkTypes() {
@@ -97,6 +105,10 @@ function runLinter({ fix }) {
         summarizeFailureOutput: true,
       }),
     );
+}
+
+function reloadBrowser() {
+  browserSync.reload();
 }
 
 function buildBabel(exclude = []) {
@@ -140,9 +152,9 @@ function buildBundle(packageName) {
     .pipe(gulp.dest(join(packageDir, 'dist')));
 }
 
-function watchPackages(task, options) {
+function watchPackages(task, options, folderName = 'src') {
   return gulp.watch(
-    globFromPackagesDirName(packagesDirName),
+    globFolderFromPackagesDirName(packagesDirName, folderName),
     { delay: 200, ...options },
     task,
   );
@@ -157,9 +169,7 @@ gulp.task(
   function bundle() {
     return buildBundle(frontendPackageName);
   },
-  function reloadBrowser() {
-    browserSync.reload();
-  },
+  reloadBrowser,
 );
 
 gulp.task('build', gulp.series('transpile', 'bundle'));
@@ -184,7 +194,7 @@ gulp.task('serve:frontend', function serveFrontend(done) {
   done();
 });
 
-gulp.task('restart:backend', function startBackend(done) {
+gulp.task('restart:server', function startBackend(done) {
   if (backendNode) {
     backendNode.kill();
   }
@@ -208,11 +218,59 @@ gulp.task('restart:backend', function startBackend(done) {
 });
 
 gulp.task(
+  'watch:frontend',
+  gulp.parallel(
+    'serve:frontend',
+    function reloadBrowser() {
+      return watchPackages(gulp.series(''))
+    }
+  )
+);
+
+gulp.task(
+  'watch:transpile',
+  function watchTranspile() {
+    return watchPackages(
+      gulp.series('transpile'), 
+      { ignoreInitial: false }
+    );
+  }
+)
+
+gulp.task(
+  'watch:build',
+  function watchBuild() {
+    return watchPackages(gulp.series('build'), { ignoreInitial: false });
+  }
+)
+
+gulp.task(
+  'watch:frontend',
+  gulp.series(
+    'serve:frontend',
+    function watchFrontend() {
+      return watchPackages(
+        gulp.series(reloadBrowser),
+        { ignoreInitial: true },
+        'dist'
+      );
+    }
+  )
+)
+
+gulp.task(
+  'watch:server',
+  function watchServer() {
+    return watchPackages(gulp.series('transpile', 'restart:server'));
+  }
+)
+
+gulp.task(
   'watch-no-init-build',
   gulp.parallel(
     'serve:frontend',
-    gulp.series('restart:backend', function watch() {
-      return watchPackages(gulp.series('build', 'restart:backend'));
+    gulp.series('restart:server', function watch() {
+      return watchPackages(gulp.series('build', 'restart:server'));
     }),
   ),
 );
