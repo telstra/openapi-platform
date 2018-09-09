@@ -221,8 +221,8 @@ gulp.task(
   'watch:frontend',
   gulp.parallel(
     'serve:frontend',
-    function reloadBrowser() {
-      return watchPackages(gulp.series(''))
+    function watchReloadBrowser() {
+      return watchPackages(gulp.task('reload-browser', reloadBrowser));
     }
   )
 );
@@ -231,7 +231,7 @@ gulp.task(
   'watch:transpile',
   function watchTranspile() {
     return watchPackages(
-      gulp.series('transpile'), 
+      gulp.task('transpile'), 
       { ignoreInitial: false }
     );
   }
@@ -240,7 +240,10 @@ gulp.task(
 gulp.task(
   'watch:build',
   function watchBuild() {
-    return watchPackages(gulp.series('build'), { ignoreInitial: false });
+    return watchPackages(
+      gulp.task('build'), 
+      { ignoreInitial: false }
+    );
   }
 )
 
