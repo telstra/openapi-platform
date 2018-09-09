@@ -10,10 +10,12 @@ export async function build({ ...webpackOptions } = {}) {
   logger.info('Bundling frontend app...');
 
   const webpackInputs = {
-    OUTPUT_PATH: process.cwd(),
-    STATS_DIRNAME: null,
-    API_URL: uiUrl(config),
-    NODE_ENV: config.get('env'),
+    output: {
+      path:process.cwd(),
+      statsDirName: null
+    },
+    apiUrl: uiUrl(config),
+    env: config.get('env'),
     ...webpackOptions,
   };
   const webpackConfig = createWebpackConfig(webpackInputs);
