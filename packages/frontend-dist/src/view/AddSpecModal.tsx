@@ -5,7 +5,8 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
-import { state as specState, AddedSpec } from '../state/SpecState';
+import { Spec } from '@openapi-platform/model';
+import { state as specState } from '../state/SpecState';
 import { FloatingModal } from './basic/FloatingModal';
 import { SpecModal } from './basic/SpecModal';
 import { createStyled } from './createStyled';
@@ -31,7 +32,10 @@ const Styled: any = createStyled(theme => ({
  * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
+export class AddSpecModal extends Component<
+  RouteComponentProps<{ specId?: string }>,
+  {}
+> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -45,7 +49,8 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    this.props.history.push('/');
+    const lastSlash = this.props.match.url.lastIndexOf('/');
+    this.props.history.push(this.props.match.url.slice(0, lastSlash));
   };
 
   private closeErrorModal = () => {
@@ -56,10 +61,17 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
    * Event fired when the user presses the 'Add' button.
    */
   @action
-  private onSubmitSpec = async (submittedSpec: AddedSpec) => {
+  private onSubmitSpec = async (submittedSpec: Spec) => {
     this.showProgressIndicator = true;
     try {
-      await specState.addSpec(submittedSpec);
+      if (this.props.match.params.specId) {
+        await specState.updateSpec(
+          parseInt(this.props.match.params.specId, 10),
+          submittedSpec,
+        );
+      } else {
+        await specState.addSpec(submittedSpec);
+      }
       this.closeModal();
     } catch (e) {
       console.error(e);
@@ -70,6 +82,11 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
   };
 
   public render() {
+    const {
+      match: {
+        params: { specId },
+      },
+    } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -77,8 +94,14 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
             {() => [
               <SpecModal
                 key={0}
+                initialSpec={
+                  specId ? specState.specs.get(parseInt(specId, 10)) : undefined
+                }
+                titleProps={{
+                  children: specId ? 'Edit Specification' : 'Add Specification',
+                }}
                 submitButtonProps={{
-                  children: 'Add',
+                  children: specId ? 'Save' : 'Add',
                 }}
                 onSubmitSpec={this.onSubmitSpec}
                 onCloseModal={this.closeModal}
@@ -92,7 +115,9 @@ export class AddSpecModal extends Component<RouteComponentProps<{}>, {}> {
               >
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
-                  <Typography>An error occurred adding the Spec.</Typography>
+                  <Typography>
+                    An error occurred {specId ? 'saving' : 'adding'} the specification.
+                  </Typography>
                 </div>
                 <div className={classes.buttonRow}>
                   <Button color="primary" onClick={this.closeErrorModal}>

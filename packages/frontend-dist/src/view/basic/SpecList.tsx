@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 
 import { Observer } from 'mobx-react';
 
-import { HasId, Spec } from '@openapi-platform/model';
+import { Id, HasId, Spec } from '@openapi-platform/model';
 import { state } from '../../state/SdkConfigState';
 import { createStyled } from '../createStyled';
 import { SpecItem } from './SpecItem';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
   expandedSpecId: number | null;
-  onSpecExpanded: (id: number | null) => void;
-  onSpecSelected: (Spec: Spec) => void;
-  onAddSdkConfig: () => void;
+  onSpecExpanded: (id: Id | null) => void;
+  onEditSpec: (spec: HasId<Spec>) => void;
+  onAddSdkConfig: (spec: HasId<Spec>) => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -33,7 +33,7 @@ export class SpecList extends Component<SpecListProps, {}> {
     this.props.onSpecExpanded(expanded ? specification.id : null);
 
   public render() {
-    const { expandedSpecId, onAddSdkConfig, onSpecSelected, specs } = this.props;
+    const { expandedSpecId, onEditSpec, onAddSdkConfig, specs } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -48,7 +48,7 @@ export class SpecList extends Component<SpecListProps, {}> {
                       sdkConfigs={state.specSdkConfigs.get(spec.id)}
                       expanded={expandedSpecId === spec.id}
                       onPanelChange={this.panelExpand}
-                      onSpecOpen={onSpecSelected}
+                      onEditSpec={onEditSpec}
                       onAddSdkConfig={onAddSdkConfig}
                     />
                   ))}
