@@ -240,7 +240,7 @@ gulp.task(
 );
 
 gulp.task('watch:server', function watchServer() {
-  return watchPackages(gulp.task('restart:server'), undefined, 'lib');
+  return watchPackages(gulp.task('restart:server'), { ignoreInitial: false }, 'lib');
 });
 
 gulp.task('format:lint', function formatLint() {
