@@ -262,7 +262,24 @@ gulp.task('watch:checker', function startWatchChecker() {
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
-gulp.task('watch', gulp.parallel('watch:build', 'watch:server', 'watch:frontend'));
+gulp.task('watch', 
+  gulp.series(
+    'transpile',
+    'restart:server',
+    'bundle',
+    'serve:frontend',
+    function rebuild() {
+      return watchPackages(
+        gulp.series(
+          'transpile', 
+          'restart:server',
+          'bundle',
+          reloadBrowser
+        )
+      );
+    }
+  )
+);
 
 gulp.task('default', gulp.task('watch'));
 
