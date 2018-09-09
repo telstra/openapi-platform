@@ -4,13 +4,13 @@
 require('source-map-support/register');
 
 require('colors');
-const { join, sep, resolve } = require('path');
+const { join, sep, resolve, relative } = require('path');
 const spawn = require('cross-spawn');
 
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
-const newer = require('gulp-newer');
+const changed = require('gulp-changed');
 const filter = require('gulp-filter');
 const plumber = require('gulp-plumber');
 const gulpTslint = require('gulp-tslint');
@@ -34,11 +34,17 @@ const frontendPackageName = 'frontend';
 let backendNode = undefined;
 
 function swapSrcWith(srcPath, newDirName) {
+  // Should look like /packages/<package-name>/src/<rest-of-the-path>
+  srcPath = relative(__dirname, srcPath);
   const parts = srcPath.split(sep);
-  parts[1] = newDirName;
-  return parts.join(sep);
+  // Swap out src for the new dir name
+  parts[2] = newDirName;
+  return join(__dirname, ...parts);
 }
 
+/**
+ * @param srcPath An absolute path
+ */
 function swapSrcWithLib(srcPath) {
   return swapSrcWith(srcPath, 'lib');
 }
@@ -52,13 +58,13 @@ function rename(fn) {
 
 function globFolderFromPackagesDirName(dirName, folderName) {
   return [
-    `./${dirName}/*/${folderName}/**/*.{js,jsx,ts,tsx}`,
-    `!./${dirName}/*/${folderName}/**/__mocks__/*.{js,ts,tsx,jsx}`,
+    `./${dirName}/*/${folderName}/**/*.{js,jsx,ts,tsx,html,css}`,
+    `!./${dirName}/*/${folderName}/**/__mocks__/*.{js,ts,tsx,jsx,html,css}`,
   ];
 }
 
 function globSrcFromPackagesDirName(dirName) {
-  return globFolderFromPackagesDirName(dirName, 'src')
+  return globFolderFromPackagesDirName(dirName, 'src');
 }
 
 function globLibFromPackagesDirName(dirName) {
@@ -81,17 +87,17 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
-function packagesStream() {
+function packagesSrcStream() {
   return gulp.src(globSrcFromPackagesDirName(packagesDirName), { base: packagesDir });
 }
 
 function checkTypes() {
-  const stream = packagesStream();
+  const stream = packagesSrcStream();
   return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
 }
 
 function runLinter({ fix }) {
-  const stream = packagesStream();
+  const stream = packagesSrcStream();
   return stream
     .pipe(
       gulpTslint({
@@ -107,12 +113,13 @@ function runLinter({ fix }) {
     );
 }
 
-function reloadBrowser() {
+function reloadBrowser(done) {
   browserSync.reload();
+  done();
 }
 
 function buildBabel(exclude = []) {
-  let stream = packagesStream();
+  let stream = packagesSrcStream();
 
   if (exclude) {
     // We need to exclude things that get bundled
@@ -123,11 +130,11 @@ function buildBabel(exclude = []) {
 
   return stream
     .pipe(errorLogger())
-    .pipe(newer({ dest: packagesDir, map: swapSrcWithLib }))
+    .pipe(changed(packagesDir, { extension: '.js', transformPath: swapSrcWithLib }))
     .pipe(compilationLogger())
     .pipe(sourcemaps.init())
     .pipe(babel())
-    .pipe(rename(file => resolve(file.base, swapSrcWithLib(file.relative))))
+    .pipe(rename(file => (file.path = swapSrcWithLib(file.path))))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(packagesDir));
 }
@@ -217,50 +224,24 @@ gulp.task('restart:server', function startBackend(done) {
   done();
 });
 
-gulp.task(
-  'watch:transpile',
-  function watchTranspile() {
-    return watchPackages(
-      gulp.task('transpile'), 
-      { ignoreInitial: false }
-    );
-  }
-)
+gulp.task('watch:transpile', function watchTranspile() {
+  return watchPackages(gulp.task('transpile'), { ignoreInitial: false });
+});
 
-gulp.task(
-  'watch:build',
-  function watchBuild() {
-    return watchPackages(
-      gulp.task('build'), 
-      { ignoreInitial: false }
-    );
-  }
-)
+gulp.task('watch:build', function watchBuild() {
+  return watchPackages(gulp.task('build'), { ignoreInitial: false });
+});
 
 gulp.task(
   'watch:frontend',
-  gulp.series(
-    'serve:frontend',
-    function watchReloadBrowser() {
-      return watchPackages(
-        gulp.series(reloadBrowser),
-        undefined,
-        'dist'
-      );
-    }
-  )
-)
+  gulp.series('serve:frontend', function watchReloadBrowser() {
+    return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
+  }),
+);
 
-gulp.task(
-  'watch:server',
-  function watchServer() {
-    return watchPackages(
-      gulp.task('restart:server'),
-      undefined,
-      'lib'
-    );
-  }
-)
+gulp.task('watch:server', function watchServer() {
+  return watchPackages(gulp.task('restart:server'), undefined, 'lib');
+});
 
 gulp.task('format:lint', function formatLint() {
   return runLinter({ fix: true });
