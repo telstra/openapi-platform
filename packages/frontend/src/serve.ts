@@ -13,10 +13,11 @@ export async function serve(bundlePath: string) {
     .use('/', express.static(bundlePath));
 
   const port = config.get('ui.port');
+  const host = config.get('ui.host');
   return await new Promise((resolve, reject) => {
     try {
       // TODO: Consider resolving the app itself instead.
-      app.listen(port, () => {
+      app.listen(port, host, () => {
         resolve(port);
       });
     } catch (err) {
