@@ -218,16 +218,6 @@ gulp.task('restart:server', function startBackend(done) {
 });
 
 gulp.task(
-  'watch:frontend',
-  gulp.parallel(
-    'serve:frontend',
-    function watchReloadBrowser() {
-      return watchPackages(gulp.task('reload-browser', reloadBrowser));
-    }
-  )
-);
-
-gulp.task(
   'watch:transpile',
   function watchTranspile() {
     return watchPackages(
@@ -253,7 +243,7 @@ gulp.task(
     'serve:frontend',
     function watchFrontend() {
       return watchPackages(
-        gulp.series(reloadBrowser),
+        gulp.task(reloadBrowser),
         { ignoreInitial: true },
         'dist'
       );
