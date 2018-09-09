@@ -244,7 +244,7 @@ gulp.task(
     function watchFrontend() {
       return watchPackages(
         gulp.task(reloadBrowser),
-        { ignoreInitial: true },
+        undefined,
         'dist'
       );
     }
@@ -254,19 +254,13 @@ gulp.task(
 gulp.task(
   'watch:server',
   function watchServer() {
-    return watchPackages(gulp.series('transpile', 'restart:server'));
+    return watchPackages(
+      gulp.series('restart:server'),
+      undefined,
+      'lib'
+    );
   }
 )
-
-gulp.task(
-  'watch-no-init-build',
-  gulp.parallel(
-    'serve:frontend',
-    gulp.series('restart:server', function watch() {
-      return watchPackages(gulp.series('build', 'restart:server'));
-    }),
-  ),
-);
 
 gulp.task('format:lint', function formatLint() {
   return runLinter({ fix: true });
@@ -287,7 +281,7 @@ gulp.task('watch:checker', function startWatchChecker() {
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
-gulp.task('watch', gulp.series('build', 'watch-no-init-build'));
+gulp.task('watch', gulp.parallel('watch:build', 'watch:server', 'watch:frontend'));
 
 gulp.task('default', gulp.task('watch'));
 
