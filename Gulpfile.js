@@ -219,21 +219,21 @@ function bundle() {
 }
 
 function watchTranspile() {
-  return watchPackages(gulp.task('transpile'), { ignoreInitial: false });
+  return watchPackages(transpile, { ignoreInitial: false });
 }
 
 function watchBuild() {
-  return watchPackages(gulp.task('build'), { ignoreInitial: false });
+  return watchPackages(build, { ignoreInitial: false });
 }
 
 function watchFrontend() {
-  return gulp.series('serve:frontend', function watchReloadBrowser() {
+  return gulp.series(serveFrontend, function watchReloadBrowser() {
     return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
   });
 }
 
 function watchServer() {
-  return watchPackages(gulp.task('restart:server'), { ignoreInitial: false }, 'lib');
+  return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
 }
 
 function formatLint() {
@@ -248,16 +248,19 @@ function watchChecker() {
   return watchPackages(gulp.task('checker'), { ignoreInitial: false });
 }
 
-
 gulp.task('transpile', transpile);
 
+bundle.description = 'Creates bundles for frontend packages';
 gulp.task('bundle', bundle);
 
 const build = gulp.series(transpile, bundle);
+build.description = 'Transpiles all packages and then creates bundles for frontend packages';
 gulp.task('build', build);
 
+serveFrontend.description = 'Serves the frontend app on a port specified in the OpenAPI Platform config file';
 gulp.task('serve:frontend', serveFrontend);
 
+// TODO: Note that if you're not running watch or watch:server, restartServer doesn't actuall explicitly kill the original node instance.
 gulp.task('restart:server', restartServer);
 
 gulp.task('watch:transpile', watchTranspile);
@@ -280,16 +283,16 @@ gulp.task('checker', checker);
 gulp.task('watch:checker', watchChecker);
 
 const watch = gulp.series(
-  'transpile',
-  'restart:server',
-  'bundle',
-  'serve:frontend',
+  transpile,
+  restartServer,
+  bundle,
+  serveFrontend,
   function rebuild() {
     return watchPackages(
       gulp.series(
-        'transpile', 
-        'restart:server',
-        'bundle',
+        transpile, 
+        restartServer,
+        bundle,
         reloadBrowser
       )
     );
@@ -298,7 +301,9 @@ const watch = gulp.series(
 watch.description = 'Watches for anything that intigates a build and reloads the backend and frontend';
 gulp.task('watch', watch);
 
-gulp.task('default', gulp.task('watch'));
+const defaultTask = gulp.series('watch');
+defaultTask.description = "It's just watch, use it if you want to spin up every server instance you'll need for testing your code in a dev environment";
+gulp.task('default', gulp.series('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
