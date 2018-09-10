@@ -67,10 +67,6 @@ function globSrcFromPackagesDirName(dirName) {
   return globFolderFromPackagesDirName(dirName, 'src');
 }
 
-function globLibFromPackagesDirName(dirName) {
-  return globFolderFromPackagesDirName(dirName, 'lib');
-}
-
 function compilationLogger() {
   return through.obj(function(file, enc, callback) {
     console.log(`Compiling '${file.relative.cyan}'`);
@@ -167,21 +163,7 @@ function watchPackages(task, options, folderName = 'src') {
   );
 }
 
-gulp.task('transpile', function transpile() {
-  return buildBabel();
-});
-
-gulp.task(
-  'bundle',
-  function bundle() {
-    return buildBundle(frontendPackageName);
-  },
-  reloadBrowser,
-);
-
-gulp.task('build', gulp.series('transpile', 'bundle'));
-
-gulp.task('serve:frontend', function serveFrontend(done) {
+function serveFrontend(done) {
   const { readConfig } = require('@openapi-platform/config');
   const openapiPlatformConfig = readConfig();
   const uiPort = openapiPlatformConfig.get('ui.port');
@@ -199,9 +181,9 @@ gulp.task('serve:frontend', function serveFrontend(done) {
     },
   });
   done();
-});
+}
 
-gulp.task('restart:server', function startBackend(done) {
+function restartServer(done) {
   if (backendNode) {
     backendNode.kill();
   }
@@ -222,66 +204,99 @@ gulp.task('restart:server', function startBackend(done) {
     }
   });
   done();
-});
+}
 
-gulp.task('watch:transpile', function watchTranspile() {
-  return watchPackages(gulp.task('transpile'), { ignoreInitial: false });
-});
+function transpile() {
+  return buildBabel();
+}
 
-gulp.task('watch:build', function watchBuild() {
-  return watchPackages(gulp.task('build'), { ignoreInitial: false });
-});
+function bundle() {
+  return buildBundle(frontendPackageName);
+}
 
-gulp.task(
-  'watch:frontend',
-  gulp.series('serve:frontend', function watchReloadBrowser() {
+function watchTranspile() {
+  return watchPackages(transpile, { ignoreInitial: false });
+}
+
+function watchBuild() {
+  return watchPackages(build, { ignoreInitial: false });
+}
+
+function watchFrontend() {
+  return gulp.series(serveFrontend, function watchReloadBrowser() {
     return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
-  }),
-);
+  });
+}
 
-gulp.task('watch:server', function watchServer() {
-  return watchPackages(gulp.task('restart:server'), { ignoreInitial: false }, 'lib');
-});
+function watchServer() {
+  return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
+}
 
-gulp.task('format:lint', function formatLint() {
+function formatLint() {
   return runLinter({ fix: true });
-});
+}
 
-gulp.task('checker:lint', function checkLint() {
+function checkLint() {
   return runLinter({ fix: false });
-});
+}
+
+function watchChecker() {
+  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
+}
+
+gulp.task('transpile', transpile);
+
+bundle.description = 'Creates bundles for frontend packages';
+gulp.task('bundle', bundle);
+
+const build = gulp.series(transpile, bundle);
+build.description =
+  'Transpiles all packages and then creates bundles for frontend packages';
+gulp.task('build', build);
+
+serveFrontend.description =
+  'Serves the frontend app on a port specified in the OpenAPI Platform config file';
+gulp.task('serve:frontend', serveFrontend);
+
+// TODO: Note that if you're not running watch or watch:server, restartServer doesn't actuall explicitly kill the original node instance.
+gulp.task('restart:server', restartServer);
+
+gulp.task('watch:transpile', watchTranspile);
+
+gulp.task('watch:build', watchBuild);
+
+gulp.task('watch:frontend', watchFrontend);
+
+gulp.task('watch:server', watchServer);
+
+gulp.task('format:lint', formatLint);
+
+gulp.task('checker:lint', checkLint);
 
 gulp.task('checker:types', checkTypes);
 
-gulp.task('checker', gulp.series('checker:types', 'checker:lint'));
+const checker = gulp.series(checkTypes, checkLint);
+gulp.task('checker', checker);
 
-gulp.task('watch:checker', function startWatchChecker() {
-  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
-});
+gulp.task('watch:checker', watchChecker);
 
-/**
- * Watches for anything that intigates a build and reloads the backend and frontend
- */
-gulp.task('watch', 
-  gulp.series(
-    'transpile',
-    'restart:server',
-    'bundle',
-    'serve:frontend',
-    function rebuild() {
-      return watchPackages(
-        gulp.series(
-          'transpile', 
-          'restart:server',
-          'bundle',
-          reloadBrowser
-        )
-      );
-    }
-  )
+const watch = gulp.series(
+  transpile,
+  restartServer,
+  bundle,
+  serveFrontend,
+  function rebuild() {
+    return watchPackages(gulp.series(transpile, restartServer, bundle, reloadBrowser));
+  },
 );
+watch.description =
+  "Watches for changes in packages' src folder -> Builds & reloads the backend & frontend";
+gulp.task('watch', watch);
 
-gulp.task('default', gulp.task('watch'));
+const defaultTask = gulp.series('watch');
+defaultTask.description =
+  "It's just watch, use it if you want to spin up every server instance you'll need for testing your code in a dev environment";
+gulp.task('default', gulp.series('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
