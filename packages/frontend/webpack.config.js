@@ -26,7 +26,7 @@ const stats = {
   children: false,
 };
 
-module.exports = ({ apiUrl, env = 'development', output = {} }) => {
+module.exports = ({ apiBaseUrl, env = 'development', output = {} }) => {
   const { path = __dirname, distDirName = 'dist', statsDirName = 'stats' } = output;
   const isProduction = env === 'production';
   const plugins = [
@@ -36,7 +36,7 @@ module.exports = ({ apiUrl, env = 'development', output = {} }) => {
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({
-      API_BASE_URL: JSON.stringify(apiUrl),
+      API_BASE_URL: JSON.stringify(apiBaseUrl),
     }),
   ];
   if (statsDirName) {
