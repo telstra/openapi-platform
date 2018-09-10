@@ -167,21 +167,7 @@ function watchPackages(task, options, folderName = 'src') {
   );
 }
 
-gulp.task('transpile', function transpile() {
-  return buildBabel();
-});
-
-gulp.task(
-  'bundle',
-  function bundle() {
-    return buildBundle(frontendPackageName);
-  },
-  reloadBrowser,
-);
-
-gulp.task('build', gulp.series('transpile', 'bundle'));
-
-gulp.task('serve:frontend', function serveFrontend(done) {
+function serveFrontend(done) {
   const { readConfig } = require('@openapi-platform/config');
   const openapiPlatformConfig = readConfig();
   const uiPort = openapiPlatformConfig.get('ui.port');
@@ -199,9 +185,9 @@ gulp.task('serve:frontend', function serveFrontend(done) {
     },
   });
   done();
-});
+}
 
-gulp.task('restart:server', function startBackend(done) {
+function restartServer(done) {
   if (backendNode) {
     backendNode.kill();
   }
@@ -222,48 +208,56 @@ gulp.task('restart:server', function startBackend(done) {
     }
   });
   done();
-});
+}
 
-gulp.task('watch:transpile', function watchTranspile() {
+function transpile() {
+  return buildBabel();
+}
+
+function bundle() {
+  return buildBundle(frontendPackageName);
+}
+
+function build() {
+  return gulp.series(transpile, bundle);
+}
+
+function watchTranspile() {
   return watchPackages(gulp.task('transpile'), { ignoreInitial: false });
-});
+}
 
-gulp.task('watch:build', function watchBuild() {
+function watchBuild() {
   return watchPackages(gulp.task('build'), { ignoreInitial: false });
-});
+}
 
-gulp.task(
-  'watch:frontend',
-  gulp.series('serve:frontend', function watchReloadBrowser() {
+function watchFrontend() {
+  return gulp.series('serve:frontend', function watchReloadBrowser() {
     return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
-  }),
-);
+  });
+}
 
-gulp.task('watch:server', function watchServer() {
+function watchServer() {
   return watchPackages(gulp.task('restart:server'), { ignoreInitial: false }, 'lib');
-});
+}
 
-gulp.task('format:lint', function formatLint() {
+function formatLint() {
   return runLinter({ fix: true });
-});
+}
 
-gulp.task('checker:lint', function checkLint() {
+function checkLint() {
   return runLinter({ fix: false });
-});
+}
 
-gulp.task('checker:types', checkTypes);
+function check() {
+  return gulp.series('checker:types', 'checker:lint');
+}
 
-gulp.task('checker', gulp.series('checker:types', 'checker:lint'));
-
-gulp.task('watch:checker', function startWatchChecker() {
+function watchChecker() {
   return watchPackages(gulp.task('checker'), { ignoreInitial: false });
-});
+}
 
-/**
- * Watches for anything that intigates a build and reloads the backend and frontend
- */
-gulp.task('watch', 
-  gulp.series(
+function watch() {
+  return gulp.series(
     'transpile',
     'restart:server',
     'bundle',
@@ -278,8 +272,41 @@ gulp.task('watch',
         )
       );
     }
-  )
-);
+  );
+}
+
+gulp.task('transpile', transpile);
+
+gulp.task('bundle', bundle);
+
+gulp.task('build', build);
+
+gulp.task('serve:frontend', serveFrontend);
+
+gulp.task('restart:server', restartServer);
+
+gulp.task('watch:transpile', watchTranspile);
+
+gulp.task('watch:build', watchBuild);
+
+gulp.task('watch:frontend', watchFrontend);
+
+gulp.task('watch:server', watchServer);
+
+gulp.task('format:lint', formatLint);
+
+gulp.task('checker:lint', checkLint);
+
+gulp.task('checker:types', checkTypes);
+
+gulp.task('checker', check);
+
+gulp.task('watch:checker', watchChecker);
+
+/**
+ * Watches for anything that intigates a build and reloads the backend and frontend
+ */
+gulp.task('watch', watch);
 
 gulp.task('default', gulp.task('watch'));
 
