@@ -290,7 +290,7 @@ const watch = gulp.series(
   },
 );
 watch.description =
-  'Watches for anything that intigates a build and reloads the backend and frontend';
+  "Watches for changes in packages' src folder -> Builds & reloads the backend & frontend";
 gulp.task('watch', watch);
 
 const defaultTask = gulp.series('watch');
