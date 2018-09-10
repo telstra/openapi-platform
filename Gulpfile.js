@@ -218,10 +218,6 @@ function bundle() {
   return buildBundle(frontendPackageName);
 }
 
-function build() {
-  return gulp.series(transpile, bundle);
-}
-
 function watchTranspile() {
   return watchPackages(gulp.task('transpile'), { ignoreInitial: false });
 }
@@ -248,37 +244,16 @@ function checkLint() {
   return runLinter({ fix: false });
 }
 
-function check() {
-  return gulp.series('checker:types', 'checker:lint');
-}
-
 function watchChecker() {
   return watchPackages(gulp.task('checker'), { ignoreInitial: false });
 }
 
-function watch() {
-  return gulp.series(
-    'transpile',
-    'restart:server',
-    'bundle',
-    'serve:frontend',
-    function rebuild() {
-      return watchPackages(
-        gulp.series(
-          'transpile', 
-          'restart:server',
-          'bundle',
-          reloadBrowser
-        )
-      );
-    }
-  );
-}
 
 gulp.task('transpile', transpile);
 
 gulp.task('bundle', bundle);
 
+const build = gulp.series(transpile, bundle);
 gulp.task('build', build);
 
 gulp.task('serve:frontend', serveFrontend);
@@ -299,13 +274,28 @@ gulp.task('checker:lint', checkLint);
 
 gulp.task('checker:types', checkTypes);
 
-gulp.task('checker', check);
+const checker = gulp.series(checkTypes, checkLint);
+gulp.task('checker', checker);
 
 gulp.task('watch:checker', watchChecker);
 
-/**
- * Watches for anything that intigates a build and reloads the backend and frontend
- */
+const watch = gulp.series(
+  'transpile',
+  'restart:server',
+  'bundle',
+  'serve:frontend',
+  function rebuild() {
+    return watchPackages(
+      gulp.series(
+        'transpile', 
+        'restart:server',
+        'bundle',
+        reloadBrowser
+      )
+    );
+  }
+);
+watch.description = 'Watches for anything that intigates a build and reloads the backend and frontend';
 gulp.task('watch', watch);
 
 gulp.task('default', gulp.task('watch'));
