@@ -136,12 +136,12 @@ function buildBabel(exclude = []) {
 }
 
 function createWebpackStream(packageDir) {
-  const { readConfig } = require('@openapi-platform/config');
+  const { readConfig, apiBaseUrl } = require('@openapi-platform/config');
   const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
   const webpackConfig = createWebpackConfig({
     env: process.env.NODE_ENV,
-    apiBaseUrl: openapiPlatformConfig.get('ui.apiBaseUrl'),
+    apiBaseUrl: apiBaseUrl(openapiPlatformConfig),
   });
   return webpackStream(webpackConfig, webpack);
 }
