@@ -67,10 +67,6 @@ function globSrcFromPackagesDirName(dirName) {
   return globFolderFromPackagesDirName(dirName, 'src');
 }
 
-function globLibFromPackagesDirName(dirName) {
-  return globFolderFromPackagesDirName(dirName, 'lib');
-}
-
 function compilationLogger() {
   return through.obj(function(file, enc, callback) {
     console.log(`Compiling '${file.relative.cyan}'`);
@@ -254,10 +250,12 @@ bundle.description = 'Creates bundles for frontend packages';
 gulp.task('bundle', bundle);
 
 const build = gulp.series(transpile, bundle);
-build.description = 'Transpiles all packages and then creates bundles for frontend packages';
+build.description =
+  'Transpiles all packages and then creates bundles for frontend packages';
 gulp.task('build', build);
 
-serveFrontend.description = 'Serves the frontend app on a port specified in the OpenAPI Platform config file';
+serveFrontend.description =
+  'Serves the frontend app on a port specified in the OpenAPI Platform config file';
 gulp.task('serve:frontend', serveFrontend);
 
 // TODO: Note that if you're not running watch or watch:server, restartServer doesn't actuall explicitly kill the original node instance.
@@ -288,21 +286,16 @@ const watch = gulp.series(
   bundle,
   serveFrontend,
   function rebuild() {
-    return watchPackages(
-      gulp.series(
-        transpile, 
-        restartServer,
-        bundle,
-        reloadBrowser
-      )
-    );
-  }
+    return watchPackages(gulp.series(transpile, restartServer, bundle, reloadBrowser));
+  },
 );
-watch.description = 'Watches for anything that intigates a build and reloads the backend and frontend';
+watch.description =
+  'Watches for anything that intigates a build and reloads the backend and frontend';
 gulp.task('watch', watch);
 
 const defaultTask = gulp.series('watch');
-defaultTask.description = "It's just watch, use it if you want to spin up every server instance you'll need for testing your code in a dev environment";
+defaultTask.description =
+  "It's just watch, use it if you want to spin up every server instance you'll need for testing your code in a dev environment";
 gulp.task('default', gulp.series('watch'));
 
 process.on('exit', () => {
