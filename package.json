@@ -32,7 +32,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn transpile && yarn test:no-system"
+      "pre-commit": "yarn checker:types && yarn format:lint && git add . && lint-staged && yarn transpile && yarn test:no-system"
     }
   },
   "lint-staged": {

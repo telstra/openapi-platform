@@ -1,7 +1,5 @@
 import webpack from 'webpack';
 
-import { uiUrl } from '@openapi-platform/config';
-
 import createWebpackConfig from '../webpack.config';
 import { config } from './config';
 import { logger } from './logger';
