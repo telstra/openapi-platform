@@ -15,7 +15,7 @@ your machine:
 
 ## Gulp Commands
 Most commands/tasks are managed by [Gulp](https://github.com/gulpjs/gulp).
-If you want a list of tasks you can run with Gulp run with descriptions of what they, then run: `yarn gulp --tasks`.
+If you want a list of tasks you can run with Gulp run with descriptions of what they, then run: `yarn gulp --tasks --depth 1`.
 
 If you want to run a Gulp task run: `yarn gulp <task>`
 Some of them have also been added to the package.json file for easy of use.
