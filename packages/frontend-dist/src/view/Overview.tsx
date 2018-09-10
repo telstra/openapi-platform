@@ -24,11 +24,10 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
     this.props.history.push(`${this.props.match.url}/${spec.id}/edit`);
   private openAddSdkConfigModal = (spec: HasId<Spec>) =>
     this.props.history.push(`${this.props.match.url}/${spec.id}/sdk-configs/add`);
-  private onEditSdkConfigModal = (sdkConfig: HasId<SdkConfig>) => {
+  private onEditSdkConfigModal = (sdkConfig: HasId<SdkConfig>) =>
     this.props.history.push(
       `${this.props.match.url}/${sdkConfig.specId}/sdk-configs/${sdkConfig.id}/edit`,
     );
-  };
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
 

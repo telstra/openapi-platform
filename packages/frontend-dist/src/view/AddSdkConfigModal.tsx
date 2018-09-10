@@ -72,14 +72,15 @@ export class AddSdkConfigModal extends Component<
   private onSubmitSdkConfig = async (submittedSdkConfig: AddedSdkConfig) => {
     this.showProgressIndicator = true;
     try {
-      // @ts-ignore
-      const sdkConfigId = parseInt(this.props.match.params.sdkConfigId, 10);
       if (this.props.match.params.sdkConfigId) {
-        await sdkConfigState.updateSdkConfig(sdkConfigId, submittedSdkConfig);
+        await sdkConfigState.updateSdkConfig(
+          parseInt(this.props.match.params.sdkConfigId, 10),
+          submittedSdkConfig,
+        );
       } else {
         await sdkConfigState.addSdkConfig({
           ...submittedSdkConfig,
-          specId: parseInt(this.props.match.params!.specId, 10),
+          specId: parseInt(this.props.match.params.specId, 10),
         });
       }
       this.closeModal();

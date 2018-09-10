@@ -59,8 +59,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   };
 
   private onEditSdkConfig = () => {
-    const { sdkConfig } = this.props;
-    this.props.onEditSdkConfig(sdkConfig);
+    this.props.onEditSdkConfig(this.props.sdkConfig);
   };
 
   public render() {
