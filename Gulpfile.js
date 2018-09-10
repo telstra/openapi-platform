@@ -94,9 +94,11 @@ function checkTypes() {
 
 function runLinter({ fix }) {
   const stream = packagesSrcStream();
+  const tslintProgram = tslint.Linter.createProgram('./tsconfig.json');
   return stream
     .pipe(
       gulpTslint({
+        program: tslintProgram,
         fix,
         formatter: 'stylish',
         tslint,
