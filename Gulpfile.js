@@ -272,9 +272,6 @@ build.description =
   'Transpiles the sources for each package and creates bundles for the frontend packages.';
 gulp.task('build', build);
 
-const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
-  return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
-});
 gulp.task('serve:frontend', serveFrontend);
 
 // TODO: Note that if you're not running watch or watch:server, restartServer doesn't actually
@@ -285,6 +282,9 @@ gulp.task('watch:transpile', watchTranspile);
 
 gulp.task('watch:build', watchBuild);
 
+const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
+  return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
+});
 gulp.task('watch:frontend', watchFrontend);
 
 gulp.task('watch:server', watchServer);
