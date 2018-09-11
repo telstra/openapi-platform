@@ -11,14 +11,14 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
   ExpansionPanelActions,
-  Divider,
   Table,
   TableBody,
+  Divider,
 } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
-import { HasId, SdkConfig, Spec } from '@openapi-platform/model';
+import { HasId, SdkConfig, Spec, Id } from '@openapi-platform/model';
 import { createStyled } from '../createStyled';
 import { SdkConfigItem } from './SdkConfigItem';
 
@@ -39,6 +39,9 @@ const Styled: any = createStyled(theme => ({
   summaryTitle: {
     minWidth: 0,
     flexBasis: '220px',
+  },
+  summaryTitleExpanded: {
+    minWidth: 0,
   },
   summaryDescription: {
     minWidth: 0,
@@ -76,6 +79,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   onPanelChange: (event: any, expanded: boolean) => void;
   onEditSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
+  onSpecOpen: (id: Id | null) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
@@ -87,6 +91,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
 export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
     this.props.onPanelChange(this.props.spec, expanded);
+  private specOpen = () => this.props.onSpecOpen(this.props.spec.id);
 
   private onEditSpec = () => this.props.onEditSpec(this.props.spec);
 
@@ -102,7 +107,9 @@ export class SpecItem extends Component<SpecItemProps> {
               classes={{ content: classes.summarySection }}
               expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutlined />}
             >
-              <div className={classes.summaryTitle}>
+              <div
+                className={expanded ? classes.summaryTitleExpanded : classes.summaryTitle}
+              >
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>
                   {spec.title}
                 </Typography>
@@ -115,7 +122,9 @@ export class SpecItem extends Component<SpecItemProps> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div className={classes.detailSection}>
-                <Typography className={classes.indent}>{spec.description}</Typography>
+                <Typography className={classes.indent} gutterBottom>
+                  {spec.description}
+                </Typography>
                 <Typography variant="subheading" gutterBottom className={classes.indent}>
                   Specification File
                 </Typography>
@@ -157,8 +166,11 @@ export class SpecItem extends Component<SpecItemProps> {
             </ExpansionPanelDetails>
             <Divider />
             <ExpansionPanelActions>
-              <Button size="small" color="primary" onClick={this.onEditSpec}>
+              <Button color="primary" onClick={this.onEditSpec}>
                 Edit
+              </Button>
+              <Button color="primary" onClick={this.specOpen}>
+                Open
               </Button>
             </ExpansionPanelActions>
           </ExpansionPanel>

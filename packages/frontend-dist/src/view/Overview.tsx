@@ -30,6 +30,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
     );
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
+  private goToSpec = (id: Id | null) => this.props.history.push(`/specs/${id}`);
 
   private renderSpecList: (
     props: RouteComponentProps<{ specId?: string }>,

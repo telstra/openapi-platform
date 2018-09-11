@@ -1,6 +1,6 @@
 import React, { SFC } from 'react';
 
-import { TextField, Toolbar, Typography } from '@material-ui/core';
+import { IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 
 import { Category } from '../../Storybook';
@@ -11,10 +11,11 @@ export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> 
   searchPrompt: string;
   onSearchInputChange: (event: { target: { value: string } }) => void;
   actions: any[];
+  showBack?: boolean;
 }
 
 const Styled = createStyled(theme => ({
-  title: {
+  leftArea: {
     flex: 1,
     color: theme.palette.text.secondary,
     marginRight: theme.spacing.unit,
@@ -57,13 +58,22 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
   searchPrompt,
   onSearchInputChange,
   actions,
+  showBack,
 }) => (
   <Styled>
     {({ classes }) => (
       <Toolbar className={classes.toolbar}>
-        <Typography variant="title" className={classes.title}>
-          {title}
-        </Typography>
+        <div className={classes.leftArea}>
+          {showBack ? (
+            <IconButton className={classes.title}>
+              <Icons.ArrowBack />
+            </IconButton>
+          ) : (
+            <Typography variant="title" className={classes.title}>
+              {title}
+            </Typography>
+          )}
+        </div>
         <TextField
           placeholder={searchPrompt}
           className={classes.searchArea}

@@ -8,11 +8,12 @@ import { createStyled } from '../createStyled';
 import { SpecItem } from './SpecItem';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
-  expandedSpecId: number | null;
+  expandedSpecId: Id | null;
   onSpecExpanded: (id: Id | null) => void;
   onEditSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
+  onSpecSelected: (id: Id | null) => void;
 }
 
 const Styled = createStyled(theme => ({
