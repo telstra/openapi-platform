@@ -229,12 +229,6 @@ watchBuild.description =
   'Same as build, but watches for changes in the src directory of each package and retranspiles '
   + 'and rebundles whenever a change is detected.';
 
-function watchFrontend() {
-  return gulp.series(serveFrontend, function watchReloadBrowser() {
-    return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
-  });
-}
-
 function watchServer() {
   return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
 }
@@ -278,6 +272,9 @@ build.description =
   'Transpiles the sources for each package and creates bundles for the frontend packages.';
 gulp.task('build', build);
 
+const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
+  return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
+});
 gulp.task('serve:frontend', serveFrontend);
 
 // TODO: Note that if you're not running watch or watch:server, restartServer doesn't actually
