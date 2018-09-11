@@ -75,6 +75,14 @@ export async function createServer() {
     .use('/sdks', sdkService)
     .use(express.errorHandler());
 
+  app.service('specifications').hooks({
+    before: {
+      async remove(context) {
+        // Remove any associated SDK configurations when a specification is removed
+        await sdkConfigService.remove(null, { query: { specId: context.data.id } });
+      },
+    },
+  });
   app.service('sdkConfigs').hooks({
     before: {
       async create(context) {
@@ -83,6 +91,10 @@ export async function createServer() {
           context.data.buildStatus = BuildStatus.NotRun;
         }
         return context;
+      },
+      async remove(context) {
+        // Remove any associated SDKs when a SDK config is removed
+        await sdkService.remove(null, { query: { sdkConfigId: context.data.id } });
       },
     },
   });

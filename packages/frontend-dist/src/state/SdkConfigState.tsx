@@ -45,18 +45,6 @@ class SdkConfigState {
       .update(id, updatedSdkConfigStore);
     this.sdkConfigs.set(id, sdkConfig);
   }
-  @action
-  public async deleteSdkConfigsForSpec(specId: number): Promise<void> {
-    await client.service('sdkConfigs').remove(null, {
-      query: {
-        specId,
-      },
-    });
-    const sdkConfigsToDelete = this.specSdkConfigs.get(specId);
-    if (sdkConfigsToDelete !== undefined) {
-      sdkConfigsToDelete.forEach(sdkConfig => this.sdkConfigs.delete(sdkConfig.id));
-    }
-  }
 }
 
 export interface AddedSdkConfig {
