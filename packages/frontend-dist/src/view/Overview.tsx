@@ -23,7 +23,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
   private openAddSdkConfigModal = () =>
     this.props.history.push(`${this.props.match.url}/sdkConfig/add`);
-  private goToSpec = spec => this.props.history.push(`/specs/${spec.id}`);
+  private goToSpec = (id: Id | null) => this.props.history.push(`/specs/${id}`);
   private expandSpec: (id: Id | null) => void = action((id: Id | null) => {
     state.expandedSpecId = id;
   });

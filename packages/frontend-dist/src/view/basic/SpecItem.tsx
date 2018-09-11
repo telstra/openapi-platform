@@ -11,13 +11,15 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  ExpansionPanelActions,
   Table,
   TableBody,
+  Divider,
 } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
-import { HasId, SdkConfig, Spec } from '@openapi-platform/model';
+import { HasId, SdkConfig, Spec, Id } from '@openapi-platform/model';
 import { createStyled } from '../createStyled';
 import { SdkConfigItem } from './SdkConfigItem';
 
@@ -38,6 +40,9 @@ const Styled: any = createStyled(theme => ({
   summaryTitle: {
     minWidth: 0,
     flexBasis: '220px',
+  },
+  summaryTitleExpanded: {
+    minWidth: 0,
   },
   summaryDescription: {
     minWidth: 0,
@@ -70,10 +75,10 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
-  spec: Spec;
+  spec: HasId<Spec>;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  onSpecOpen: (spec: Spec) => void;
+  onSpecOpen: (id: Id | null) => void;
   onAddSdkConfig: (event: any) => void | undefined;
   sdkConfigs?: Array<HasId<SdkConfig>>;
 }
@@ -85,6 +90,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
 export class SpecItem extends Component<SpecItemProps> {
   private onChange = (event, expanded) =>
     this.props.onPanelChange(this.props.spec, expanded);
+  private specOpen = () => this.props.onSpecOpen(this.props.spec.id);
 
   public render() {
     const { spec, expanded, onAddSdkConfig, sdkConfigs = [] } = this.props;
@@ -96,7 +102,9 @@ export class SpecItem extends Component<SpecItemProps> {
               classes={{ content: classes.summarySection }}
               expandIcon={expanded ? <Icons.Close /> : <Icons.InfoOutlined />}
             >
-              <div className={classes.summaryTitle}>
+              <div
+                className={expanded ? classes.summaryTitleExpanded : classes.summaryTitle}
+              >
                 <Typography noWrap variant={expanded ? 'title' : 'body1'}>
                   {spec.title}
                 </Typography>
@@ -109,7 +117,9 @@ export class SpecItem extends Component<SpecItemProps> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div className={classes.detailSection}>
-                <Typography className={classes.indent}>{spec.description}</Typography>
+                <Typography className={classes.indent} gutterBottom>
+                  {spec.description}
+                </Typography>
                 <Typography variant="subheading" gutterBottom className={classes.indent}>
                   Specification File
                 </Typography>
@@ -153,6 +163,12 @@ export class SpecItem extends Component<SpecItemProps> {
                 </List>
               </div>
             </ExpansionPanelDetails>
+            <Divider />
+            <ExpansionPanelActions>
+              <Button color="primary" onClick={this.specOpen}>
+                Open
+              </Button>
+            </ExpansionPanelActions>
           </ExpansionPanel>
         )}
       </Styled>

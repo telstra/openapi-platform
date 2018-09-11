@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 
 import { Observer } from 'mobx-react';
 
-import { HasId, Spec } from '@openapi-platform/model';
+import { HasId, Spec, Id } from '@openapi-platform/model';
 import { state } from '../../state/SdkConfigState';
 import { createStyled } from '../createStyled';
 import { SpecItem } from './SpecItem';
 export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
-  expandedSpecId: number | null;
-  onSpecExpanded: (id: number | null) => void;
-  onSpecSelected: (Spec: Spec) => void;
+  expandedSpecId: Id | null;
+  onSpecExpanded: (id: Id | null) => void;
+  onSpecSelected: (id: Id | null) => void;
   onAddSdkConfig: () => void;
 }
 
