@@ -76,33 +76,61 @@ export async function createServer() {
     .use(express.errorHandler());
 
   app.service('specifications').hooks({
-    before: {
+    after: {
       async remove(context) {
         // Remove any associated SDK configurations when a specification is removed
-        await sdkConfigService.remove(null, { query: { specId: context.data.id } });
+        if (Array.isArray(context.result)) {
+          // For each specification, remove any associated SDK configurations
+          context.result.forEach(async specification => {
+            await app.service('sdkConfigs').remove(null, {
+              query: { specId: specification.id },
+            });
+          });
+        } else {
+          // Only a single specification was removed
+          await app.service('sdkConfigs').remove(null, {
+            query: { specId: context.result.id },
+          });
+        }
       },
     },
   });
   app.service('sdkConfigs').hooks({
     before: {
       async create(context) {
-        await specService.get(context.data.specId, {});
+        await app.service('specifications').get(context.data.specId, {});
         if (!hasValidBuildStatus(context.data.buildStatus)) {
           context.data.buildStatus = BuildStatus.NotRun;
         }
         return context;
       },
+    },
+    after: {
       async remove(context) {
-        // Remove any associated SDKs when a SDK config is removed
-        await sdkService.remove(null, { query: { sdkConfigId: context.data.id } });
+        // Remove any associated SDKs when a SDK configuration is removed
+        if (Array.isArray(context.result)) {
+          // For each SDK configuration, remove any associated SDKs
+          context.result.forEach(async sdkConfig => {
+            await app.service('sdks').remove(null, {
+              query: { sdkConfigId: sdkConfig.id },
+            });
+          });
+        } else {
+          // Only a single SDK config was removed
+          await app.service('sdks').remove(null, {
+            query: { sdkConfigId: context.result.id },
+          });
+        }
       },
     },
   });
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
-        const spec = await specService.get(sdkConfig.specId, {});
+        const sdkConfig = await app
+          .service('sdkConfigs')
+          .get(context.data.sdkConfigId, {});
+        const spec = await app.service('specifications').get(sdkConfig.specId, {});
         const sdk = await generateSdk(logger, spec, sdkConfig);
         /*
         TODO: The linkside of the info object is probably temporary.
