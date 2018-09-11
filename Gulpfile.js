@@ -224,12 +224,6 @@ function watchBuild() {
   return watchPackages(build, { ignoreInitial: false });
 }
 
-function watchFrontend() {
-  return gulp.series(serveFrontend, function watchReloadBrowser() {
-    return watchPackages(gulp.series(reloadBrowser), undefined, 'dist');
-  });
-}
-
 function watchServer() {
   return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
 }
@@ -267,6 +261,9 @@ gulp.task('watch:transpile', watchTranspile);
 
 gulp.task('watch:build', watchBuild);
 
+const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
+  return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
+});
 gulp.task('watch:frontend', watchFrontend);
 
 gulp.task('watch:server', watchServer);
