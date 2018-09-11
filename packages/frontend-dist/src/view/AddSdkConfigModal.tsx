@@ -1,31 +1,19 @@
 import React, { Component } from 'react';
 
-import { Button, Typography } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@material-ui/core';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
 import { state as sdkConfigState, AddedSdkConfig } from '../state/SdkConfigState';
-import { FloatingModal } from './basic/FloatingModal';
 import { SdkConfigModal } from './basic/SdkConfigModal';
-import { createStyled } from './createStyled';
-
-const Styled: any = createStyled(theme => ({
-  errorModalPaper: {
-    maxWidth: theme.spacing.unit * 48,
-  },
-  modalContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing.unit * 3,
-  },
-  buttonRow: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: theme.spacing.unit,
-  },
-}));
 
 /**
  * A modal window that allows the user to add an SDK configuration to the dashboard.
@@ -42,7 +30,7 @@ export class AddSdkConfigModal extends Component<
   private showProgressIndicator: boolean = false;
 
   /**
-   * Whether or not the 'failed to add SdkConfig' modal is open
+   * Whether or not the 'failed to add SDK configuration' modal is open
    */
   @observable
   private showErrorModal: boolean = false;
@@ -61,12 +49,13 @@ export class AddSdkConfigModal extends Component<
     }
   };
 
+  @action
   private closeErrorModal = () => {
     this.showErrorModal = false;
   };
 
   /**
-   * Event fired when the user presses the 'Add' button.
+   * Event fired when the user presses the 'Add' or 'Update' button.
    */
   @action
   private onSubmitSdkConfig = async (submittedSdkConfig: AddedSdkConfig) => {
@@ -99,52 +88,48 @@ export class AddSdkConfigModal extends Component<
       },
     } = this.props;
     return (
-      <Styled>
-        {({ classes }) => (
-          <Observer>
-            {() => [
-              <SdkConfigModal
-                key={0}
-                submitButtonProps={{
-                  children: sdkConfigId ? 'Update' : 'Add',
-                }}
-                initialSdkConfig={
-                  sdkConfigId
-                    ? sdkConfigState.sdkConfigs.get(parseInt(sdkConfigId, 10))
-                    : undefined
-                }
-                titleProps={{
-                  children: sdkConfigId
-                    ? 'Update SDK Configuration'
-                    : 'Add SDK Configuration',
-                }}
-                onSubmitSdkConfig={this.onSubmitSdkConfig}
-                onCloseModal={this.closeModal}
-                showSubmitProgress={this.showProgressIndicator}
-              />,
-              <FloatingModal
-                key={1}
-                open={this.showErrorModal}
-                onClose={this.closeErrorModal}
-                classes={{ paper: classes.errorModalPaper }}
-              >
-                <div className={classes.modalContent}>
-                  <Typography variant="title">Error</Typography>
-                  <Typography>
-                    An error occurred {sdkConfigId ? 'updating' : 'adding'} the
-                    specification.
-                  </Typography>
-                </div>
-                <div className={classes.buttonRow}>
-                  <Button color="primary" onClick={this.closeErrorModal}>
-                    Ok
-                  </Button>
-                </div>
-              </FloatingModal>,
-            ]}
-          </Observer>
-        )}
-      </Styled>
+      <Observer>
+        {() => [
+          <SdkConfigModal
+            key={0}
+            submitButtonProps={{
+              children: sdkConfigId ? 'Update' : 'Add',
+            }}
+            initialSdkConfig={
+              sdkConfigId
+                ? sdkConfigState.sdkConfigs.get(parseInt(sdkConfigId, 10))
+                : undefined
+            }
+            titleProps={{
+              children: sdkConfigId
+                ? 'Update SDK Configuration'
+                : 'Add SDK Configuration',
+            }}
+            onSubmitSdkConfig={this.onSubmitSdkConfig}
+            onCloseModal={this.closeModal}
+            showSubmitProgress={this.showProgressIndicator}
+          />,
+          <Dialog
+            key={1}
+            open={this.showErrorModal}
+            onClose={this.closeErrorModal}
+            maxWidth="xs"
+          >
+            <DialogTitle>Error</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                An error occurred {sdkConfigId ? 'updating' : 'adding'} the SDK
+                configuration.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button color="primary" onClick={this.closeErrorModal}>
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>,
+        ]}
+      </Observer>
     );
   }
 }

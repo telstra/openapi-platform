@@ -33,17 +33,7 @@ export class BasicSpecState implements SpecState {
   @action
   public async deleteSpec(id: number): Promise<void> {
     // Delete all SDK configurations associated with the spec
-    await client.service('sdkConfigs').remove(null, {
-      query: {
-        specId: id,
-      },
-    });
-    const sdkConfigsToDelete = sdkConfigState.specSdkConfigs.get(id);
-    if (sdkConfigsToDelete !== undefined) {
-      sdkConfigsToDelete.forEach(sdkConfig =>
-        sdkConfigState.sdkConfigs.delete(sdkConfig.id),
-      );
-    }
+    await sdkConfigState.deleteSdkConfigsForSpec(id);
     // Delete the spec
     await client.service('specifications').remove(id);
     this.specs.delete(id);
