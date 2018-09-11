@@ -232,6 +232,10 @@ watchBuild.description =
 function watchServer() {
   return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
 }
+watchServer.description =
+  'Runs the backend server, restarting it whenever the transpiled sources for any package '
+  + 'change. Note that in order to automatically retranspile sources, you will need to run a '
+  + 'command like watch:build.';
 
 function formatLint() {
   return runLinter({ fix: true });
@@ -285,6 +289,10 @@ gulp.task('watch:build', watchBuild);
 const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
   return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
 });
+watchFrontend.description =
+  'Serves the frontend app like serve:frontend, but automatically reloads the app in the browser '
+  + 'whenever the frontend bundle changes. Note that in order to automatically rebundle the '
+  + 'frontend, you will need to run a command like watch:build.';
 gulp.task('watch:frontend', watchFrontend);
 
 gulp.task('watch:server', watchServer);
@@ -315,8 +323,8 @@ const watch = gulp.series(
 );
 watch.description =
   'Watches for any changes in the src folder of each package. If a change is detected then the '
-  + 'code will be transpiled, before rebundling and reloading the frontend and restarting the '
-  + 'backend.';
+  + 'code will be transpiled, before rebundling the frontend, restarting the backend, and '
+  + 'reloading the frontend in the browser.';
 gulp.task('watch', watch);
 
 const defaultTask = gulp.series('watch');
