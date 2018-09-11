@@ -98,7 +98,7 @@ export class AddSpecModal extends Component<
                   specId ? specState.specs.get(parseInt(specId, 10)) : undefined
                 }
                 titleProps={{
-                  children: specId ? 'Upd Specification' : 'Add Specification',
+                  children: specId ? 'Update Specification' : 'Add Specification',
                 }}
                 submitButtonProps={{
                   children: specId ? 'Update' : 'Add',
