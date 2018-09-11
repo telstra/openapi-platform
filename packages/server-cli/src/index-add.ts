@@ -19,7 +19,11 @@ async function createItem(serviceName, data) {
     .service(serviceName)
     .create(data)
     .catch(err => {
-      logger.error('Unable to connect to server');
+      if (err.name === 'Timeout') {
+        logger.error(`Unable to connect to server on port ${config.get('server.port')}`);
+      } else {
+        logger.error(err);
+      }
     });
   socket.disconnect();
   return response;
