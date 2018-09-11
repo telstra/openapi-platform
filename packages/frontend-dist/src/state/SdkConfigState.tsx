@@ -26,6 +26,25 @@ class SdkConfigState {
       .create(addedSdkConfig);
     this.sdkConfigs.set(sdkConfig.id, sdkConfig);
   }
+
+  @action
+  public async updateSdkConfig(
+    id: number,
+    updatedSdkConfig: AddedSdkConfig,
+  ): Promise<void> {
+    const currentConfig = this.sdkConfigs.get(id);
+    // Copy over elements specified in SdkConfig but not editable from the form.
+    const updatedSdkConfigStore: SdkConfig = {
+      ...updatedSdkConfig,
+      buildStatus: currentConfig!.buildStatus,
+      gitInfo: currentConfig!.gitInfo,
+      specId: currentConfig!.specId,
+    };
+    const sdkConfig: HasId<SdkConfig> = await client
+      .service('sdkConfigs')
+      .update(id, updatedSdkConfigStore);
+    this.sdkConfigs.set(id, sdkConfig);
+  }
 }
 
 export interface AddedSdkConfig {
