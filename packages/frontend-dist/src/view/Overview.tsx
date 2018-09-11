@@ -12,6 +12,7 @@ import { AddSpecModal } from './AddSpecModal';
 import { ContentContainer } from './basic/ContentContainer';
 import { SimpleToolbar } from './basic/SimpleToolbar';
 import { SpecList } from './basic/SpecList';
+import { DeleteSpecModal } from './DeleteSpecModal';
 
 /**
  * An overview of the current state of Swagger Platform.
@@ -22,6 +23,8 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
   private openEditSpecModal = (spec: HasId<Spec>) =>
     this.props.history.push(`${this.props.match.url}/${spec.id}/edit`);
+  private openDeleteSpecModal = (spec: HasId<Spec>) =>
+    this.props.history.push(`${this.props.match.url}/${spec.id}/delete`);
   private openAddSdkConfigModal = (spec: HasId<Spec>) =>
     this.props.history.push(`${this.props.match.url}/${spec.id}/sdk-configs/add`);
   private onEditSdkConfigModal = (sdkConfig: HasId<SdkConfig>) =>
@@ -43,8 +46,10 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
           }
           // Expands/collapses a Spec
           onSpecExpanded={this.expandSpec}
-          // open a modal the edit the current spec
+          // Open a modal to edit the current spec
           onEditSpec={this.openEditSpecModal}
+          // Open a model to delete the current spec
+          onDeleteSpec={this.openDeleteSpecModal}
           // Open a modal to add an SDK configuration when the 'Add SDK Configuration' button is
           // clicked
           onAddSdkConfig={this.openAddSdkConfigModal}
@@ -79,6 +84,11 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
               exact
               path={`${this.props.match.url}/:specId(\\d+)/edit`}
               component={AddSpecModal}
+            />
+            <Route
+              exact
+              path={`${this.props.match.url}/:specId(\\d+)/delete`}
+              component={DeleteSpecModal}
             />
             <Route
               exact
