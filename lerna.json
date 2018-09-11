@@ -1,0 +1,26 @@
+{
+  "lerna": "3.2.1",
+  "version": "1.0.0-alpha.0",
+  "changelog": {
+    "repo": "telstra/opeanpi-platform",
+    "cacheDir": ".changelog"
+  },
+  "packages": [
+    "build-packages/*",
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "npmClientArgs": [
+    "--no-lockfile"
+  ],
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "*.md",
+        "test/**",
+        "*.log",
+        "openapi-platform.config*"
+      ]
+    }
+  }
+}

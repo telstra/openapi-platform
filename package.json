@@ -10,24 +10,25 @@
   ],
   "scripts": {
     "format": "run-s format:*",
+    "format:lint": "gulp format:lint",
     "format:prettier": "prettier --write \"{**/,}*.{js,jsx,ts,tsx}\"",
-    "format:lint": "yarn checker:lint --fix",
     "build": "gulp build",
     "watch": "gulp watch",
     "transpile": "gulp transpile",
     "bundle": "gulp bundle",
-    "watch:checker": "nodemon --quiet -e tsx --watch ./packages --watch ./test --exec \"echo \\\"Checking types...\\\" && yarn checker\"",
-    "checker": "run-s checker:*",
-    "checker:types": "tsc --noEmit",
-    "checker:lint": "tslint -p .",
+    "watch:checker": "gulp watch:checker",
+    "checker": "gulp checker",
+    "checker:types": "gulp checker:types",
+    "checker:lint": "gulp checker:lint",
     "test": "yarn transpile && yarn test:jest",
     "test:jest": "jest",
     "test:no-system": "yarn test:jest --testMatch \"<rootDir>/test/!(system/)**/?(*.)test.(t|j)s?(x)\"",
-    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system"
+    "ci-test": "yarn checker:types && yarn transpile && yarn test:no-system",
+    "init-db": "node ./scripts/initDb.js"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn test:no-system"
+      "pre-commit": "yarn checker:types && yarn format:lint && lint-staged && yarn transpile && yarn test:no-system"
     }
   },
   "lint-staged": {
@@ -73,21 +74,24 @@
     "gulp-newer": "^1.4.0",
     "gulp-plumber": "^1.2.0",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-watch": "^5.0.1",
+    "gulp-tslint": "^8.1.3",
+    "gulp-typescript": "5.0.0-alpha.3",
     "html-webpack-plugin": "^3.0.6",
     "husky": "1.0.0-rc.13",
     "jest": "^23.5.0",
-    "jest-mock-functions": "^1.2.0",
+    "jest-mock-functions": "3.0.1",
     "lint-staged": "^7.2.2",
     "npm-run-all": "^4.1.2",
     "prettier": "^1.12.1",
     "react-test-renderer": "^16.4.2",
+    "source-map-support": "^0.5.5",
     "style-loader": "^0.22.1",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-react": "^3.5.1",
     "typescript": "^3.0.1",
     "webpack": "^4.1.1",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
     "webpack-stream": "^5.1.1"
   },
@@ -116,5 +120,6 @@
       "email": "mail@patrickshaw.me",
       "url": "https://github.com/PatrickShaw"
     }
-  ]
+  ],
+  "dependencies": {}
 }

@@ -1,7 +1,9 @@
 /**
  * Inspiration for this file taken from https://github.com/babel/babel/blob/master/Gulpfile.js
  */
-const colors = require('colors');
+require('source-map-support/register');
+
+require('colors');
 const { join, sep, resolve } = require('path');
 const spawn = require('cross-spawn');
 
@@ -9,9 +11,14 @@ const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const newer = require('gulp-newer');
-const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 const plumber = require('gulp-plumber');
+const gulpTslint = require('gulp-tslint');
+const gulpTypescript = require('gulp-typescript');
+
+const tslint = require('tslint');
+
+const tsProject = gulpTypescript.createProject('tsconfig.json');
 
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -66,8 +73,34 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
-function buildBabel(exclude) {
-  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+function packagesStream() {
+  return gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+}
+
+function checkTypes() {
+  const stream = packagesStream();
+  return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
+}
+
+function runLinter({ fix }) {
+  const stream = packagesStream();
+  return stream
+    .pipe(
+      gulpTslint({
+        fix,
+        formatter: 'stylish',
+        tslint,
+      }),
+    )
+    .pipe(
+      gulpTslint.report({
+        summarizeFailureOutput: true,
+      }),
+    );
+}
+
+function buildBabel(exclude = []) {
+  let stream = packagesStream();
 
   if (exclude) {
     // We need to exclude things that get bundled
@@ -88,8 +121,13 @@ function buildBabel(exclude) {
 }
 
 function createWebpackStream(packageDir) {
+  const { readConfig } = require('@openapi-platform/config');
+  const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
-  const webpackConfig = createWebpackConfig({ NODE_ENV: process.env.NODE_ENV });
+  const webpackConfig = createWebpackConfig({
+    NODE_ENV: process.env.NODE_ENV,
+    API_PORT: openapiPlatformConfig.get('server.port'),
+  });
   return webpackStream(webpackConfig, webpack);
 }
 
@@ -102,8 +140,16 @@ function buildBundle(packageName) {
     .pipe(gulp.dest(join(packageDir, 'dist')));
 }
 
+function watchPackages(task, options) {
+  return gulp.watch(
+    globFromPackagesDirName(packagesDirName),
+    { delay: 200, ...options },
+    task,
+  );
+}
+
 gulp.task('transpile', function transpile() {
-  return buildBabel([frontendPackageName]);
+  return buildBabel();
 });
 
 gulp.task(
@@ -119,12 +165,20 @@ gulp.task(
 gulp.task('build', gulp.series('transpile', 'bundle'));
 
 gulp.task('serve:frontend', function serveFrontend(done) {
+  const { readConfig } = require('@openapi-platform/config');
+  const openapiPlatformConfig = readConfig();
+  const uiPort = openapiPlatformConfig.get('ui.port');
   browserSync.init({
+    port: uiPort,
     server: {
       baseDir: join(__dirname, 'packages/frontend/dist'),
       ws: true,
       // We need this so that routes work properly
       middleware: [historyApiFallback()],
+    },
+    ui: {
+      // Keep in mind that 'uiPort', from the context of OpenAPI Platform, is the frontend web app
+      port: uiPort + 1,
     },
   });
   done();
@@ -136,10 +190,14 @@ gulp.task('restart:backend', function startBackend(done) {
   }
   const backendEnv = Object.create(process.env);
   backendEnv.NODE_ENV = 'development';
-  backendNode = spawn('node', [join(__dirname, 'packages/server/lib/index.js')], {
-    stdio: 'inherit',
-    env: backendEnv,
-  });
+  backendNode = spawn(
+    'node',
+    [join(__dirname, 'packages/server/bin/start-openapi-platform-server.js')],
+    {
+      stdio: 'inherit',
+      env: backendEnv,
+    },
+  );
 
   backendNode.on('close', function(code) {
     if (code === 8) {
@@ -154,21 +212,33 @@ gulp.task(
   gulp.parallel(
     'serve:frontend',
     gulp.series('restart:backend', function watch() {
-      return gulpWatch(
-        globFromPackagesDirName(packagesDirName),
-        { debounceDelay: 200 },
-        gulp.series('build', 'restart:backend'),
-      );
+      return watchPackages(gulp.series('build', 'restart:backend'));
     }),
   ),
 );
+
+gulp.task('format:lint', function formatLint() {
+  return runLinter({ fix: true });
+});
+
+gulp.task('checker:lint', function checkLint() {
+  return runLinter({ fix: false });
+});
+
+gulp.task('checker:types', checkTypes);
+
+gulp.task('checker', gulp.series('checker:types', 'checker:lint'));
+
+gulp.task('watch:checker', function startWatchChecker() {
+  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
+});
 
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
 gulp.task('watch', gulp.series('build', 'watch-no-init-build'));
 
-gulp.task('default', gulp.series('watch'));
+gulp.task('default', gulp.task('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
