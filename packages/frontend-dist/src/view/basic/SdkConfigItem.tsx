@@ -37,6 +37,7 @@ const Styled: any = createStyled(theme => ({
 
 export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
   sdkConfig: HasId<SdkConfig>;
+  onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 /**
@@ -55,6 +56,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
     // TODO: Need to get this from the actual backend
     this.props.sdkConfig.buildStatus = BuildStatus.Success;
     this.latestSdkUrl = sdk.path;
+  };
+
+  private onEditSdkConfig = () => {
+    this.props.onEditSdkConfig(this.props.sdkConfig);
   };
 
   public render() {
@@ -91,6 +96,9 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
+                    <IconButton aria-label="Edit" onClick={this.onEditSdkConfig}>
+                      <Icons.Edit />
+                    </IconButton>
                     <Button
                       size="small"
                       disabled={sdkConfig.buildStatus === BuildStatus.Running}
