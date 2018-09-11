@@ -3,7 +3,7 @@
  */
 require('source-map-support/register');
 
-const colors = require('colors');
+require('colors');
 const { join, sep, resolve } = require('path');
 const spawn = require('cross-spawn');
 
@@ -11,9 +11,14 @@ const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const newer = require('gulp-newer');
-const gulpWatch = require('gulp-watch');
 const filter = require('gulp-filter');
 const plumber = require('gulp-plumber');
+const gulpTslint = require('gulp-tslint');
+const gulpTypescript = require('gulp-typescript');
+
+const tslint = require('tslint');
+
+const tsProject = gulpTypescript.createProject('tsconfig.json');
 
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
@@ -68,8 +73,34 @@ function errorLogger() {
 }
 
 const packagesDir = join(__dirname, packagesDirName);
+function packagesStream() {
+  return gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+}
+
+function checkTypes() {
+  const stream = packagesStream();
+  return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
+}
+
+function runLinter({ fix }) {
+  const stream = packagesStream();
+  return stream
+    .pipe(
+      gulpTslint({
+        fix,
+        formatter: 'stylish',
+        tslint,
+      }),
+    )
+    .pipe(
+      gulpTslint.report({
+        summarizeFailureOutput: true,
+      }),
+    );
+}
+
 function buildBabel(exclude = []) {
-  let stream = gulp.src(globFromPackagesDirName(packagesDirName), { base: packagesDir });
+  let stream = packagesStream();
 
   if (exclude) {
     // We need to exclude things that get bundled
@@ -107,6 +138,14 @@ function buildBundle(packageName) {
     .pipe(errorLogger())
     .pipe(createWebpackStream(packageDir))
     .pipe(gulp.dest(join(packageDir, 'dist')));
+}
+
+function watchPackages(task, options) {
+  return gulp.watch(
+    globFromPackagesDirName(packagesDirName),
+    { delay: 200, ...options },
+    task,
+  );
 }
 
 gulp.task('transpile', function transpile() {
@@ -173,21 +212,33 @@ gulp.task(
   gulp.parallel(
     'serve:frontend',
     gulp.series('restart:backend', function watch() {
-      return gulpWatch(
-        globFromPackagesDirName(packagesDirName),
-        { debounceDelay: 200 },
-        gulp.series('build', 'restart:backend'),
-      );
+      return watchPackages(gulp.series('build', 'restart:backend'));
     }),
   ),
 );
+
+gulp.task('format:lint', function formatLint() {
+  return runLinter({ fix: true });
+});
+
+gulp.task('checker:lint', function checkLint() {
+  return runLinter({ fix: false });
+});
+
+gulp.task('checker:types', checkTypes);
+
+gulp.task('checker', gulp.series('checker:types', 'checker:lint'));
+
+gulp.task('watch:checker', function startWatchChecker() {
+  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
+});
 
 /**
  * Watches for anything that intigates a build and reloads the backend and frontend
  */
 gulp.task('watch', gulp.series('build', 'watch-no-init-build'));
 
-gulp.task('default', gulp.series('watch'));
+gulp.task('default', gulp.task('watch'));
 
 process.on('exit', () => {
   if (backendNode) {
