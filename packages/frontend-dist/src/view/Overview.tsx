@@ -5,7 +5,7 @@ import React, { Component, ReactNode } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Route } from 'react-router-dom';
 
-import { Id, HasId, Spec } from '@openapi-platform/model';
+import { Id, HasId, Spec, SdkConfig } from '@openapi-platform/model';
 import { state } from '../state/SpecState';
 import { AddSdkConfigModal } from './AddSdkConfigModal';
 import { AddSpecModal } from './AddSpecModal';
@@ -24,6 +24,10 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
     this.props.history.push(`${this.props.match.url}/${spec.id}/edit`);
   private openAddSdkConfigModal = (spec: HasId<Spec>) =>
     this.props.history.push(`${this.props.match.url}/${spec.id}/sdk-configs/add`);
+  private onEditSdkConfigModal = (sdkConfig: HasId<SdkConfig>) =>
+    this.props.history.push(
+      `${this.props.match.url}/${sdkConfig.specId}/sdk-configs/${sdkConfig.id}/edit`,
+    );
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
 
@@ -44,6 +48,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
           // Open a modal to add an SDK configuration when the 'Add SDK Configuration' button is
           // clicked
           onAddSdkConfig={this.openAddSdkConfigModal}
+          onEditSdkConfig={this.onEditSdkConfigModal}
         />
       )}
     </Observer>
@@ -78,6 +83,13 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
             <Route
               exact
               path={`${this.props.match.url}/:specId(\\d+)/sdk-configs/add`}
+              component={AddSdkConfigModal}
+            />
+            <Route
+              exact
+              path={`${
+                this.props.match.url
+              }/:specId(\\d+)/sdk-configs/:sdkConfigId(\\d+)/edit`}
               component={AddSdkConfigModal}
             />
           </ContentContainer>,

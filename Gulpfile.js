@@ -87,11 +87,6 @@ function packagesSrcStream() {
   return gulp.src(globSrcFromPackagesDirName(packagesDirName), { base: packagesDir });
 }
 
-function checkTypes() {
-  const stream = packagesSrcStream();
-  return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
-}
-
 function runLinter({ fix }) {
   const stream = packagesSrcStream();
   const tslintProgram = tslint.Linter.createProgram('./tsconfig.json');
@@ -165,6 +160,16 @@ function watchPackages(task, options, folderName = 'src') {
   );
 }
 
+function transpile() {
+  return buildBabel();
+}
+transpile.description = 'Transpiles the sources for each package so that they can be run.';
+
+function bundle() {
+  return buildBundle(frontendPackageName);
+}
+bundle.description = 'Creates bundles for the frontend packages for use in a browser.';
+
 function serveFrontend(done) {
   const { readConfig } = require('@openapi-platform/config');
   const openapiPlatformConfig = readConfig();
@@ -184,6 +189,10 @@ function serveFrontend(done) {
   });
   done();
 }
+serveFrontend.description =
+  'Serves the frontend app on the port specified in the OpenAPI Platform config file in the UI '
+  + 'section. Note that this is intended for development purposes only, please see the '
+  + 'start-openapi-platform-frontend script in the frontend package for a production server.';
 
 function restartServer(done) {
   if (backendNode) {
@@ -200,7 +209,7 @@ function restartServer(done) {
     },
   );
 
-  backendNode.on('close', function(code) {
+  backendNode.on('close', function (code) {
     if (code === 8) {
       console.log('Error detected, waiting for changes...'.red);
     }
@@ -208,53 +217,71 @@ function restartServer(done) {
   done();
 }
 
-function transpile() {
-  return buildBabel();
-}
-
-function bundle() {
-  return buildBundle(frontendPackageName);
-}
-
 function watchTranspile() {
   return watchPackages(transpile, { ignoreInitial: false });
 }
+watchTranspile.description =
+  'Same as transpile, but watches for changes in the src directory of each package and retranspiles '
+  + 'whenever a change is detected.';
 
 function watchBuild() {
   return watchPackages(build, { ignoreInitial: false });
 }
+watchBuild.description =
+  'Same as build, but watches for changes in the src directory of each package and retranspiles '
+  + 'and rebundles whenever a change is detected.';
 
 function watchServer() {
   return watchPackages(restartServer, { ignoreInitial: false }, 'lib');
 }
+watchServer.description =
+  'Runs the backend server, restarting it whenever the transpiled sources for any package '
+  + 'change. Note that in order to automatically retranspile sources, you will need to run a '
+  + 'command like watch:build.';
 
 function formatLint() {
   return runLinter({ fix: true });
 }
+formatLint.description =
+  'Corrects any automatically fixable linter warnings or errors. Note that this command will '
+  + 'overwrite files without creating a backup.';
 
 function checkLint() {
   return runLinter({ fix: false });
 }
+checkLint.description =
+  'Runs the linter on the codebase, displaying the output. This will display any linter warnings '
+  + 'or errors, as configured for the project.'
+
+function checkTypes() {
+  const stream = packagesSrcStream();
+  return stream.pipe(tsProject(gulpTypescript.reporter.fullReporter()));
+}
+checkTypes.description =
+  'Runs the TypeScript type checker on the codebase, displaying the output. This will display any '
+  + 'serious errors in the code, such as invalid syntax or the use of incorrect types.'
 
 function watchChecker() {
   return watchPackages(gulp.task('checker'), { ignoreInitial: false });
 }
+watchChecker.description =
+  'Runs the linter and TypeScript type checker on the entire codebase, watching for any changes '
+  + 'made to the code. When changes are detected, the linter and TypeScript type checker are '
+  + 'automatically rerun.';
 
 gulp.task('transpile', transpile);
 
-bundle.description = 'Creates bundles for frontend packages';
 gulp.task('bundle', bundle);
 
 const build = gulp.series(transpile, bundle);
 build.description =
-  'Transpiles all packages and then creates bundles for frontend packages';
+  'Transpiles the sources for each package and creates bundles for the frontend packages.';
 gulp.task('build', build);
 
-serveFrontend.description =
-  'Serves the frontend app on a port specified in the OpenAPI Platform config file';
 gulp.task('serve:frontend', serveFrontend);
 
-// TODO: Note that if you're not running watch or watch:server, restartServer doesn't actuall explicitly kill the original node instance.
+// TODO: Note that if you're not running watch or watch:server, restartServer doesn't actually
+// explicitly kill the original node instance.
 gulp.task('restart:server', restartServer);
 
 gulp.task('watch:transpile', watchTranspile);
@@ -264,6 +291,10 @@ gulp.task('watch:build', watchBuild);
 const watchFrontend = gulp.series(serveFrontend, function watchReloadBrowser() {
   return watchPackages(gulp.series(reloadBrowser), {}, 'dist');
 });
+watchFrontend.description =
+  'Serves the frontend app like serve:frontend, but automatically reloads the app in the browser '
+  + 'whenever the frontend bundle changes. Note that in order to automatically rebundle the '
+  + 'frontend, you will need to run a command like watch:build.';
 gulp.task('watch:frontend', watchFrontend);
 
 gulp.task('watch:server', watchServer);
@@ -275,6 +306,10 @@ gulp.task('checker:lint', checkLint);
 gulp.task('checker:types', checkTypes);
 
 const checker = gulp.series(checkTypes, checkLint);
+checker.description =
+  'Runs the linter and TypeScript type checker on the codebase, displaying the output. This is the '
+  + 'same as running the checker:types and checker:lint commands in succession. Use the '
+  + 'watch:checker command to automatically rerun this command when changes are made.';
 gulp.task('checker', checker);
 
 gulp.task('watch:checker', watchChecker);
@@ -289,13 +324,16 @@ const watch = gulp.series(
   },
 );
 watch.description =
-  "Watches for changes in packages' src folder -> Builds & reloads the backend & frontend";
+  'Watches for any changes in the src folder of each package. If a change is detected then the '
+  + 'code will be transpiled, before rebundling the frontend, restarting the backend, and '
+  + 'reloading the frontend in the browser.';
 gulp.task('watch', watch);
 
 const defaultTask = gulp.series('watch');
 defaultTask.description =
-  "It's just watch, use it if you want to spin up every server instance you'll need for testing your code in a dev environment";
-gulp.task('default', gulp.series('watch'));
+  'Same as the watch command. Use it to spin up a backend and frontend server instance for testing '
+  + 'your code in a dev environment.';
+gulp.task('default', defaultTask);
 
 process.on('exit', () => {
   if (backendNode) {

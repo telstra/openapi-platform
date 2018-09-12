@@ -41,14 +41,31 @@ export function createSpecService(specModel) {
     Model: specModel,
   });
   service.docs = {
-    description: 'Swagger/OpenAPI specs',
+    description: 'OpenAPI specifications to generate SDKs from',
     definitions: {
-      specifications: {
+      specs: {
         type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            description: 'Name of the OpenAPI specification',
+          },
+          description: {
+            type: 'string',
+            description: 'Description of the OpenAPI specification',
+          },
+          path: {
+            type: 'string',
+            description: 'URL at which the OpenAPI specification can be found',
+          },
+        },
         additionalProperties: true,
       },
-      'specifications list': {
+      'specs list': {
         type: 'array',
+        items: {
+          $ref: '#definitions/specs',
+        },
       },
     },
   };
