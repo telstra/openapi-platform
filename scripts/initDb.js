@@ -3,9 +3,9 @@
   Also option to clear data from db.
   Requires openapi-platform server to be running.
 */
-
+require('source-map-support/register');
 const { createServerClient } = require('@openapi-platform/server-client');
-const { readConfig } = require('@openapi-platform/config');
+const { readConfig, apiBaseUrl } = require('@openapi-platform/config');
 const { openapiLogger, consoleTransport } = require('@openapi-platform/logger');
 const { addDummyData } = require('./addDummyData');
 
@@ -31,9 +31,7 @@ async function insertSampleData(client) {
 
 async function run() {
   const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
+  const { client, socket } = createServerClient(apiBaseUrl(config));
   try {
     let clear = true;
     let populate = false;

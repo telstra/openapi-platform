@@ -89,9 +89,11 @@ function packagesSrcStream() {
 
 function runLinter({ fix }) {
   const stream = packagesSrcStream();
+  const tslintProgram = tslint.Linter.createProgram('./tsconfig.json');
   return stream
     .pipe(
       gulpTslint({
+        program: tslintProgram,
         fix,
         formatter: 'stylish',
         tslint,
@@ -131,12 +133,12 @@ function buildBabel(exclude = []) {
 }
 
 function createWebpackStream(packageDir) {
-  const { readConfig } = require('@openapi-platform/config');
+  const { readConfig, apiBaseUrl } = require('@openapi-platform/config');
   const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
   const webpackConfig = createWebpackConfig({
-    NODE_ENV: process.env.NODE_ENV,
-    API_PORT: openapiPlatformConfig.get('server.port'),
+    env: openapiPlatformConfig.get('env'),
+    apiBaseUrl: apiBaseUrl(openapiPlatformConfig),
   });
   return webpackStream(webpackConfig, webpack);
 }
