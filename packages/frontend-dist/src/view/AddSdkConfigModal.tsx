@@ -92,7 +92,6 @@ export class AddSdkConfigModal extends Component<
         {() => (
           <>
             <SdkConfigModal
-              key={0}
               submitButtonProps={{
                 children: sdkConfigId ? 'Update' : 'Add',
               }}
@@ -111,7 +110,6 @@ export class AddSdkConfigModal extends Component<
               showSubmitProgress={this.showProgressIndicator}
             />
             <Dialog
-              key={1}
               open={this.showErrorModal}
               onClose={this.closeErrorModal}
               maxWidth="xs"

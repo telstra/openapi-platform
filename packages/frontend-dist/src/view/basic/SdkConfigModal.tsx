@@ -140,7 +140,6 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
           <Observer>
             {() => (
               <Dialog
-                key={0}
                 open
                 onClose={onCloseModal}
                 maxWidth="sm"

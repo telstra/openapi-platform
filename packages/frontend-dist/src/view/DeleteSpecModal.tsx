@@ -78,7 +78,7 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ specId: str
           <Observer>
             {() => (
               <>
-                <Dialog key={0} maxWidth="xs" open onClose={this.closeModal}>
+                <Dialog maxWidth="xs" open onClose={this.closeModal}>
                   <DialogTitle>Delete Specification</DialogTitle>
                   <DialogContent>
                     <DialogContentText>
@@ -107,7 +107,6 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ specId: str
                   </DialogActions>
                 </Dialog>
                 <Dialog
-                  key={1}
                   open={this.showErrorModal}
                   onClose={this.closeErrorModal}
                   maxWidth="xs"

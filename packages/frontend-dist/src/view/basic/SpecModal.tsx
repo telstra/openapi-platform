@@ -126,7 +126,6 @@ export class SpecModal extends Component<SpecModalProps> {
           <Observer>
             {() => (
               <Dialog
-                key={0}
                 open
                 onClose={onCloseModal}
                 maxWidth="sm"

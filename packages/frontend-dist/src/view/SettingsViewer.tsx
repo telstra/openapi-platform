@@ -72,13 +72,12 @@ export const SettingsViewer: ComponentType<{}> = observer(() => (
     {({ classes }) => (
       <>
         <SimpleToolbar
-          key={0}
           title="Settings"
           searchPrompt="Filter settings"
           onSearchInputChange={onSearch}
           actions={[]}
         />
-        <ContentContainer key={1}>
+        <ContentContainer>
           <Paper className={classes.paper}>
             <FormControl component="fieldset">
               <FormLabel component="legend">Theme</FormLabel>

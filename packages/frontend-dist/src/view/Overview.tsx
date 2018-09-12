@@ -65,7 +65,6 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
         {() => (
           <>
             <SimpleToolbar
-              key={0}
               title="Overview"
               searchPrompt="Search specs"
               onSearchInputChange={this.onSearch}
@@ -75,7 +74,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
                 </IconButton>,
               ]}
             />
-            <ContentContainer key={1}>
+            <ContentContainer>
               <Route
                 path={`${this.props.match.url}/:specId(\\d+)`}
                 children={this.renderSpecList}

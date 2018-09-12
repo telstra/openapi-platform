@@ -82,7 +82,6 @@ export class AddSpecModal extends Component<
         {() => (
           <>
             <SpecModal
-              key={0}
               initialSpec={specId ? specState.specs.get(parseInt(specId, 10)) : undefined}
               titleProps={{
                 children: specId ? 'Update Specification' : 'Add Specification',
@@ -95,7 +94,6 @@ export class AddSpecModal extends Component<
               showSubmitProgress={this.showProgressIndicator}
             />
             <Dialog
-              key={1}
               open={this.showErrorModal}
               onClose={this.closeErrorModal}
               maxWidth="xs"
