@@ -142,7 +142,7 @@ function createWebpackStream(packageDir) {
   const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
   const webpackConfig = createWebpackConfig({
-    env: process.env.NODE_ENV,
+    env: openapiPlatformConfig.get('env'),
     apiBaseUrl: apiBaseUrl(openapiPlatformConfig),
   });
   return webpackStream(webpackConfig, webpack);
