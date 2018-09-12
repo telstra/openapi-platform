@@ -12,7 +12,7 @@ export async function build({ ...webpackOptions } = {}) {
       path: process.cwd(),
       statsDirName: null,
     },
-    baseApiUrl: config.get('ui.baseApiUrl'),
+    apiBaseUrl: config.get('ui.apiBaseUrl'),
     env: config.get('env'),
     ...webpackOptions,
   };
