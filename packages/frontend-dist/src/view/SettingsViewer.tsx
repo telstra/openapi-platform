@@ -69,50 +69,52 @@ const setSidebarBackground = (e, value) => {
 // TODO: Add react-router's injected props
 export const SettingsViewer: ComponentType<{}> = observer(() => (
   <Styled>
-    {({ classes }) => [
-      <SimpleToolbar
-        key={0}
-        title="Settings"
-        searchPrompt="Filter settings"
-        onSearchInputChange={onSearch}
-        actions={[]}
-      />,
-      <ContentContainer key={1}>
-        <Paper className={classes.paper}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Theme</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={state.paletteType === 'dark'}
-                    onChange={toggleDarkTheme}
-                    value={darkThemeLabel}
-                  />
-                }
-                label={darkThemeLabel}
-              />
-            </FormGroup>
-            <FormLabel component="legend">Sidebar</FormLabel>
-            <RadioGroup
-              name="sidebar"
-              value={sidebarBackgrounds
-                .findIndex(s => s.background === state.navBackground)
-                .toString()}
-              onChange={setSidebarBackground}
-            >
-              {sidebarBackgrounds.map((background, index) => (
+    {({ classes }) => (
+      <>
+        <SimpleToolbar
+          key={0}
+          title="Settings"
+          searchPrompt="Filter settings"
+          onSearchInputChange={onSearch}
+          actions={[]}
+        />
+        <ContentContainer key={1}>
+          <Paper className={classes.paper}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Theme</FormLabel>
+              <FormGroup>
                 <FormControlLabel
-                  key={index}
-                  value={index.toString()}
-                  control={<Radio />}
-                  label={background.label}
+                  control={
+                    <Switch
+                      checked={state.paletteType === 'dark'}
+                      onChange={toggleDarkTheme}
+                      value={darkThemeLabel}
+                    />
+                  }
+                  label={darkThemeLabel}
                 />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </Paper>
-      </ContentContainer>,
-    ]}
+              </FormGroup>
+              <FormLabel component="legend">Sidebar</FormLabel>
+              <RadioGroup
+                name="sidebar"
+                value={sidebarBackgrounds
+                  .findIndex(s => s.background === state.navBackground)
+                  .toString()}
+                onChange={setSidebarBackground}
+              >
+                {sidebarBackgrounds.map((background, index) => (
+                  <FormControlLabel
+                    key={index}
+                    value={index.toString()}
+                    control={<Radio />}
+                    label={background.label}
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </Paper>
+        </ContentContainer>
+      </>
+    )}
   </Styled>
 ));

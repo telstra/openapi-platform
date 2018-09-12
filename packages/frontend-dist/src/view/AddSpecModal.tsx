@@ -79,39 +79,41 @@ export class AddSpecModal extends Component<
     } = this.props;
     return (
       <Observer>
-        {() => [
-          <SpecModal
-            key={0}
-            initialSpec={specId ? specState.specs.get(parseInt(specId, 10)) : undefined}
-            titleProps={{
-              children: specId ? 'Update Specification' : 'Add Specification',
-            }}
-            submitButtonProps={{
-              children: specId ? 'Update' : 'Add',
-            }}
-            onSubmitSpec={this.onSubmitSpec}
-            onCloseModal={this.closeModal}
-            showSubmitProgress={this.showProgressIndicator}
-          />,
-          <Dialog
-            key={1}
-            open={this.showErrorModal}
-            onClose={this.closeErrorModal}
-            maxWidth="xs"
-          >
-            <DialogTitle>Error</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                An error occurred {specId ? 'updating' : 'adding'} the specification.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button color="primary" onClick={this.closeErrorModal}>
-                Ok
-              </Button>
-            </DialogActions>
-          </Dialog>,
-        ]}
+        {() => (
+          <>
+            <SpecModal
+              key={0}
+              initialSpec={specId ? specState.specs.get(parseInt(specId, 10)) : undefined}
+              titleProps={{
+                children: specId ? 'Update Specification' : 'Add Specification',
+              }}
+              submitButtonProps={{
+                children: specId ? 'Update' : 'Add',
+              }}
+              onSubmitSpec={this.onSubmitSpec}
+              onCloseModal={this.closeModal}
+              showSubmitProgress={this.showProgressIndicator}
+            />
+            <Dialog
+              key={1}
+              open={this.showErrorModal}
+              onClose={this.closeErrorModal}
+              maxWidth="xs"
+            >
+              <DialogTitle>Error</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  An error occurred {specId ? 'updating' : 'adding'} the specification.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button color="primary" onClick={this.closeErrorModal}>
+                  Ok
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
       </Observer>
     );
   }

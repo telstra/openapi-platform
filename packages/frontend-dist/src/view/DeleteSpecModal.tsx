@@ -76,54 +76,56 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ specId: str
       <Styled>
         {({ classes }) => (
           <Observer>
-            {() => [
-              <Dialog key={0} maxWidth="xs" open onClose={this.closeModal}>
-                <DialogTitle>Delete Specification</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Are you sure you want to delete the{' '}
-                    {specId && specState.specs.has(parseInt(specId, 10))
-                      ? specState.specs.get(parseInt(specId, 10))!.title
-                      : ''}{' '}
-                    specification?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button color="primary" onClick={this.closeModal}>
-                    Cancel
-                  </Button>
-                  {this.showProgressIndicator ? (
-                    <CircularProgress
-                      size={24}
-                      color="secondary"
-                      className={classes.progressIndicator}
-                    />
-                  ) : (
-                    <Button color="secondary" type="submit" onClick={this.onDeleteSpec}>
-                      Delete
+            {() => (
+              <>
+                <Dialog key={0} maxWidth="xs" open onClose={this.closeModal}>
+                  <DialogTitle>Delete Specification</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Are you sure you want to delete the{' '}
+                      {specId && specState.specs.has(parseInt(specId, 10))
+                        ? specState.specs.get(parseInt(specId, 10))!.title
+                        : ''}{' '}
+                      specification?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" onClick={this.closeModal}>
+                      Cancel
                     </Button>
-                  )}
-                </DialogActions>
-              </Dialog>,
-              <Dialog
-                key={1}
-                open={this.showErrorModal}
-                onClose={this.closeErrorModal}
-                maxWidth="xs"
-              >
-                <DialogTitle>Error</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    An error occurred deleting the specification.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button color="primary" onClick={this.closeErrorModal}>
-                    Ok
-                  </Button>
-                </DialogActions>
-              </Dialog>,
-            ]}
+                    {this.showProgressIndicator ? (
+                      <CircularProgress
+                        size={24}
+                        color="secondary"
+                        className={classes.progressIndicator}
+                      />
+                    ) : (
+                      <Button color="secondary" type="submit" onClick={this.onDeleteSpec}>
+                        Delete
+                      </Button>
+                    )}
+                  </DialogActions>
+                </Dialog>
+                <Dialog
+                  key={1}
+                  open={this.showErrorModal}
+                  onClose={this.closeErrorModal}
+                  maxWidth="xs"
+                >
+                  <DialogTitle>Error</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      An error occurred deleting the specification.
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" onClick={this.closeErrorModal}>
+                      Ok
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </>
+            )}
           </Observer>
         )}
       </Styled>

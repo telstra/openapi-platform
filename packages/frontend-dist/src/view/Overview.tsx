@@ -62,48 +62,54 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   public render() {
     return (
       <Observer>
-        {() => [
-          <SimpleToolbar
-            key={0}
-            title="Overview"
-            searchPrompt="Search specs"
-            onSearchInputChange={this.onSearch}
-            actions={[
-              <IconButton key={0} aria-label="add" onClick={this.openAddSpecModal}>
-                <AddIcon />
-              </IconButton>,
-            ]}
-          />,
-          <ContentContainer key={1}>
-            <Route
-              path={`${this.props.match.url}/:specId(\\d+)`}
-              children={this.renderSpecList}
+        {() => (
+          <>
+            <SimpleToolbar
+              key={0}
+              title="Overview"
+              searchPrompt="Search specs"
+              onSearchInputChange={this.onSearch}
+              actions={[
+                <IconButton key={0} aria-label="add" onClick={this.openAddSpecModal}>
+                  <AddIcon />
+                </IconButton>,
+              ]}
             />
-            <Route exact path={`${this.props.match.url}/add`} component={AddSpecModal} />
-            <Route
-              exact
-              path={`${this.props.match.url}/:specId(\\d+)/edit`}
-              component={AddSpecModal}
-            />
-            <Route
-              exact
-              path={`${this.props.match.url}/:specId(\\d+)/delete`}
-              component={DeleteSpecModal}
-            />
-            <Route
-              exact
-              path={`${this.props.match.url}/:specId(\\d+)/sdk-configs/add`}
-              component={AddSdkConfigModal}
-            />
-            <Route
-              exact
-              path={`${
-                this.props.match.url
-              }/:specId(\\d+)/sdk-configs/:sdkConfigId(\\d+)/edit`}
-              component={AddSdkConfigModal}
-            />
-          </ContentContainer>,
-        ]}
+            <ContentContainer key={1}>
+              <Route
+                path={`${this.props.match.url}/:specId(\\d+)`}
+                children={this.renderSpecList}
+              />
+              <Route
+                exact
+                path={`${this.props.match.url}/add`}
+                component={AddSpecModal}
+              />
+              <Route
+                exact
+                path={`${this.props.match.url}/:specId(\\d+)/edit`}
+                component={AddSpecModal}
+              />
+              <Route
+                exact
+                path={`${this.props.match.url}/:specId(\\d+)/delete`}
+                component={DeleteSpecModal}
+              />
+              <Route
+                exact
+                path={`${this.props.match.url}/:specId(\\d+)/sdk-configs/add`}
+                component={AddSdkConfigModal}
+              />
+              <Route
+                exact
+                path={`${
+                  this.props.match.url
+                }/:specId(\\d+)/sdk-configs/:sdkConfigId(\\d+)/edit`}
+                component={AddSdkConfigModal}
+              />
+            </ContentContainer>
+          </>
+        )}
       </Observer>
     );
   }
