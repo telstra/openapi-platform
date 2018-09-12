@@ -21,11 +21,7 @@ export function serverUrl(config): string {
 export function apiBaseUrl(config) {
   // TODO: IF there is a way to do config dependent defaults directly in convict then do that instead of this.
   const url = config.get('ui.apiBaseUrl');
-  return url
-    ? url
-    : `${config.get('server.protocol')}://${config.get('server.host')}:${config.get(
-        'server.port',
-      )}`;
+  return url ? url : serverUrl(config);
 }
 
 export function uiUrl(config): string {
