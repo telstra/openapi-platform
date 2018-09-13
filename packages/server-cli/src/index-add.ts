@@ -4,7 +4,7 @@ import { readConfig } from '@openapi-platform/config';
 import { createServerClient } from '@openapi-platform/server-client';
 import { logger } from './logger';
 
-import { specBuilder, configBuilder } from './builder';
+import { specBuilder, configBuilder } from './itemBuilder';
 
 /**
  * Creates an item in the backend.

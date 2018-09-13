@@ -5,6 +5,6 @@ program
   .command('add <type>', 'Add an item')
   .command('list <type> [filters...]', 'List items in db')
   .command('remove <type> <ids...>', 'Remove items from db')
-  .command('build <sdk>', 'Runs the build process for an SDK');
+  .command('build <spec id> <sdkConfigIds...>', 'Runs the build process for an SDK');
 
 program.parse(process.argv);
