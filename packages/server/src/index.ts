@@ -10,6 +10,7 @@ import { createServer } from './createServer';
 import { logger } from './logger';
 export async function run() {
   const port = config.get('server.port');
+  const host = config.get('server.host');
   // Overriding logger used in non testing environments, logging in tests just go to stdout.
   overrideConsoleLogger(logger);
   overrideUtilInspectStyle();
@@ -17,7 +18,7 @@ export async function run() {
 
   const app = await createServer();
 
-  app.listen(port, (er, err) => {
+  app.listen(port, host, (er, err) => {
     logger.info(`OpenAPI Platform Server now listening on port ${port}`);
   });
 

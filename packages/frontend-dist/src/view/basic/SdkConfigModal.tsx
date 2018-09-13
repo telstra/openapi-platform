@@ -13,9 +13,10 @@ import {
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
 import { ModalProps } from '@material-ui/core/Modal';
+import { TypographyProps } from '@material-ui/core/Typography';
 import { Observer } from 'mobx-react';
 
-import { SDK_CONFIG_TARGETS } from '@openapi-platform/model';
+import { SDK_CONFIG_TARGETS, SdkConfig } from '@openapi-platform/model';
 import { AddedSdkConfig } from '../../state/SdkConfigState';
 import { Category } from '../../Storybook';
 import {
@@ -53,6 +54,8 @@ const Styled: any = createStyled(theme => ({
 export type OnCloseModal = () => void;
 export type OnSubmitSdkConfig = (sdkConfig: AddedSdkConfig) => void;
 export interface SdkConfigModalProps {
+  readonly initialSdkConfig?: SdkConfig;
+  readonly titleProps?: TypographyProps;
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSdkConfig: OnSubmitSdkConfig;
   readonly cancelButtonProps?: ButtonProps;
@@ -75,11 +78,14 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
         !SDK_CONFIG_TARGETS.includes(target)
           ? inputInvalid('Error: Missing target')
           : inputValid(),
-      initialValue: '',
+      initialValue: this.props.initialSdkConfig ? this.props.initialSdkConfig.target : '',
     },
     version: {
       validation: alwaysValid,
-      initialValue: '',
+      initialValue:
+        this.props.initialSdkConfig && this.props.initialSdkConfig.version
+          ? this.props.initialSdkConfig.version
+          : '',
     },
     options: {
       validation: options => {
@@ -90,7 +96,10 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
           return inputInvalid('Error: invalid JSON');
         }
       },
-      initialValue: '{}',
+      initialValue:
+        this.props.initialSdkConfig && this.props.initialSdkConfig.options
+          ? JSON.stringify(this.props.initialSdkConfig.options, null, 2)
+          : '{}',
     },
   });
 
@@ -127,6 +136,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
   public render() {
     const {
       onCloseModal,
+      titleProps,
       modalProps,
       cancelButtonProps,
       showSubmitProgress,
@@ -146,9 +156,11 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               >
                 <form>
                   <div className={classes.modalContent}>
-                    <Typography variant="title" className={classes.title}>
-                      Add SDK Configuration
-                    </Typography>
+                    <Typography
+                      variant="title"
+                      className={classes.title}
+                      {...titleProps}
+                    />
                     <FormControl
                       error={this.inputStore.getInputError('target') !== null}
                       margin="dense"

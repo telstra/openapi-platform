@@ -98,10 +98,10 @@ export class AddSpecModal extends Component<
                   specId ? specState.specs.get(parseInt(specId, 10)) : undefined
                 }
                 titleProps={{
-                  children: specId ? 'Edit Specification' : 'Add Specification',
+                  children: specId ? 'Update Specification' : 'Add Specification',
                 }}
                 submitButtonProps={{
-                  children: specId ? 'Save' : 'Add',
+                  children: specId ? 'Update' : 'Add',
                 }}
                 onSubmitSpec={this.onSubmitSpec}
                 onCloseModal={this.closeModal}
@@ -116,7 +116,7 @@ export class AddSpecModal extends Component<
                 <div className={classes.modalContent}>
                   <Typography variant="title">Error</Typography>
                   <Typography>
-                    An error occurred {specId ? 'saving' : 'adding'} the specification.
+                    An error occurred {specId ? 'updating' : 'adding'} the specification.
                   </Typography>
                 </div>
                 <div className={classes.buttonRow}>

@@ -77,6 +77,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   onEditSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
+  onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 /**
@@ -92,7 +93,7 @@ export class SpecItem extends Component<SpecItemProps> {
   private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
 
   public render() {
-    const { spec, expanded, sdkConfigs = [] } = this.props;
+    const { spec, expanded, sdkConfigs = [], onEditSdkConfig } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -144,7 +145,11 @@ export class SpecItem extends Component<SpecItemProps> {
                 <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
                   <TableBody>
                     {sdkConfigs.map(sdkConfig => (
-                      <SdkConfigItem key={sdkConfig.id} sdkConfig={sdkConfig} />
+                      <SdkConfigItem
+                        key={sdkConfig.id}
+                        sdkConfig={sdkConfig}
+                        onEditSdkConfig={onEditSdkConfig}
+                      />
                     ))}
                   </TableBody>
                 </Table>
