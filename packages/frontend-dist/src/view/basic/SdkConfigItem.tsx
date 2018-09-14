@@ -50,20 +50,42 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
 
   @action
   public createSdk = async () => {
-    const sdk: HasId<Sdk> = await client
-      .service('sdks')
-      .create({ sdkConfigId: this.props.sdkConfig.id });
-    // TODO: Need to get this from the actual backend
-    this.props.sdkConfig.buildStatus = BuildStatus.Success;
-    this.latestSdkUrl = sdk.path;
+    this.props.sdkConfig.buildStatus = BuildStatus.Running;
+    try {
+      const sdk: HasId<Sdk> = await client
+        .service('sdks')
+        .create({ sdkConfigId: this.props.sdkConfig.id });
+      // TODO: Need to get this from the actual backend
+      this.props.sdkConfig.buildStatus = BuildStatus.Success;
+      this.latestSdkUrl = sdk.path;
+    } catch (err) {
+      this.props.sdkConfig.buildStatus = BuildStatus.Fail;
+    }
   };
 
   private onEditSdkConfig = () => {
     this.props.onEditSdkConfig(this.props.sdkConfig);
   };
 
+  private getLatestSdk = async (sdkConfig: HasId<SdkConfig>) => {
+    const sdks: Sdk[] = await client
+      .service('sdks')
+      .find({
+        query: {
+          $sort: {
+            createdAt: -1,
+          },
+          sdkConfigId: sdkConfig.id,
+        },
+      });
+      this.latestSdkUrl = sdks[0].path;
+  }
+
   public render() {
     const { sdkConfig } = this.props;
+    if (sdkConfig.buildStatus === BuildStatus.Success) {
+      this.getLatestSdk(sdkConfig);
+    }
     return (
       <Styled>
         {({ classes }) => (
