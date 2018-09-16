@@ -13,6 +13,7 @@ import { Observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
 import { state as sdkConfigState, AddedSdkConfig } from '../state/SdkConfigState';
+import { goUpUrl } from '../util/goUpUrl';
 import { SdkConfigModal } from './basic/SdkConfigModal';
 
 /**
@@ -36,16 +37,12 @@ export class AddSdkConfigModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    // TODO: This might need to get refactored.
-    const lastSlash = this.props.match.url.lastIndexOf('/');
-    const secondLastSlash = this.props.match.url.lastIndexOf('/', lastSlash - 1);
     if (this.props.match.params.sdkConfigId) {
       // If editing, we need to go up 3 times
-      const thirdLastSlash = this.props.match.url.lastIndexOf('/', secondLastSlash - 1);
-      this.props.history.push(this.props.match.url.slice(0, thirdLastSlash));
+      this.props.history.push(goUpUrl(this.props.match.url, 3));
     } else {
       // Otherwise, go up 2 times.
-      this.props.history.push(this.props.match.url.slice(0, secondLastSlash));
+      this.props.history.push(goUpUrl(this.props.match.url, 2));
     }
   };
 

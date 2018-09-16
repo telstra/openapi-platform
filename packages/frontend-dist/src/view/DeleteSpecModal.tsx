@@ -13,6 +13,7 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 
 import { state as specState } from '../state/SpecState';
+import { goUpUrl } from '../util/goUpUrl';
 import { createStyled } from './createStyled';
 
 const Styled: any = createStyled(theme => ({
@@ -35,14 +36,11 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ specId: str
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    const lastSlash = this.props.match.url.lastIndexOf('/');
-    this.props.history.push(this.props.match.url.slice(0, lastSlash));
+    this.props.history.push(goUpUrl(this.props.match.url));
   };
 
   private closeModalOnDelete = () => {
-    const lastSlash = this.props.match.url.lastIndexOf('/');
-    const secondLastSlash = this.props.match.url.lastIndexOf('/', lastSlash - 1);
-    this.props.history.push(this.props.match.url.slice(0, secondLastSlash));
+    this.props.history.push(goUpUrl(this.props.match.url, 2));
   };
 
   private closeErrorModal = () => {

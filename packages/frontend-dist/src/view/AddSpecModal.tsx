@@ -15,6 +15,7 @@ import { RouteComponentProps } from 'react-router';
 
 import { Spec } from '@openapi-platform/model';
 import { state as specState } from '../state/SpecState';
+import { goUpUrl } from '../util/goUpUrl';
 import { SpecModal } from './basic/SpecModal';
 
 /**
@@ -38,8 +39,7 @@ export class AddSpecModal extends Component<
   private showErrorModal: boolean = false;
 
   private closeModal = () => {
-    const lastSlash = this.props.match.url.lastIndexOf('/');
-    this.props.history.push(this.props.match.url.slice(0, lastSlash));
+    this.props.history.push(goUpUrl(this.props.match.url));
   };
 
   @action
