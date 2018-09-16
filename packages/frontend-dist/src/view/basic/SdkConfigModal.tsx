@@ -9,11 +9,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
-import { ModalProps } from '@material-ui/core/Modal';
-import { TypographyProps } from '@material-ui/core/Typography';
+import { DialogProps } from '@material-ui/core/Dialog';
+import { DialogTitleProps } from '@material-ui/core/DialogTitle';
 import { Observer } from 'mobx-react';
 
 import { SDK_CONFIG_TARGETS, SdkConfig } from '@openapi-platform/model';
@@ -26,25 +29,14 @@ import {
   alwaysValid,
 } from '../../ValidatedFormStore';
 import { createStyled } from '../createStyled';
-import { FloatingModal } from './FloatingModal';
 
 const Styled: any = createStyled(theme => ({
-  modalPaper: {
-    maxWidth: theme.spacing.unit * 64,
-  },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3,
   },
   optionsText: {
     fontFamily: 'Roboto Mono',
-  },
-  buttonRow: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: theme.spacing.unit,
   },
   progressIndicator: {
     margin: `0 ${theme.spacing.unit * 4}px`,
@@ -55,13 +47,13 @@ export type OnCloseModal = () => void;
 export type OnSubmitSdkConfig = (sdkConfig: AddedSdkConfig) => void;
 export interface SdkConfigModalProps {
   readonly initialSdkConfig?: SdkConfig;
-  readonly titleProps?: TypographyProps;
+  readonly titleProps?: DialogTitleProps;
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSdkConfig: OnSubmitSdkConfig;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
-  readonly modalProps?: ModalProps;
+  readonly dialogProps?: DialogProps;
 }
 
 /**
@@ -137,7 +129,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
     const {
       onCloseModal,
       titleProps,
-      modalProps,
+      dialogProps,
       cancelButtonProps,
       showSubmitProgress,
       submitButtonProps,
@@ -147,20 +139,16 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
         {({ classes }) => (
           <Observer>
             {() => (
-              <FloatingModal
-                key={0}
-                classes={{ paper: classes.modalPaper }}
+              <Dialog
                 open
                 onClose={onCloseModal}
-                {...modalProps}
+                maxWidth="sm"
+                fullWidth
+                {...dialogProps}
               >
                 <form>
-                  <div className={classes.modalContent}>
-                    <Typography
-                      variant="title"
-                      className={classes.title}
-                      {...titleProps}
-                    />
+                  <DialogTitle {...titleProps} />
+                  <DialogContent classes={{ root: classes.modalContent }}>
                     <FormControl
                       error={this.inputStore.getInputError('target') !== null}
                       margin="dense"
@@ -219,9 +207,8 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
                           'Target-specific options to pass to Swagger Codegen in JSON'}
                       </FormHelperText>
                     </FormControl>
-                  </div>
-
-                  <div className={classes.buttonRow}>
+                  </DialogContent>
+                  <DialogActions>
                     <Button
                       color="primary"
                       type="button"
@@ -240,9 +227,9 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
                         {...submitButtonProps}
                       />
                     )}
-                  </div>
+                  </DialogActions>
                 </form>
-              </FloatingModal>
+              </Dialog>
             )}
           </Observer>
         )}
