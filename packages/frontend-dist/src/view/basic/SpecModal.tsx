@@ -132,77 +132,79 @@ export class SpecModal extends Component<SpecModalProps> {
                 fullWidth
                 {...dialogProps}
               >
-                <DialogTitle {...titleProps} />
-                <DialogContent classes={{ root: classes.modalContent }}>
-                  <FormControl
-                    error={this.inputStore.getInputError('title') !== null}
-                    margin="normal"
-                  >
-                    <InputLabel htmlFor="title">Title</InputLabel>
-                    <Input
-                      id="title"
-                      onChange={this.onInputChange}
-                      onBlur={this.onInputBlur}
-                      value={this.inputStore.getInputValue('title')}
-                    />
-                    <FormHelperText>
-                      {this.inputStore.getInputError('title') || 'E.g. Petstore'}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    error={this.inputStore.getInputError('url') !== null}
-                    margin="dense"
-                  >
-                    <InputLabel htmlFor="url">URL</InputLabel>
-                    <Input
-                      id="url"
-                      onChange={this.onInputChange}
-                      onBlur={this.onInputBlur}
-                      value={this.inputStore.getInputValue('url')}
-                    />
-                    <FormHelperText>
-                      {this.inputStore.getInputError('url') ||
-                        'E.g. http://petstore.swagger.io/v2/swagger.json'}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    error={this.inputStore.getInputError('description') !== null}
-                    margin="dense"
-                  >
-                    <InputLabel htmlFor="description">Description</InputLabel>
-                    <Input
-                      id="description"
-                      onChange={this.onInputChange}
-                      onBlur={this.onInputBlur}
-                      value={this.inputStore.getInputValue('description')}
-                      multiline
-                      rowsMax={3}
-                    />
-                    <FormHelperText>
-                      {this.inputStore.getInputError('description')}
-                    </FormHelperText>
-                  </FormControl>
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    color="primary"
-                    type="button"
-                    onClick={onCloseModal}
-                    {...cancelButtonProps}
-                  >
-                    Cancel
-                  </Button>
-                  {showSubmitProgress ? (
-                    <CircularProgress size={24} className={classes.progressIndicator} />
-                  ) : (
+                <form>
+                  <DialogTitle {...titleProps} />
+                  <DialogContent classes={{ root: classes.modalContent }}>
+                    <FormControl
+                      error={this.inputStore.getInputError('title') !== null}
+                      margin="normal"
+                    >
+                      <InputLabel htmlFor="title">Title</InputLabel>
+                      <Input
+                        id="title"
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.inputStore.getInputValue('title')}
+                      />
+                      <FormHelperText>
+                        {this.inputStore.getInputError('title') || 'E.g. Petstore'}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl
+                      error={this.inputStore.getInputError('url') !== null}
+                      margin="dense"
+                    >
+                      <InputLabel htmlFor="url">URL</InputLabel>
+                      <Input
+                        id="url"
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.inputStore.getInputValue('url')}
+                      />
+                      <FormHelperText>
+                        {this.inputStore.getInputError('url') ||
+                          'E.g. http://petstore.swagger.io/v2/swagger.json'}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl
+                      error={this.inputStore.getInputError('description') !== null}
+                      margin="dense"
+                    >
+                      <InputLabel htmlFor="description">Description</InputLabel>
+                      <Input
+                        id="description"
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.inputStore.getInputValue('description')}
+                        multiline
+                        rowsMax={3}
+                      />
+                      <FormHelperText>
+                        {this.inputStore.getInputError('description')}
+                      </FormHelperText>
+                    </FormControl>
+                  </DialogContent>
+                  <DialogActions>
                     <Button
                       color="primary"
-                      type="submit"
-                      onClick={this.onAddButtonClick}
-                      {...submitButtonProps}
-                    />
-                  )}
-                </DialogActions>
+                      type="button"
+                      onClick={onCloseModal}
+                      {...cancelButtonProps}
+                    >
+                      Cancel
+                    </Button>
+                    {showSubmitProgress ? (
+                      <CircularProgress size={24} className={classes.progressIndicator} />
+                    ) : (
+                      <Button
+                        color="primary"
+                        type="submit"
+                        onClick={this.onAddButtonClick}
+                        {...submitButtonProps}
+                      />
+                    )}
+                  </DialogActions>
+                </form>
               </Dialog>
             )}
           </Observer>

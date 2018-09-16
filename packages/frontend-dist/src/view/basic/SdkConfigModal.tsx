@@ -146,87 +146,89 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
                 fullWidth
                 {...dialogProps}
               >
-                <DialogTitle {...titleProps} />
-                <DialogContent classes={{ root: classes.modalContent }}>
-                  <FormControl
-                    error={this.inputStore.getInputError('target') !== null}
-                    margin="dense"
-                  >
-                    <InputLabel htmlFor="target">Target</InputLabel>
-                    <Select
-                      onChange={this.onTargetChange}
-                      onBlur={this.onTargetBlur}
-                      value={this.inputStore.getInputValue('target')}
-                      inputProps={{
-                        id: 'target',
-                      }}
+                <form>
+                  <DialogTitle {...titleProps} />
+                  <DialogContent classes={{ root: classes.modalContent }}>
+                    <FormControl
+                      error={this.inputStore.getInputError('target') !== null}
+                      margin="dense"
                     >
-                      {SDK_CONFIG_TARGETS.map(target => (
-                        <MenuItem key={target} value={target}>
-                          {target}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <FormHelperText>
-                      {this.inputStore.getInputError('target')}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    error={this.inputStore.getInputError('version') !== null}
-                    margin="dense"
-                  >
-                    <InputLabel htmlFor="version">Version</InputLabel>
-                    <Input
-                      id="version"
-                      onChange={this.onInputChange}
-                      onBlur={this.onInputBlur}
-                      value={this.inputStore.getInputValue('version')}
-                    />
-                    <FormHelperText>
-                      {this.inputStore.getInputError('version') || 'E.g. 1.2.34'}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    error={this.inputStore.getInputError('options') !== null}
-                    margin="dense"
-                  >
-                    <InputLabel htmlFor="options">Options</InputLabel>
-                    <Input
-                      id="options"
-                      className={classes.optionsText}
-                      onChange={this.onInputChange}
-                      onBlur={this.onInputBlur}
-                      value={this.inputStore.getInputValue('options')}
-                      multiline
-                      rows={5}
-                      rowsMax={10}
-                    />
-                    <FormHelperText>
-                      {this.inputStore.getInputError('options') ||
-                        'Target-specific options to pass to Swagger Codegen in JSON'}
-                    </FormHelperText>
-                  </FormControl>
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    color="primary"
-                    type="button"
-                    onClick={onCloseModal}
-                    {...cancelButtonProps}
-                  >
-                    Cancel
-                  </Button>
-                  {showSubmitProgress ? (
-                    <CircularProgress size={24} className={classes.progressIndicator} />
-                  ) : (
+                      <InputLabel htmlFor="target">Target</InputLabel>
+                      <Select
+                        onChange={this.onTargetChange}
+                        onBlur={this.onTargetBlur}
+                        value={this.inputStore.getInputValue('target')}
+                        inputProps={{
+                          id: 'target',
+                        }}
+                      >
+                        {SDK_CONFIG_TARGETS.map(target => (
+                          <MenuItem key={target} value={target}>
+                            {target}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <FormHelperText>
+                        {this.inputStore.getInputError('target')}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl
+                      error={this.inputStore.getInputError('version') !== null}
+                      margin="dense"
+                    >
+                      <InputLabel htmlFor="version">Version</InputLabel>
+                      <Input
+                        id="version"
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.inputStore.getInputValue('version')}
+                      />
+                      <FormHelperText>
+                        {this.inputStore.getInputError('version') || 'E.g. 1.2.34'}
+                      </FormHelperText>
+                    </FormControl>
+                    <FormControl
+                      error={this.inputStore.getInputError('options') !== null}
+                      margin="dense"
+                    >
+                      <InputLabel htmlFor="options">Options</InputLabel>
+                      <Input
+                        id="options"
+                        className={classes.optionsText}
+                        onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
+                        value={this.inputStore.getInputValue('options')}
+                        multiline
+                        rows={5}
+                        rowsMax={10}
+                      />
+                      <FormHelperText>
+                        {this.inputStore.getInputError('options') ||
+                          'Target-specific options to pass to Swagger Codegen in JSON'}
+                      </FormHelperText>
+                    </FormControl>
+                  </DialogContent>
+                  <DialogActions>
                     <Button
                       color="primary"
-                      type="submit"
-                      onClick={this.onAddButtonClick}
-                      {...submitButtonProps}
-                    />
-                  )}
-                </DialogActions>
+                      type="button"
+                      onClick={onCloseModal}
+                      {...cancelButtonProps}
+                    >
+                      Cancel
+                    </Button>
+                    {showSubmitProgress ? (
+                      <CircularProgress size={24} className={classes.progressIndicator} />
+                    ) : (
+                      <Button
+                        color="primary"
+                        type="submit"
+                        onClick={this.onAddButtonClick}
+                        {...submitButtonProps}
+                      />
+                    )}
+                  </DialogActions>
+                </form>
               </Dialog>
             )}
           </Observer>
