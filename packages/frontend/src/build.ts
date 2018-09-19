@@ -1,8 +1,6 @@
 import webpack from 'webpack';
 
 import createWebpackConfig from '../webpack.config';
-import { config } from './config';
-import { apiBaseUrl } from '@openapi-platform/config';
 import { logger } from './logger';
 
 export async function build({ ...webpackOptions } = {}) {
@@ -13,8 +11,6 @@ export async function build({ ...webpackOptions } = {}) {
       path: process.cwd(),
       statsDirName: null,
     },
-    apiBaseUrl: apiBaseUrl(config),
-    env: config.get('env'),
     ...webpackOptions,
   };
   const webpackConfig = createWebpackConfig(webpackInputs);

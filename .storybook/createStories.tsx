@@ -1,7 +1,8 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { basename } from 'path';
-import { ThemeProvider } from '../src/view/ThemeProvider';
+// TODO: Should seperate purely UI things from the frontend-dist packages
+import { ThemeProvider } from '../packages/frontend-dist/src/view/ThemeProvider';
 export function createStories(moduleInfo) {
   moduleInfo.forEach(({ path, requiredModule }) => {
     const storybookInfo = requiredModule.storybook;
