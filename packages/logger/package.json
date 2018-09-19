@@ -1,0 +1,17 @@
+{
+  "name": "@openapi-platform/logger",
+  "version": "1.0.0-alpha.0",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "license": "Apache-2",
+  "private": false,
+  "sideEffects": false,
+  "dependencies": {
+    "@types/morgan": "^1.7.35",
+    "colors": "^1.2.5",
+    "mockdate": "^2.0.2",
+    "moment": "^2.22.1",
+    "morgan": "^1.9.0",
+    "winston": "^3.0.0"
+  }
+}

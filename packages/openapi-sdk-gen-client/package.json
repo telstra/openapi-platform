@@ -1,0 +1,12 @@
+{
+  "name": "@openapi-platform/openapi-sdk-gen-client",
+  "version": "1.0.0-alpha.0",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "license": "Apache-2",
+  "private": false,
+  "sideEffects": false,
+  "dependencies": {
+    "node-fetch": "^2.1.2"
+  }
+}

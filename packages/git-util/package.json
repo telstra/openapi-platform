@@ -1,0 +1,17 @@
+{
+  "name": "@openapi-platform/git-util",
+  "version": "1.0.0-alpha.0",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "license": "Apache-2",
+  "private": false,
+  "sideEffects": false,
+  "dependencies": {
+    "isomorphic-git": "^0.22.3",
+    "mz": "^2.7.0",
+    "node-fetch": "^2.1.2",
+    "fs-extra": "^7.0.0",
+    "adm-zip": "^0.4.11",
+    "globby": "^8.0.1"
+  }
+}

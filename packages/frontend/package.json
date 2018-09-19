@@ -1,0 +1,22 @@
+{
+  "name": "@openapi-platform/frontend",
+  "description": "Deploy and execute the OpenAPI Platform web app",
+  "version": "1.0.0-alpha.0",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "license": "Apache-2",
+  "private": false,
+  "sideEffects": false,
+  "bin": {
+    "start-openapi-platform-frontend": "./bin/start-openapi-platform-frontend.js",
+    "build-openapi-platform-frontend": "./bin/build-openapi-platform-frontend.js"
+  },
+  "dependencies": {
+    "@openapi-platform/config": "1.0.0-alpha.0",
+    "@openapi-platform/frontend-dist": "1.0.0-alpha.0",
+    "@openapi-platform/logger": "1.0.0-alpha.0",
+    "connect-history-api-fallback": "^1.5.0",
+    "source-map-support": "^0.5.9",
+    "webpack": "^4.17.1"
+  }
+}

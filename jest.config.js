@@ -1,8 +1,4 @@
-module.exports = {
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  transform: {
-    '^.+\\.tsx?$': 'babel-jest'
-  }
-};
+const buildUtils = require('@openapi-platform/build-util');
+module.exports = Object.assign(buildUtils.jest.settings(), {
+  projects: ['<rootDir>', '<rootDir>/packages/*', '<rootDir>/build-packages/*'],
+});
