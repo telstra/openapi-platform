@@ -37,7 +37,6 @@ class SdkConfigState {
     const updatedSdkConfigStore: SdkConfig = {
       ...updatedSdkConfig,
       buildStatus: currentConfig!.buildStatus,
-      gitInfo: currentConfig!.gitInfo,
       specId: currentConfig!.specId,
     };
     const sdkConfig: HasId<SdkConfig> = await client
