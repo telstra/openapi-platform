@@ -119,7 +119,18 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               : '',
         },
         repoBranch: {
-          validation: alwaysValid,
+          validation: (repoBranch, inputStore) => {
+            if (inputStore.getInputValue('repoUrl')) {
+              return inputValid();
+            } else {
+              // Make sure the repo branch isn't set if a repo URL isn't set
+              return repoBranch
+                ? inputInvalid(
+                    "Error: Can't specify a branch if a repository URL isn't also specified",
+                  )
+                : inputValid();
+            }
+          },
           initialValue:
             this.props.initialSdkConfig &&
             this.props.initialSdkConfig.gitInfo &&
@@ -136,7 +147,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               // Make sure the username isn't set if a repo URL isn't set
               return username
                 ? inputInvalid(
-                    "Error: Can't specify a username is a repository URL isn't also specified",
+                    "Error: Can't specify a username if a repository URL isn't also specified",
                   )
                 : inputValid();
             }
@@ -159,7 +170,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               // Make sure the access token isn't set if a repo URL isn't set
               return accessToken
                 ? inputInvalid(
-                    "Error: Can't specify a personal access token is a repository URL isn't also specified",
+                    "Error: Can't specify a personal access token if a repository URL isn't also specified",
                   )
                 : inputValid();
             }
@@ -177,20 +188,6 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
       },
       complete: false,
       goToStep: () => this.goToStep(1),
-    },
-    {
-      name: 'File Cleanup',
-      inputStore: new ValidatedFormStore({}),
-      render: () => <div>TODO</div>,
-      complete: false,
-      goToStep: () => this.goToStep(2),
-    },
-    {
-      name: 'Readme Cleanup',
-      inputStore: new ValidatedFormStore({}),
-      render: () => <div>TODO</div>,
-      complete: false,
-      goToStep: () => this.goToStep(3),
     },
   ];
 
@@ -292,7 +289,13 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
         {({ classes }) => (
           <Observer>
             {() => (
-              <Dialog open onClose={onCloseModal} maxWidth="md" {...dialogProps}>
+              <Dialog
+                open
+                onClose={onCloseModal}
+                maxWidth="sm"
+                fullWidth
+                {...dialogProps}
+              >
                 <form>
                   <DialogTitle {...titleProps} />
                   <DialogContent classes={{ root: classes.modalContent }}>
