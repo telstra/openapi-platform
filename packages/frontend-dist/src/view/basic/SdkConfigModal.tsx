@@ -107,7 +107,7 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
         repoUrl: {
           validation: repoUrl => {
             if (!repoUrl) {
-              return inputInvalid('Error: URL cannot be empty');
+              return inputValid();
             } else if (!isWebUri(repoUrl)) {
               return inputInvalid('Error: Invalid URL');
             }
@@ -128,8 +128,19 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               : '',
         },
         username: {
-          validation: username =>
-            !username ? inputInvalid('Error: Missing username') : inputValid(),
+          validation: (username, inputStore) => {
+            if (inputStore.getInputValue('repoUrl')) {
+              // Only check that a username is present if the repo URL is set
+              return !username ? inputInvalid('Error: Missing username') : inputValid();
+            } else {
+              // Make sure the username isn't set if a repo URL isn't set
+              return username
+                ? inputInvalid(
+                    "Error: Can't specify a username is a repository URL isn't also specified",
+                  )
+                : inputValid();
+            }
+          },
           initialValue:
             this.props.initialSdkConfig &&
             this.props.initialSdkConfig.gitInfo &&
@@ -138,10 +149,21 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
               : '',
         },
         accessToken: {
-          validation: accessToken =>
-            !accessToken
-              ? inputInvalid('Error: Missing personal access token')
-              : inputValid(),
+          validation: (accessToken, inputStore) => {
+            if (inputStore.getInputValue('repoUrl')) {
+              // Only check that an access token is present if the repo URL is set
+              return !accessToken
+                ? inputInvalid('Error: Missing personal access token')
+                : inputValid();
+            } else {
+              // Make sure the access token isn't set if a repo URL isn't set
+              return accessToken
+                ? inputInvalid(
+                    "Error: Can't specify a personal access token is a repository URL isn't also specified",
+                  )
+                : inputValid();
+            }
+          },
           initialValue:
             this.props.initialSdkConfig &&
             this.props.initialSdkConfig.gitInfo &&
@@ -239,10 +261,28 @@ export class SdkConfigModal extends Component<SdkConfigModalProps> {
       'target' | 'version' | 'options'
     >;
     const target = basicInfoInputStore.getInputValue('target');
-    const version = basicInfoInputStore.getInputValue('version');
+    const version = basicInfoInputStore.getInputValue('version')
+      ? basicInfoInputStore.getInputValue('version')
+      : undefined;
     const options = JSON.parse(basicInfoInputStore.getInputValue('options'));
+
+    const gitInfoInputStore = this.steps[1].inputStore as ValidatedFormStore<
+      'repoUrl' | 'repoBranch' | 'username' | 'accessToken'
+    >;
+    const gitInfo = gitInfoInputStore.getInputValue('repoUrl')
+      ? {
+          repoUrl: gitInfoInputStore.getInputValue('repoUrl'),
+          auth: {
+            username: gitInfoInputStore.getInputValue('username'),
+            token: gitInfoInputStore.getInputValue('accessToken'),
+          },
+          branch: gitInfoInputStore.getInputValue('repoBranch')
+            ? gitInfoInputStore.getInputValue('repoBranch')
+            : undefined,
+        }
+      : undefined;
     // TODO: submittedSdkConfig.pushPath = "";
-    this.props.onSubmitSdkConfig({ target, version, options });
+    this.props.onSubmitSdkConfig({ target, version, options, gitInfo });
   }
 
   public render() {

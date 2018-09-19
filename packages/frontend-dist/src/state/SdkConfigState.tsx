@@ -1,6 +1,6 @@
 import { observable, computed, action } from 'mobx';
 
-import { HasId, Id, SdkConfig } from '@openapi-platform/model';
+import { HasId, Id, SdkConfig, GitInfo } from '@openapi-platform/model';
 import { client } from '../client';
 
 class SdkConfigState {
@@ -51,7 +51,8 @@ export interface AddedSdkConfig {
   specId?: number;
   target: string;
   version?: string;
-  options?: any;
+  options: any;
+  gitInfo?: GitInfo;
 }
 
 export const state: SdkConfigState = new SdkConfigState();

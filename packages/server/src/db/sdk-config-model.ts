@@ -25,7 +25,7 @@ export function createSdkConfigModel(dbConnection: Sequelize.Sequelize) {
       },
       options: {
         type: Sequelize.JSON,
-        allowNull: true,
+        allowNull: false,
       },
       gitInfo: {
         type: Sequelize.JSON,
