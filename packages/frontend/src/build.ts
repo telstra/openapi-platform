@@ -1,8 +1,8 @@
 import webpack from 'webpack';
 
+import { apiBaseUrl } from '@openapi-platform/config';
 import createWebpackConfig from '../webpack.config';
 import { config } from './config';
-import { apiBaseUrl } from '@openapi-platform/config';
 import { logger } from './logger';
 
 export async function build({ ...webpackOptions } = {}) {

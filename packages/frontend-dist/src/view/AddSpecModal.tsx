@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import {
   Button,
-  Typography,
   Dialog,
   DialogActions,
   DialogContent,

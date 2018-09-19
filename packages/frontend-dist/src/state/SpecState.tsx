@@ -1,4 +1,4 @@
-import { HasId, Spec, SdkConfig } from '@openapi-platform/model';
+import { HasId, Spec } from '@openapi-platform/model';
 import { observable, computed, action } from 'mobx';
 import { client } from '../client';
 import { state as sdkConfigState } from './SdkConfigState';

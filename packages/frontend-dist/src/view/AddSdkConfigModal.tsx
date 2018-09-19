@@ -89,9 +89,6 @@ export class AddSdkConfigModal extends Component<
         {() => (
           <>
             <SdkConfigModal
-              submitButtonProps={{
-                children: sdkConfigId ? 'Update' : 'Add',
-              }}
               initialSdkConfig={
                 sdkConfigId
                   ? sdkConfigState.sdkConfigs.get(parseInt(sdkConfigId, 10))
