@@ -57,12 +57,12 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
         .service('sdks')
         .create({ sdkConfigId: this.props.sdkConfig.id });
 
+      // Errors from building a SDK via the open API call will result in sdk.buildStatus === FAIL.
+      // sdk.buildError will contain the error message.
       this.props.sdkConfig.buildStatus = sdk.buildStatus;
       this.latestSdkUrl = sdk.path;
     } catch (err) {
-      console.log('omg err');
-      console.log(err);
-
+      // Catches errors apart from the open API call to build the SDK.
       this.props.sdkConfig.buildStatus = BuildStatus.Fail;
     }
   };

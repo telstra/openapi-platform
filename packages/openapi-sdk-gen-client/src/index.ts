@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-import { HasId } from '@openapi-platform/model';
+import { BuildStatus, HasId } from '@openapi-platform/model';
 import { SdkConfig } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
@@ -30,5 +30,6 @@ export async function generateSdk(
   return {
     path: json.link,
     sdkConfigId: sdkConfig.id,
+    buildStatus: BuildStatus.Success,
   };
 }

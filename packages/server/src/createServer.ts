@@ -111,7 +111,7 @@ export async function createServer() {
           // Create the built SDK.
           context.data.path = sdk.path;
           context.data.sdkConfigId = sdkConfig.id;
-          context.data.buildStatus = BuildStatus.Success;
+          context.data.buildStatus = sdk.buildStatus;
         } catch (error) {
           context.data.sdkConfigId = sdkConfig.id;
           context.data.path = '';

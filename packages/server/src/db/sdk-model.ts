@@ -25,8 +25,8 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
       },
       buildError: {
         type: Sequelize.STRING,
-        allowNull: true
-      }
+        allowNull: true,
+      },
     },
     {
       freezeTableName: true,
@@ -65,8 +65,8 @@ export function createSdkService(sdkModel) {
           },
           buildError: {
             type: 'string',
-            description: 'Error message if the build of this SDK failed'
-          }
+            description: 'Error message if the build of this SDK failed',
+          },
         },
         additionalProperties: true,
       },

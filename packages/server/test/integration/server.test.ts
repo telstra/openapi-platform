@@ -171,7 +171,9 @@ describe('test server', () => {
           };
           throw new Error(swaggerCodegenMalformedOptionsResponse.message);
         });
-        await expect(app.service('sdks').create(sdkData)).rejects.toThrowError();
+
+        const sdk = await app.service('sdks').create(sdkData);
+        expect(sdk.buildStatus).toEqual(BuildStatus.Fail);
 
         // generateSdk() called once.
         expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
@@ -204,7 +206,8 @@ describe('test server', () => {
           throw new Error(swaggerCodegenInvalidSpecificationResponse.message);
         });
 
-        await expect(app.service('sdks').create(sdkData)).rejects.toThrowError();
+        const sdk = await app.service('sdks').create(sdkData);
+        expect(sdk.buildStatus).toEqual(BuildStatus.Fail);
 
         expect(sdkGeneration.generateSdk).toHaveBeenCalledTimes(1);
       });
