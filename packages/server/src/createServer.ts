@@ -90,22 +90,32 @@ export async function createServer() {
     before: {
       async create(context) {
         const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
-        
+
+        // Update the SDK build config.
         sdkConfig.buildStatus = BuildStatus.Running;
         await sdkConfigService.update(sdkConfig.id, sdkConfig, {});
 
         const spec = await specService.get(sdkConfig.specId, {});
-        const sdk = await generateSdk(logger, spec, sdkConfig);
-        /*
-        TODO: The linkside of the info object is probably temporary.
-        Might need to consider downloading the object from
-        wherever the Swagger gen API stores it.
-        */
-        if (sdkConfig.gitInfo) {
-          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, { logger });
+
+        try {
+          const sdk = await generateSdk(logger, spec, sdkConfig);
+          /*
+          TODO: The linkside of the info object is probably temporary.
+          Might need to consider downloading the object from
+          wherever the Swagger gen API stores it.
+          */
+          if (sdkConfig.gitInfo) {
+            await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, { logger });
+          }
+
+          // Create the built SDK.
+          context.data.path = sdk.path;
+          context.data.sdkConfigId = sdkConfig.id;
+          context.data.buildStatus = BuildStatus.Success;
+        } catch (error) {
+          context.data.sdkConfigId = sdkConfig.id;
+          context.data.buildStatus = BuildStatus.Fail;
         }
-        context.data.path = sdk.path;
-        context.data.sdkConfigId = sdkConfig.id;
         return context;
       },
     },
@@ -113,15 +123,14 @@ export async function createServer() {
       async create(context) {
         const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
         sdkConfig.buildStatus = BuildStatus.Success;
-        await sdkConfigService.update(context.data.sdkConfigId, sdkConfig, {});
-      }
+      },
     },
     error: {
       async create(context) {
         const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
         sdkConfig.buildStatus = BuildStatus.Fail;
-        const temp = await sdkConfigService.update(sdkConfig.id, sdkConfig, {});
-      }
+        await sdkConfigService.update(sdkConfig.id, sdkConfig, {});
+      },
     },
   });
 
