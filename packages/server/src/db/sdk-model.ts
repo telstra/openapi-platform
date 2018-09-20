@@ -19,6 +19,10 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      buildStatus: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,
@@ -51,6 +55,10 @@ export function createSdkService(sdkModel) {
             type: 'string',
             description: 'URL from where the SDK can be downloaded from',
           },
+          buildStatus: {
+            type: 'string',
+            description: 'The status of this specific SDK build',
+          }
         },
         additionalProperties: true,
       },
