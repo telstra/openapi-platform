@@ -45,6 +45,7 @@ export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> 
  * For use in lists, grids, etc.
  */
 export class SdkConfigItem extends Component<SdkConfigItemProps> {
+  // This is the download path to the most recently created SDK for this config.
   @observable
   private latestSdkUrl?: string;
 
@@ -55,10 +56,13 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
       const sdk: HasId<Sdk> = await client
         .service('sdks')
         .create({ sdkConfigId: this.props.sdkConfig.id });
-      // TODO: Need to get this from the actual backend
-      this.props.sdkConfig.buildStatus = BuildStatus.Success;
+
+      this.props.sdkConfig.buildStatus = sdk.buildStatus;
       this.latestSdkUrl = sdk.path;
     } catch (err) {
+      console.log('omg err');
+      console.log(err);
+
       this.props.sdkConfig.buildStatus = BuildStatus.Fail;
     }
   };
@@ -68,18 +72,16 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   };
 
   private getLatestSdk = async (sdkConfig: HasId<SdkConfig>) => {
-    const sdks: Sdk[] = await client
-      .service('sdks')
-      .find({
-        query: {
-          $sort: {
-            createdAt: -1,
-          },
-          sdkConfigId: sdkConfig.id,
+    const sdks: Sdk[] = await client.service('sdks').find({
+      query: {
+        $sort: {
+          createdAt: -1,
         },
-      });
-      this.latestSdkUrl = sdks[0].path;
-  }
+        sdkConfigId: sdkConfig.id,
+      },
+    });
+    this.latestSdkUrl = sdks.length > 0 ? sdks[0].path : '';
+  };
 
   public render() {
     const { sdkConfig } = this.props;
