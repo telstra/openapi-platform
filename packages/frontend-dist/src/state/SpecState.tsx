@@ -1,13 +1,14 @@
-import { HasId } from '@openapi-platform/model';
-import { Spec } from '@openapi-platform/model';
+import { HasId, Spec } from '@openapi-platform/model';
 import { observable, computed, action } from 'mobx';
 import { client } from '../client';
+import { state as sdkConfigState } from './SdkConfigState';
 
 export interface SpecState {
   specs: Map<number, HasId<Spec>>;
   specList: Array<HasId<Spec>>;
   addSpec: (addedSpec: Spec) => Promise<void>;
   updateSpec: (id: number, updatedSpec: Spec) => Promise<void>;
+  deleteSpec: (id: number) => Promise<void>;
 }
 
 export class BasicSpecState implements SpecState {
@@ -28,6 +29,20 @@ export class BasicSpecState implements SpecState {
       .service('specifications')
       .update(id, updatedSpec);
     this.specs.set(id, spec);
+  }
+  @action
+  public async deleteSpec(id: number): Promise<void> {
+    // Delete the spec
+    await client.service('specifications').remove(id);
+    this.specs.delete(id);
+    // Delete all SDK configurations associated with the spec (only locally, the hook for
+    // specification removal will delete any associated SDK configurations from the database)
+    const sdkConfigsToDelete = sdkConfigState.specSdkConfigs.get(id);
+    if (sdkConfigsToDelete !== undefined) {
+      sdkConfigsToDelete.forEach(sdkConfig =>
+        sdkConfigState.sdkConfigs.delete(sdkConfig.id),
+      );
+    }
   }
 }
 

@@ -26,7 +26,7 @@ export interface SdkConfig {
    * A full list of options for a given target language can be obtained from:
    * https://generator.swagger.io/api/gen/clients/<TARGET_LANGUAGE>
    */
-  options?: any;
+  options: any;
 
   /**
    * The current build status of the SDK.
