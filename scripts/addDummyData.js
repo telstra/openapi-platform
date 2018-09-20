@@ -19,16 +19,19 @@ async function addDummyData(specs, sdkConfigs) {
     {
       target: 'java',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'python',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'go',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
   );
@@ -43,16 +46,19 @@ async function addDummyData(specs, sdkConfigs) {
     {
       target: 'java',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'python',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
     {
       target: 'go',
       version: 'v1.0.0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
   );
@@ -66,16 +72,19 @@ async function addDummyData(specs, sdkConfigs) {
     {
       target: 'java',
       version: 'v1.0.34',
+      options: {},
       buildStatus: BuildStatus.Success,
     },
     {
       target: 'javascript',
       version: 'v1.0.35',
+      options: {},
       buildStatus: BuildStatus.Running,
     },
     {
       target: 'haskell-http-client',
       version: 'v0',
+      options: {},
       buildStatus: BuildStatus.NotRun,
     },
   );
@@ -88,6 +97,7 @@ async function addDummyData(specs, sdkConfigs) {
   await addToSpec(spec2, {
     target: 'go',
     version: 'alpha',
+    options: {},
     buildStatus: BuildStatus.Fail,
   });
   const spec3 = await specs.create({
@@ -101,11 +111,13 @@ async function addDummyData(specs, sdkConfigs) {
     {
       target: 'python',
       version: 'alpha',
+      options: {},
       buildStatus: BuildStatus.Success,
     },
     {
       target: 'java',
       version: 'alpha',
+      options: {},
       buildStatus: BuildStatus.Success,
     },
   );

@@ -16,9 +16,9 @@ import { ButtonProps } from '@material-ui/core/Button';
 import { DialogProps } from '@material-ui/core/Dialog';
 import { DialogTitleProps } from '@material-ui/core/DialogTitle';
 import { Observer } from 'mobx-react';
+import { isWebUri } from 'valid-url';
 
 import { Spec } from '@openapi-platform/model';
-import { isWebUri } from 'valid-url';
 import { Category } from '../../Storybook';
 import {
   ValidatedFormStore,
@@ -105,11 +105,6 @@ export class SpecModal extends Component<SpecModalProps> {
     this.inputStore.setInputValue(event.target.id, event.target.value);
   private onInputBlur = event => this.inputStore.updateInputError(event.target.id);
 
-  private onAddButtonClick = event => {
-    event.preventDefault();
-    this.onSubmitSpec();
-  };
-
   public render() {
     const {
       onCloseModal,
@@ -185,12 +180,7 @@ export class SpecModal extends Component<SpecModalProps> {
                     </FormControl>
                   </DialogContent>
                   <DialogActions>
-                    <Button
-                      color="primary"
-                      type="button"
-                      onClick={onCloseModal}
-                      {...cancelButtonProps}
-                    >
+                    <Button color="primary" onClick={onCloseModal} {...cancelButtonProps}>
                       Cancel
                     </Button>
                     {showSubmitProgress ? (
@@ -198,8 +188,7 @@ export class SpecModal extends Component<SpecModalProps> {
                     ) : (
                       <Button
                         color="primary"
-                        type="submit"
-                        onClick={this.onAddButtonClick}
+                        onClick={this.onSubmitSpec}
                         {...submitButtonProps}
                       />
                     )}
