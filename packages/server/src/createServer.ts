@@ -114,7 +114,9 @@ export async function createServer() {
           context.data.buildStatus = BuildStatus.Success;
         } catch (error) {
           context.data.sdkConfigId = sdkConfig.id;
+          context.data.path = '';
           context.data.buildStatus = BuildStatus.Fail;
+          context.data.buildError = error.toString();
         }
         return context;
       },
@@ -123,6 +125,7 @@ export async function createServer() {
       async create(context) {
         const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
         sdkConfig.buildStatus = BuildStatus.Success;
+        await sdkConfigService.update(context.data.sdkConfigId, sdkConfig, {});
       },
     },
     error: {
