@@ -124,7 +124,7 @@ export async function createServer() {
     after: {
       async create(context) {
         const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
-        sdkConfig.buildStatus = BuildStatus.Success;
+        sdkConfig.buildStatus = context.result.buildStatus;
         await sdkConfigService.update(context.data.sdkConfigId, sdkConfig, {});
       },
     },
