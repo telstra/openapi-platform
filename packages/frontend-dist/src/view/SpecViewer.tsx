@@ -14,12 +14,14 @@ export const SpecViewer: SFC<RouteComponentProps<{}>> = observer(({ history, mat
   const sdkConfigs = sdkConfigState.specSdkConfigs.get(specId);
   const onEditSdkConfigModal = (sdkConfig: HasId<SdkConfig>) =>
     history.push(`${match.url}/${sdkConfig.specId}/sdk-configs/${sdkConfig.id}/edit`);
+  const onNavigateBack = () => history.push(match.url.replace('specs', 'overview'));
 
   return spec && sdkConfigs ? (
     <SpecInformation
       spec={spec}
       sdkConfigs={sdkConfigs}
       onEditSdkConfig={onEditSdkConfigModal}
+      onNavigateBack={onNavigateBack}
     />
   ) : (
     <NotFound item="specification" />

@@ -12,6 +12,7 @@ export interface SimpleToolbarProps extends React.DOMAttributes<HTMLDivElement> 
   onSearchInputChange: (event: { target: { value: string } }) => void;
   actions: any[];
   showBack?: boolean;
+  onNavigateBack?: () => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -59,13 +60,14 @@ export const SimpleToolbar: SFC<SimpleToolbarProps> = ({
   onSearchInputChange,
   actions,
   showBack,
+  onNavigateBack,
 }) => (
   <Styled>
     {({ classes }) => (
       <Toolbar className={classes.toolbar}>
         <div className={classes.leftArea}>
           {showBack ? (
-            <IconButton className={classes.title}>
+            <IconButton className={classes.title} onClick={onNavigateBack}>
               <Icons.ArrowBack />
             </IconButton>
           ) : (

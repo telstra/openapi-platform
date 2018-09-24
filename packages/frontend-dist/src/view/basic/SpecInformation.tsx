@@ -64,6 +64,7 @@ export interface SpecInformation {
   spec: HasId<Spec>;
   sdkConfigs: Array<HasId<SdkConfig>>;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
+  onNavigateBack: () => void;
 }
 
 const onSearch = event => {};
@@ -75,6 +76,7 @@ export const SpecInformation: SFC<SpecInformation> = ({
   spec,
   sdkConfigs,
   onEditSdkConfig,
+  onNavigateBack,
 }) => (
   <Styled>
     {({ classes }) => [
@@ -85,6 +87,7 @@ export const SpecInformation: SFC<SpecInformation> = ({
         onSearchInputChange={onSearch}
         actions={[]}
         showBack
+        onNavigateBack={onNavigateBack}
       />,
       <div className={classes.content} key={1}>
         <ContentContainer>
