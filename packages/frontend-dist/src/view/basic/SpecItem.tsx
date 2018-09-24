@@ -78,6 +78,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onEditSpec: (spec: HasId<Spec>) => void;
+  onDeleteSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   onSpecOpen: (id: Id | null) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
@@ -94,6 +95,8 @@ export class SpecItem extends Component<SpecItemProps> {
   private specOpen = () => this.props.onSpecOpen(this.props.spec.id);
 
   private onEditSpec = () => this.props.onEditSpec(this.props.spec);
+
+  private onDeleteSpec = () => this.props.onDeleteSpec(this.props.spec);
 
   private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
 
@@ -166,6 +169,9 @@ export class SpecItem extends Component<SpecItemProps> {
             </ExpansionPanelDetails>
             <Divider />
             <ExpansionPanelActions>
+              <Button color="secondary" onClick={this.onDeleteSpec}>
+                Delete
+              </Button>
               <Button color="primary" onClick={this.onEditSpec}>
                 Edit
               </Button>

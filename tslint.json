@@ -12,6 +12,7 @@
       "member-ordering": false,
       "no-console": [true, "log", "warn"],
       "no-empty": false,
+      "no-unused-variable": true,
       "object-literal-sort-keys": false,
       "ordered-imports": [true, {
         "named-imports-order": "any"

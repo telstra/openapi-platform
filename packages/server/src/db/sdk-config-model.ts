@@ -25,7 +25,7 @@ export function createSdkConfigModel(dbConnection: Sequelize.Sequelize) {
       },
       options: {
         type: Sequelize.JSON,
-        allowNull: true,
+        allowNull: false,
       },
       gitInfo: {
         type: Sequelize.JSON,
@@ -65,11 +65,36 @@ export function createSdkConfigService(sdkConfigModel) {
             format: 'int64',
             description: 'ID of the specification associated with the SDK configuration',
           },
+          target: {
+            type: 'string',
+            description: 'Language that the plan will generate an SDK for',
+          },
+          version: {
+            type: 'string',
+            description: 'The version number of the SDK',
+          },
+          options: {
+            type: 'object',
+            description: 'Options to pass to OpenAPI Generator when generating an SDK',
+            additionalProperties: true,
+          },
+          gitInfo: {
+            type: 'object',
+            description: 'Used as a repository to push SDKs to',
+            additionalProperties: true,
+          },
+          buildStatus: {
+            type: 'string',
+            description: 'The status of the build',
+          },
         },
         additionalProperties: true,
       },
       'sdkConfigs list': {
         type: 'array',
+        items: {
+          $ref: '#definitions/plans',
+        },
       },
     },
   };
