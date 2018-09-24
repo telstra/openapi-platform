@@ -63,6 +63,7 @@ const Styled: any = createStyled(theme => ({
 export interface SpecInformation {
   spec: HasId<Spec>;
   sdkConfigs: Array<HasId<SdkConfig>>;
+  onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 const onSearch = event => {};
@@ -70,7 +71,11 @@ const onSearch = event => {};
 /**
  * Shows detailed information about a specified Spec
  */
-export const SpecInformation: SFC<SpecInformation> = ({ spec, sdkConfigs }) => (
+export const SpecInformation: SFC<SpecInformation> = ({
+  spec,
+  sdkConfigs,
+  onEditSdkConfig,
+}) => (
   <Styled>
     {({ classes }) => [
       <SimpleToolbar
@@ -120,7 +125,11 @@ export const SpecInformation: SFC<SpecInformation> = ({ spec, sdkConfigs }) => (
             <Table className={classes.sdkList}>
               <TableBody>
                 {sdkConfigs.map(sdk => (
-                  <SdkConfigItem sdkConfig={sdk} key={sdk.id} />
+                  <SdkConfigItem
+                    sdkConfig={sdk}
+                    key={sdk.id}
+                    onEditSdkConfig={onEditSdkConfig}
+                  />
                 ))}
               </TableBody>
             </Table>

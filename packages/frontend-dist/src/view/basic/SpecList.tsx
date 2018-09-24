@@ -13,7 +13,7 @@ export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   onEditSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
-  onSpecSelected: (id: Id | null) => void;
+  onSpecOpen: (id: Id | null) => void;
 }
 
 const Styled = createStyled(theme => ({
@@ -41,6 +41,7 @@ export class SpecList extends Component<SpecListProps, {}> {
       onAddSdkConfig,
       specs,
       onEditSdkConfig,
+      onSpecOpen,
     } = this.props;
     return (
       <Styled>
@@ -59,6 +60,7 @@ export class SpecList extends Component<SpecListProps, {}> {
                       onEditSpec={onEditSpec}
                       onAddSdkConfig={onAddSdkConfig}
                       onEditSdkConfig={onEditSdkConfig}
+                      onSpecOpen={onSpecOpen}
                     />
                   ))}
                 </div>
