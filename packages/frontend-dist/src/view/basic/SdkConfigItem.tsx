@@ -5,8 +5,7 @@ import * as Icons from '@material-ui/icons';
 import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
-import { HasId } from '@openapi-platform/model';
-import { SdkConfig, BuildStatus } from '@openapi-platform/model';
+import { SdkConfig, BuildStatus, HasId } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';
 import { client } from '../../client';
 import { createStyled } from '../createStyled';
@@ -37,7 +36,7 @@ const Styled: any = createStyled(theme => ({
 
 export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
   sdkConfig: HasId<SdkConfig>;
-  onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
+  onEditSdkConfig?: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 /**
@@ -58,9 +57,8 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
     this.latestSdkUrl = sdk.path;
   };
 
-  private onEditSdkConfig = () => {
-    this.props.onEditSdkConfig(this.props.sdkConfig);
-  };
+  private onEditSdkConfig = () =>
+    this.props.onEditSdkConfig && this.props.onEditSdkConfig(this.props.sdkConfig);
 
   public render() {
     const { sdkConfig } = this.props;
@@ -91,14 +89,6 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
-                    {this.latestSdkUrl ? (
-                      <IconButton href={this.latestSdkUrl}>
-                        <Icons.CloudDownload />
-                      </IconButton>
-                    ) : null}
-                    <IconButton aria-label="Edit" onClick={this.onEditSdkConfig}>
-                      <Icons.Edit />
-                    </IconButton>
                     <Button
                       size="small"
                       disabled={sdkConfig.buildStatus === BuildStatus.Running}
@@ -108,6 +98,16 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                         ? 'Running...'
                         : 'Run'}
                     </Button>
+                    {this.latestSdkUrl ? (
+                      <IconButton href={this.latestSdkUrl}>
+                        <Icons.CloudDownload />
+                      </IconButton>
+                    ) : null}
+                    {this.props.onEditSdkConfig ? (
+                      <IconButton aria-label="Edit" onClick={this.onEditSdkConfig}>
+                        <Icons.Edit />
+                      </IconButton>
+                    ) : null}
                   </div>
                 </TableCell>
               </TableRow>

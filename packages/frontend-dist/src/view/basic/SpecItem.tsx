@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import {
   Button,
-  IconButton,
   Typography,
   List,
   ListItem,
@@ -58,18 +57,20 @@ const Styled: any = createStyled(theme => ({
     flexShrink: 0,
     minWidth: 0,
     alignItems: 'center',
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
   },
   sdkTitleSection: {
     flexGrow: 1,
     flexShrink: 0,
   },
-  sdkHeaderActions: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
   sdkList: {
     borderCollapse: 'separate',
     padding: [theme.spacing.unit / 2, 0],
+  },
+  placeholder: {
+    color: theme.palette.text.secondary,
+    textAlign: 'center',
   },
 }));
 
@@ -77,12 +78,8 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   spec: HasId<Spec>;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  onEditSpec: (spec: HasId<Spec>) => void;
-  onDeleteSpec: (spec: HasId<Spec>) => void;
-  onAddSdkConfig: (spec: HasId<Spec>) => void;
   onSpecOpen: (id: Id | null) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
-  onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 /**
@@ -94,14 +91,8 @@ export class SpecItem extends Component<SpecItemProps> {
     this.props.onPanelChange(this.props.spec, expanded);
   private specOpen = () => this.props.onSpecOpen(this.props.spec.id);
 
-  private onEditSpec = () => this.props.onEditSpec(this.props.spec);
-
-  private onDeleteSpec = () => this.props.onDeleteSpec(this.props.spec);
-
-  private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
-
   public render() {
-    const { spec, expanded, sdkConfigs = [], onEditSdkConfig } = this.props;
+    const { spec, expanded, sdkConfigs } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -142,39 +133,31 @@ export class SpecItem extends Component<SpecItemProps> {
                       SDK Configurations
                     </Typography>
                   </div>
-                  <div className={classes.sdkHeaderActions}>
+                  {sdkConfigs ? (
                     <Button variant="flat" color="primary" size="small">
                       Run all
                     </Button>
-                    <IconButton
-                      aria-label="Add SDK Configuration"
-                      onClick={this.onAddSdkConfig}
-                    >
-                      <Icons.Add />
-                    </IconButton>
-                  </div>
+                  ) : null}
                 </div>
-                <Table classes={{ root: classNames(classes.sdkList, classes.bordered) }}>
-                  <TableBody>
-                    {sdkConfigs.map(sdkConfig => (
-                      <SdkConfigItem
-                        key={sdkConfig.id}
-                        sdkConfig={sdkConfig}
-                        onEditSdkConfig={onEditSdkConfig}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
+                {sdkConfigs ? (
+                  <Table
+                    classes={{ root: classNames(classes.sdkList, classes.bordered) }}
+                  >
+                    <TableBody>
+                      {sdkConfigs.map(sdkConfig => (
+                        <SdkConfigItem key={sdkConfig.id} sdkConfig={sdkConfig} />
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <Typography variant="body2" className={classes.placeholder}>
+                    No SDK Configurations
+                  </Typography>
+                )}
               </div>
             </ExpansionPanelDetails>
             <Divider />
             <ExpansionPanelActions>
-              <Button color="secondary" onClick={this.onDeleteSpec}>
-                Delete
-              </Button>
-              <Button color="primary" onClick={this.onEditSpec}>
-                Edit
-              </Button>
               <Button color="primary" onClick={this.specOpen}>
                 Open
               </Button>

@@ -40,7 +40,9 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ specId: str
   };
 
   private closeModalOnDelete = () => {
-    this.props.history.push(goUpUrl(this.props.match.url, 2));
+    this.props.history.push(
+      goUpUrl(this.props.match.url.replace('specs', 'overview'), 2),
+    );
   };
 
   private closeErrorModal = () => {

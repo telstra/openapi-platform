@@ -1,8 +1,11 @@
 import React, { ComponentType } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import { AddSdkConfigModal } from './AddSdkConfigModal';
+import { AddSpecModal } from './AddSpecModal';
 import { NotFound } from './basic/NotFound';
 import { createStyled } from './createStyled';
+import { DeleteSpecModal } from './DeleteSpecModal';
 import { NavigationMenu } from './NavigationMenu';
 import { Overview } from './Overview';
 import { ProfileViewer } from './ProfileViewer';
@@ -50,6 +53,18 @@ export const Page: ComponentType<{}> = () => (
             <Route path="/settings" component={SettingsViewer} />
             <Route component={NotFound} />
           </Switch>
+          <Route exact path="/specs/:specId/edit" component={AddSpecModal} />
+          <Route exact path="/specs/:specId/delete" component={DeleteSpecModal} />
+          <Route
+            exact
+            path="/specs/:specId/sdk-configs/add"
+            component={AddSdkConfigModal}
+          />
+          <Route
+            exact
+            path="/specs/:specId/sdk-configs/:sdkConfigId/edit"
+            component={AddSdkConfigModal}
+          />
         </main>
       </div>
     )}
