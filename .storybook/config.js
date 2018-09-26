@@ -3,11 +3,13 @@ import { createStories } from './createStories';
 import { withKnobs } from '@storybook/addon-knobs';
 import { checkA11y } from '@storybook/addon-a11y';
 import { setOptions } from '@storybook/addon-options';
-import withBackgrounds from '@storybook/addon-backgrounds';
+import { withViewport } from '@storybook/addon-viewport';
+import { withBackgrounds } from '@storybook/addon-backgrounds';
 import { addDecorator } from '@storybook/react';
 
 addDecorator(withKnobs);
 addDecorator(checkA11y);
+addDecorator(withViewport('responsive'));
 addDecorator(withBackgrounds());
 setOptions({
   name: 'OpenAPI Platform',
