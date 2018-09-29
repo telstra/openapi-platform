@@ -1,0 +1,14 @@
+{
+  "name": "@openapi-platform/download-util",
+  "version": "1.0.0-alpha.0",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "license": "Apache-2",
+  "private": false,
+  "dependencies": {
+    "adm-zip": "^0.4.11",
+    "del": "^3.0.0",
+    "fs-extra": "^7.0.0",
+    "globby": "^8.0.1"
+  }
+}
