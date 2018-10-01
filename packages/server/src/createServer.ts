@@ -89,11 +89,13 @@ export async function createServer() {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
+        const sdkConfig = await app
+          .service('sdkConfigs')
+          .get(context.data.sdkConfigId, {});
 
         // Update the SDK build config.
         sdkConfig.buildStatus = BuildStatus.Running;
-        await sdkConfigService.update(sdkConfig.id, sdkConfig, {});
+        await app.service('sdkConfigs').update(sdkConfig.id, sdkConfig, {});
 
         const spec = await specService.get(sdkConfig.specId, {});
 
@@ -123,16 +125,20 @@ export async function createServer() {
     },
     after: {
       async create(context) {
-        const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
+        const sdkConfig = await app
+          .service('sdkConfigs')
+          .get(context.data.sdkConfigId, {});
         sdkConfig.buildStatus = context.result.buildStatus;
-        await sdkConfigService.update(context.data.sdkConfigId, sdkConfig, {});
+        await app.service('sdkConfigs').update(context.data.sdkConfigId, sdkConfig, {});
       },
     },
     error: {
       async create(context) {
-        const sdkConfig = await sdkConfigService.get(context.data.sdkConfigId, {});
+        const sdkConfig = await app
+          .service('sdkConfigs')
+          .get(context.data.sdkConfigId, {});
         sdkConfig.buildStatus = BuildStatus.Fail;
-        await sdkConfigService.update(sdkConfig.id, sdkConfig, {});
+        await app.service('sdkConfigs').update(sdkConfig.id, sdkConfig, {});
       },
     },
   });
