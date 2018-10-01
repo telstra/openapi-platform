@@ -74,6 +74,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   private getLatestSdk = async (sdkConfig: HasId<SdkConfig>) => {
     const sdks: Sdk[] = await client.service('sdks').find({
       query: {
+        $limit: 100,
         $sort: {
           createdAt: -1,
         },
