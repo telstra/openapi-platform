@@ -84,11 +84,13 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
     this.latestSdkUrl = sdks.length > 0 ? sdks[0].path : '';
   };
 
+  public componentDidMount() {
+    const { sdkConfig } = this.props;
+    this.getLatestSdk(sdkConfig);
+  }
+
   public render() {
     const { sdkConfig } = this.props;
-    if (sdkConfig.buildStatus === BuildStatus.Success) {
-      this.getLatestSdk(sdkConfig);
-    }
     return (
       <Styled>
         {({ classes }) => (
