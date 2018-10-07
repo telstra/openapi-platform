@@ -133,12 +133,57 @@ export async function createServer() {
         const spec = await app.service('specifications').get(sdkConfig.specId, {});
         const sdk = await generateSdk(logger, spec, sdkConfig);
         /*
-        TODO: The linkside of the info object is probably temporary.
-        Might need to consider downloading the object from
-        wherever the Swagger gen API stores it.
+          TODO: The linkside of the info object is probably temporary.
+          Might need to consider downloading the object from
+          wherever the Swagger gen API stores it.
         */
         if (sdkConfig.gitInfo) {
-          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, { logger });
+          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, {
+            hooks: {
+              clone: {
+                before: async hookContext => {
+                  logger.verbose(
+                    `Cloning ${hookContext.remoteSdkUrl} into ${hookContext.repoDir}`,
+                  );
+                },
+              },
+              downloadSdk: {
+                before: async hookContext => {
+                  logger.verbose('Dowloading SDK');
+                },
+              },
+              extractSdk: {
+                before: async hookContext => {
+                  logger.verbose(
+                    `Extracting ${hookContext.sdkArchivePath} to ${hookContext.sdkDir}`,
+                  );
+                },
+              },
+              moveSdkFilesToRepo: {
+                before: async hookContext => {
+                  logger.verbose(
+                    `Moving files from ${hookContext.sdkDir} to ${hookContext.repoDir}`,
+                  );
+                },
+              },
+              stage: {
+                before: async hookContext => {
+                  logger.verbose(`Staging ${hookContext.stagedPaths.length} paths`);
+                },
+              },
+              commit: {
+                before: async () => {
+                  // Maybe state the commit message and hash
+                  logger.verbose(`Committing changes`);
+                },
+              },
+              push: {
+                before: async () => {
+                  logger.verbose(`Pushing commits...`);
+                },
+              },
+            },
+          });
         }
         context.data.path = sdk.path;
         context.data.sdkConfigId = sdkConfig.id;
