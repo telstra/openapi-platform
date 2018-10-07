@@ -119,6 +119,8 @@ export async function updateRepoWithNewSdk(
   const hooks = withDefaultHooks(options.hooks);
   options.hooks = hooks;
 
+  context.gitInfo = gitInfo;
+  context.remoteSdkUrl = remoteSdkUrl;
   context.repoDir = await makeTempDir('repo');
   try {
     /*
