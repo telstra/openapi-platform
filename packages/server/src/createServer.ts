@@ -141,34 +141,40 @@ export async function createServer() {
           await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, {
             hooks: {
               clone: {
-                before: async hookContext => {
+                before: async gitHookContext => {
                   logger.verbose(
-                    `Cloning ${hookContext.remoteSdkUrl} into ${hookContext.repoDir}`,
+                    `Cloning ${gitHookContext.remoteSdkUrl} into ${
+                      gitHookContext.repoDir
+                    }`,
                   );
                 },
               },
               downloadSdk: {
-                before: async hookContext => {
+                before: async () => {
                   logger.verbose('Dowloading SDK');
                 },
               },
               extractSdk: {
-                before: async hookContext => {
+                before: async gitHookContext => {
                   logger.verbose(
-                    `Extracting ${hookContext.sdkArchivePath} to ${hookContext.sdkDir}`,
+                    `Extracting ${gitHookContext.sdkArchivePath} to ${
+                      gitHookContext.sdkDir
+                    }`,
                   );
                 },
               },
               moveSdkFilesToRepo: {
-                before: async hookContext => {
+                before: async gitHookContext => {
                   logger.verbose(
-                    `Moving files from ${hookContext.sdkDir} to ${hookContext.repoDir}`,
+                    `Moving files from ${gitHookContext.sdkDir} to ${
+                      gitHookContext.repoDir
+                    }`,
                   );
                 },
               },
               stage: {
-                before: async hookContext => {
-                  logger.verbose(`Staging ${hookContext.stagedPaths.length} paths`);
+                before: async gitHookContext => {
+                  logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
                 },
               },
               commit: {

@@ -1,13 +1,12 @@
-import { openapiLogger } from '@openapi-platform/logger';
-jest.mock('@openapi-platform/logger');
-
+import { withDefaultHooks } from '../../src/hooks';
+import { mockFunctions } from 'jest-mock-functions';
 // TODO: Would be really nice to have a in-memory-fs
 
 // Could put the following mocks in a __mocks__ folder but these mocks are somewhat specific to these tests
 jest.mock('isomorphic-git', () => {
   const actualModule = require.requireActual('isomorphic-git');
-  const { mockFunctions } = require('jest-mock-functions');
-  const mockedGitModule = mockFunctions(actualModule, {
+  const jestMockFunctions = require('jest-mock-functions');
+  const mockedGitModule = jestMockFunctions.mockFunctions(actualModule, {
     onMockedFunction: (fn, ogFn) => fn.mockImplementation((...other) => ogFn(...other)),
   });
   mockedGitModule.clone = jest.fn().mockImplementation((...options) => {
@@ -20,8 +19,8 @@ jest.mock('isomorphic-git', () => {
 
 jest.mock('../../src/file/index', () => {
   const actualModule = require.requireActual('../../src/file/index');
-  const { mockFunctions } = require('jest-mock-functions');
-  const mockedModule = mockFunctions(actualModule, {
+  const jestMockFunctions = require('jest-mock-functions');
+  const mockedModule = jestMockFunctions.mockFunctions(actualModule, {
     onMockedFunction: (fn, ogFn) => fn.mockImplementation((...other) => ogFn(...other)),
   });
   mockedModule.downloadToPath.mockImplementation(async path => {
@@ -35,7 +34,6 @@ jest.mock('../../src/file/index', () => {
   return mockedModule;
 });
 
-const logger = openapiLogger();
 /**
  * This is actually a test to make sure the other tests are going to work.
  */
@@ -46,10 +44,10 @@ it('temp dir actually works', async () => {
 
 describe('git', () => {
   describe('updateRepoWithNewSdk', () => {
-    it("doesn't crash", async () => {
+    it('valid inputs', async () => {
       // TODO: ES6 didn't work
       const { updateRepoWithNewSdk } = require('../../src');
-
+      const hooks = mockFunctions(withDefaultHooks(), { recursive: true });
       // TODO: Need to test the outputs of this method
       await updateRepoWithNewSdk(
         {
@@ -59,8 +57,14 @@ describe('git', () => {
           },
         },
         "This SDK URL shouldn't be used",
-        { logger },
+        { hooks },
       );
+      Object.keys(hooks).forEach(key => {
+        console.log(key);
+        const hook = hooks[key];
+        expect(hook.before).toBeCalledTimes(1);
+        expect(hook.after).toBeCalledTimes(1);
+      });
     });
   });
 });

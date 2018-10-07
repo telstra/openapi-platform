@@ -9,6 +9,9 @@ import { clone, push, add, listFiles, commit } from 'isomorphic-git';
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 
+import { HookOptions, withDefaultHooks, Hook, HookCallback } from './hooks';
+export { HookOptions, Hook, HookCallback };
+
 // Note: dir = directory
 
 export async function getAllStageableFilepathsInRepo(repoDir: string) {
@@ -49,59 +52,10 @@ async function extractSdkArchiveFileToDir(extractToDir: string, archiveFilePath:
   const zip = new AdmZip(archiveFilePath);
   await zip.extractAllTo(extractToDir, true);
 }
-type HookCallback<P = any | undefined, T = any> = (input: P) => Promise<T>;
-interface Hook<B = any, BR = any, A = any, AR = any> {
-  before: HookCallback<B, BR>;
-  after: HookCallback<A, AR>;
-}
 
-type HookKeys =
-  | 'stage'
-  | 'push'
-  | 'commit'
-  | 'clone'
-  | 'downloadSdk'
-  | 'moveSdkFilesToRepo'
-  | 'cleanRepo'
-  | 'extractSdk';
-const hookKeys = [
-  'stage',
-  'push',
-  'commit',
-  'clone',
-  'downloadSdk',
-  'moveSdkFilesToRepo',
-  'cleanRepo',
-  'extractSdk',
-];
-type HookOptions = { [key in HookKeys]?: Partial<Hook> };
-
-type Hooks = { [key in HookKeys]: Hook };
-
-interface Options {
+export interface Options {
   hooks?: HookOptions;
 }
-
-function defaultHook(): HookCallback {
-  return async () => {};
-}
-
-/**
- * This lets us avoid having to do undefined checks everywhere
- */
-function withDefaultHooks(hooks: HookOptions = {}): Hooks {
-  return hookKeys.reduce((obj, key) => {
-    const { before = defaultHook(), after = defaultHook() }: Hook = hooks[key]
-      ? hooks[key]
-      : {};
-    obj[key] = {
-      before,
-      after,
-    };
-    return obj;
-  }, {}) as Hooks;
-}
-
 /**
  * Tries to put the files of a remotely stored sdk ZIP file into a locally stored
  * repository.
@@ -171,7 +125,7 @@ export async function updateRepoWithNewSdk(
       TODO: This isn't great. We clone the repo everytime we generate an SDK.
       Preferably, we'd only do it once or have some kind of cache for repos we've already cloned.
       Would have to probably git reset --hard HEAD~ or something before adding the SDK to the cloned repo
-      just to make sure there aren't any stray files lying around in the cached repo.
+      just to make sure there aren't any stray unstaged files lying around in the cached repo.
     */
     await hooks.clone.before(context);
     await clone({
