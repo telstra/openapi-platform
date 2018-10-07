@@ -191,6 +191,12 @@ export async function createServer() {
     app.use(cors());
   }
 
+  app.hooks({
+    error(hook) {
+      logger.error(hook.error);
+    },
+  });
+
   // TODO: Use migrations instead of sync to create tables
   await specModel.sync();
   await sdkConfigModel.sync();

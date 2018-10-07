@@ -24,3 +24,4 @@ that has permissions to **clone** and **push** the git repository that you want 
 
 ## Configuration
 You can create a config file in your current working directory called `openapi-platform.config.xxx` where xxx is a `json`, `yaml` or `json5`. 
+For more detailed information about configuration, you can check the `node-convict` [schema file](./packages/config/src/schema.ts).
