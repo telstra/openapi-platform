@@ -195,7 +195,6 @@ function restartServer(done) {
     backendNode.kill();
   }
   const backendEnv = Object.create(process.env);
-  backendEnv.NODE_ENV = 'development';
   backendNode = spawn(
     'node',
     [join(__dirname, 'packages/server/bin/start-openapi-platform-server.js')],
