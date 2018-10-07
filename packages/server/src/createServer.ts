@@ -140,51 +140,39 @@ export async function createServer() {
         if (sdkConfig.gitInfo) {
           await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, {
             hooks: {
-              clone: {
-                before: async gitHookContext => {
+              before: {
+                clone: async gitHookContext => {
                   logger.verbose(
                     `Cloning ${gitHookContext.remoteSdkUrl} into ${
                       gitHookContext.repoDir
                     }`,
                   );
                 },
-              },
-              downloadSdk: {
-                before: async () => {
+                downloadSdk: async () => {
                   logger.verbose('Dowloading SDK');
                 },
-              },
-              extractSdk: {
-                before: async gitHookContext => {
+                extractSdk: async gitHookContext => {
                   logger.verbose(
                     `Extracting ${gitHookContext.sdkArchivePath} to ${
                       gitHookContext.sdkDir
                     }`,
                   );
                 },
-              },
-              moveSdkFilesToRepo: {
-                before: async gitHookContext => {
+                moveSdkFilesToRepo: async gitHookContext => {
                   logger.verbose(
                     `Moving files from ${gitHookContext.sdkDir} to ${
                       gitHookContext.repoDir
                     }`,
                   );
                 },
-              },
-              stage: {
-                before: async gitHookContext => {
+                stage: async gitHookContext => {
                   logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
                 },
-              },
-              commit: {
-                before: async () => {
+                commit: async () => {
                   // Maybe state the commit message and hash
                   logger.verbose(`Committing changes`);
                 },
-              },
-              push: {
-                before: async () => {
+                push: async () => {
                   logger.verbose(`Pushing commits...`);
                 },
               },

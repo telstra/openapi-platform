@@ -1,4 +1,4 @@
-import { withDefaultHooks } from '../../src/hooks';
+import { withDefaultHooksOptions } from '../../src/hooks';
 import { mockFunctions } from 'jest-mock-functions';
 // TODO: Would be really nice to have a in-memory-fs
 
@@ -47,7 +47,7 @@ describe('git', () => {
     it('valid inputs', async () => {
       // TODO: ES6 didn't work
       const { updateRepoWithNewSdk } = require('../../src');
-      const hooks = mockFunctions(withDefaultHooks(), { recursive: true });
+      const hooks = mockFunctions(withDefaultHooksOptions(), { recursive: true });
       // TODO: Need to test the outputs of this method
       await updateRepoWithNewSdk(
         {
@@ -59,11 +59,10 @@ describe('git', () => {
         "This SDK URL shouldn't be used",
         { hooks },
       );
-      Object.keys(hooks).forEach(key => {
-        console.log(key);
-        const hook = hooks[key];
-        expect(hook.before).toBeCalledTimes(1);
-        expect(hook.after).toBeCalledTimes(1);
+      ['before', 'after'].forEach(tense => {
+        Object.keys(hooks[tense]).forEach(hookKey => {
+          expect(hooks[tense][hookKey]).toBeCalledTimes(1);
+        });
       });
     });
   });

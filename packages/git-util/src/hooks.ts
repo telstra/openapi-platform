@@ -23,26 +23,35 @@ export const hookKeys = [
   'cleanRepo',
   'extractSdk',
 ];
-export type HookOptions = { [key in HookKeys]?: Partial<Hook> };
+export interface HookOptions {
+  before?: Partial<Hooks>;
+  after?: Partial<Hooks>;
+}
 
-export type Hooks = { [key in HookKeys]: Hook };
+export interface CompleteHooksOptions {
+  before: Hooks;
+  after: Hooks;
+}
+
+export type Hooks = { [key in HookKeys]: HookCallback };
 
 export function defaultHook(): HookCallback {
   return async () => {};
 }
 
+export function withDefaultHooks(hooks: Partial<Hooks> = {}): Hooks {
+  return hookKeys.reduce((obj, key) => {
+    obj[key] = hooks[key] ? hooks[key] : defaultHook();
+    return obj;
+  }, {}) as Hooks;
+}
+
 /**
  * This lets us avoid having to do undefined checks everywhere
  */
-export function withDefaultHooks(hooks: HookOptions = {}): Hooks {
-  return hookKeys.reduce((obj, key) => {
-    const { before = defaultHook(), after = defaultHook() }: Hook = hooks[key]
-      ? hooks[key]
-      : {};
-    obj[key] = {
-      before,
-      after,
-    };
-    return obj;
-  }, {}) as Hooks;
+export function withDefaultHooksOptions(hooks: HookOptions = {}): CompleteHooksOptions {
+  return {
+    before: withDefaultHooks(hooks.before),
+    after: withDefaultHooks(hooks.after),
+  };
 }

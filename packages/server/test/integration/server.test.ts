@@ -190,6 +190,7 @@ describe('test server', () => {
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           buildStatus: BuildStatus.NotRun,
+          options: {},
         };
 
         const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
