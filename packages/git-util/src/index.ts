@@ -9,7 +9,7 @@ import { clone, push, add, listFiles, commit } from 'isomorphic-git';
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 
-import { HookOptions, withDefaultHooks, Hook, HookCallback } from './hooks';
+import { HookOptions, withDefaultHooksOptions, Hook, HookCallback } from './hooks';
 export { HookOptions, Hook, HookCallback };
 
 // Note: dir = directory
@@ -66,16 +66,16 @@ export async function migrateSdkIntoLocalRepo(
   options: Options = {},
   context: any = {},
 ) {
-  const hooks = withDefaultHooks(options.hooks);
+  const hooks = withDefaultHooksOptions(options.hooks);
   options.hooks = hooks;
 
   context.remoteSdkUrl = remoteSdkUrl;
   context.repoDir = repoDir;
 
-  await hooks.cleanRepo.before(context);
+  await hooks.before.cleanRepo(context);
   const deletedPaths = await deleteAllFilesInLocalRepo(context.repoDir);
   context.deletedPaths = deletedPaths;
-  await hooks.cleanRepo.after(deletedPaths);
+  await hooks.after.cleanRepo(deletedPaths);
 
   /*
    * We make folders for each step of the process,
@@ -84,19 +84,19 @@ export async function migrateSdkIntoLocalRepo(
   context.downloadDir = await makeTempDir('download');
   context.sdkArchivePath = join(context.downloadDir, 'sdk.zip');
   try {
-    await hooks.downloadSdk.before(context);
+    await hooks.before.downloadSdk(context);
     await downloadToPath(context.sdkArchivePath, remoteSdkUrl);
-    await hooks.downloadSdk.after(context);
+    await hooks.after.downloadSdk(context);
 
     context.sdkDir = await makeTempDir('sdk');
     try {
-      await hooks.extractSdk.before(context);
+      await hooks.before.extractSdk(context);
       await extractSdkArchiveFileToDir(context.sdkDir, context.sdkArchivePath);
-      await hooks.extractSdk.after(context);
+      await hooks.after.extractSdk(context);
 
-      await hooks.moveSdkFilesToRepo.before(context);
+      await hooks.before.moveSdkFilesToRepo(context);
       await moveFilesIntoLocalRepo(context.repoDir, context.sdkDir);
-      await hooks.moveSdkFilesToRepo.after(context);
+      await hooks.after.moveSdkFilesToRepo(context);
     } catch (err) {
       throw err;
     } finally {
@@ -116,7 +116,7 @@ export async function updateRepoWithNewSdk(
 ) {
   const context: any = {};
 
-  const hooks = withDefaultHooks(options.hooks);
+  const hooks = withDefaultHooksOptions(options.hooks);
   options.hooks = hooks;
 
   context.gitInfo = gitInfo;
@@ -129,7 +129,7 @@ export async function updateRepoWithNewSdk(
       Would have to probably git reset --hard HEAD~ or something before adding the SDK to the cloned repo
       just to make sure there aren't any stray unstaged files lying around in the cached repo.
     */
-    await hooks.clone.before(context);
+    await hooks.before.clone(context);
     await clone({
       ref: gitInfo.branch,
       dir: context.repoDir,
@@ -140,12 +140,12 @@ export async function updateRepoWithNewSdk(
       depth: 1,
       ...gitInfo.auth,
     });
-    await hooks.clone.after(context);
+    await hooks.after.clone(context);
 
     await migrateSdkIntoLocalRepo(context.repoDir, remoteSdkUrl, options, context);
 
     context.stagedPaths = await getAllStageableFilepathsInRepo(context.repoDir);
-    await hooks.stage.before(context);
+    await hooks.before.stage(context);
     for (const addedPath of context.stagedPaths) {
       const relativeFilePath = relative(context.repoDir, addedPath);
       // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
@@ -155,9 +155,9 @@ export async function updateRepoWithNewSdk(
         filepath: relativeFilePath,
       });
     }
-    await hooks.stage.after(context);
+    await hooks.after.stage(context);
 
-    await hooks.commit.before(context);
+    await hooks.before.commit(context);
     await commit({
       fs: oldFs,
       dir: context.repoDir,
@@ -169,15 +169,15 @@ export async function updateRepoWithNewSdk(
       // TODO: Could have a better message
       message: 'Updated SDK',
     });
-    await hooks.commit.after(context);
+    await hooks.after.commit(context);
 
-    await hooks.push.before(context);
+    await hooks.before.push(context);
     await push({
       fs: oldFs,
       dir: context.repoDir,
       ...gitInfo.auth,
     });
-    await hooks.push.after(context);
+    await hooks.after.push(context);
   } catch (err) {
     throw err;
   } finally {

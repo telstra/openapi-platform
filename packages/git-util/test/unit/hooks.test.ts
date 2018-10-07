@@ -1,24 +1,20 @@
-import { withDefaultHooks, hookKeys } from '../../src/hooks';
+import { withDefaultHooksOptions, hookKeys } from '../../src/hooks';
 describe('withDefaultHooks', () => {
   it('adds default hooks', () => {
-    const hooks = withDefaultHooks();
-    Object.keys(hooks).forEach(key => {
-      const hook = hooks[key];
-      expect(hook).toEqual(
-        expect.objectContaining({
-          before: expect.any(Function),
-          after: expect.any(Function),
-        }),
-      );
+    const hooks = withDefaultHooksOptions();
+    ['before', 'after'].forEach(tense => {
+      Object.keys(hooks[tense]).forEach(key => {
+        expect(hooks[tense][key]).toEqual(expect.any(Function));
+      });
     });
   });
   it('does not replace existing hooks', () => {
     const beforeCommitCallback = async () => {};
-    const hooks = withDefaultHooks({
-      commit: {
-        before: beforeCommitCallback,
+    const hooks = withDefaultHooksOptions({
+      before: {
+        commit: beforeCommitCallback,
       },
     });
-    expect(hooks.commit.before).toBe(beforeCommitCallback);
+    expect(hooks.before.commit).toBe(beforeCommitCallback);
   });
 });
