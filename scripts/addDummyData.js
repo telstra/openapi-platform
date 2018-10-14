@@ -79,7 +79,7 @@ async function addDummyData(specs, sdkConfigs) {
       target: 'javascript',
       version: 'v1.0.35',
       options: {},
-      buildStatus: BuildStatus.Running,
+      buildStatus: BuildStatus.Building,
     },
     {
       target: 'haskell-http-client',

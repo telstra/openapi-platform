@@ -1,11 +1,62 @@
 import { observable, computed, action } from 'mobx';
 
 import { HasId, Id, SdkConfig, GitInfo } from '@openapi-platform/model';
+
 import { client } from '../client';
 
 class SdkConfigState {
   @observable
   public readonly sdkConfigs: Map<Id, HasId<SdkConfig>> = new Map();
+
+  public constructor() {
+    const sdkConfigsService = client.service('sdkConfigs');
+    sdkConfigsService.on(
+      'created',
+      action((sdkConfig: HasId<SdkConfig>) => {
+        this.sdkConfigs.set(sdkConfig.id, sdkConfig);
+      }),
+    );
+    sdkConfigsService.on(
+      'patched',
+      action((sdkConfig: HasId<Partial<SdkConfig>>) => {
+        const originalSdkConfig = this.sdkConfigs.get(sdkConfig.id);
+        // TODO: Should retrieve the sdk if it doesn't already exist in state
+        if (originalSdkConfig) {
+          this.sdkConfigs.set(sdkConfig.id, {
+            ...originalSdkConfig,
+            ...sdkConfig,
+          });
+        }
+      }),
+    );
+    sdkConfigsService.on(
+      'removed',
+      action((sdkConfig: HasId<SdkConfig>) => {
+        this.sdkConfigs.delete(sdkConfig.id);
+      }),
+    );
+    sdkConfigsService.on(
+      'updated',
+      action((sdkConfig: HasId<SdkConfig>) => {
+        this.sdkConfigs.set(sdkConfig.id, sdkConfig);
+      }),
+    );
+  }
+
+  @action
+  public async sync(): Promise<void> {
+    const sdkConfigs: Array<HasId<SdkConfig>> = await client.service('sdkConfigs').find({
+      query: {
+        $sort: {
+          createdAt: 1,
+        },
+      },
+    });
+    sdkConfigs.forEach(sdkConfig => {
+      state.sdkConfigs.set(sdkConfig.id, sdkConfig);
+    });
+  }
+
   @computed
   public get specSdkConfigs(): Map<Id, Array<HasId<SdkConfig>>> {
     const specSdkConfigs = new Map();
@@ -55,19 +106,4 @@ export interface AddedSdkConfig {
 }
 
 export const state: SdkConfigState = new SdkConfigState();
-client
-  .service('sdkConfigs')
-  .find({
-    query: {
-      $sort: {
-        createdAt: 1,
-      },
-    },
-  })
-  .then(
-    action((sdkConfigs: Array<HasId<SdkConfig>>) => {
-      sdkConfigs.forEach(sdkConfig => {
-        state.sdkConfigs.set(sdkConfig.id, sdkConfig);
-      });
-    }),
-  );
+state.sync();
