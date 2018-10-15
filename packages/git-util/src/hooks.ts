@@ -4,25 +4,16 @@ export interface Hook<B = any, BR = any, A = any, AR = any> {
   after: HookCallback<A, AR>;
 }
 
-export type HookKeys =
-  | 'stage'
-  | 'push'
-  | 'commit'
-  | 'clone'
-  | 'downloadSdk'
-  | 'moveSdkFilesToRepo'
-  | 'cleanRepo'
-  | 'extractSdk';
-export const hookKeys = [
-  'stage',
-  'push',
-  'commit',
-  'clone',
-  'downloadSdk',
-  'moveSdkFilesToRepo',
-  'cleanRepo',
-  'extractSdk',
-];
+export enum HookKeys {
+  stage = 'stage',
+  push = 'push',
+  commit = 'commit',
+  clone = 'clone',
+  downloadSdk = 'downloadSdk',
+  moveSdkFilesToRepo = 'moveSdkFilesToRepo',
+  cleanRepo = 'cleanRepo',
+  extractSdk = 'extractSdk',
+}
 export interface HookOptions {
   before?: Partial<Hooks>;
   after?: Partial<Hooks>;
@@ -40,10 +31,12 @@ export function defaultHook(): HookCallback {
 }
 
 export function withDefaultHooks(hooks: Partial<Hooks> = {}): Hooks {
-  return hookKeys.reduce((obj, key) => {
-    obj[key] = hooks[key] ? hooks[key] : defaultHook();
-    return obj;
-  }, {}) as Hooks;
+  return Object.keys(HookKeys)
+    .map(key => HookKeys[key])
+    .reduce((obj, key) => {
+      obj[key] = hooks[key] ? hooks[key] : defaultHook();
+      return obj;
+    }, {}) as Hooks;
 }
 
 /**

@@ -71,7 +71,6 @@ export async function migrateSdkIntoLocalRepo(
 
   context.remoteSdkUrl = remoteSdkUrl;
   context.repoDir = repoDir;
-
   await hooks.before.cleanRepo(context);
   const deletedPaths = await deleteAllFilesInLocalRepo(context.repoDir);
   context.deletedPaths = deletedPaths;
