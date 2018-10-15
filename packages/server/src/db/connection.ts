@@ -16,7 +16,6 @@ export async function connectToDb() {
       logging: logger.verbose,
     },
   );
-
   try {
     await dbConnection.authenticate();
     logger.info('Successfully connected to database');

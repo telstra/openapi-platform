@@ -4,7 +4,7 @@ import { join, relative } from 'path';
 import AdmZip from 'adm-zip';
 import { move } from 'fs-extra';
 import globby from 'globby';
-import { clone, push, add, listFiles, commit } from 'isomorphic-git';
+import { clone, push, add, remove, listFiles, commit } from 'isomorphic-git';
 
 import { GitInfo } from '@openapi-platform/model';
 import { downloadToPath, deletePaths, makeTempDir } from './file/index';
@@ -35,9 +35,12 @@ export async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
   }
 }
 
-async function deleteAllFilesInLocalRepo(dir) {
-  const filePaths = await listFiles({ fs: oldFs, dir });
-  const fullFilePaths = filePaths.map(path => join(dir, path));
+async function deleteAllFilesInLocalRepo(repoDir) {
+  const filePaths = await listFiles({ fs: oldFs, dir: repoDir });
+  for (const filePath of filePaths) {
+    remove({ filepath: filePath, fs: oldFs, dir: repoDir });
+  }
+  const fullFilePaths = filePaths.map(path => join(repoDir, path));
   await deletePaths(fullFilePaths);
   return filePaths;
 }
@@ -136,7 +139,6 @@ export async function updateRepoWithNewSdk(
       fs: oldFs,
       url: gitInfo.repoUrl,
       singleBranch: true,
-      depth: 1,
       ...gitInfo.auth,
     });
     await hooks.after.clone(context);
