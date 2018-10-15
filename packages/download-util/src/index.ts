@@ -74,13 +74,17 @@ export async function migrateSdkIntoLocalRepo(
       logger.verbose(`Extracting ${sdkArchiveFilePath} to ${sdkDir}`);
       await extractSdkArchiveFileToDir(sdkDir, sdkArchiveFilePath);
 
-      for (let glob of fileCleaningGlobs) {
-        glob = join(sdkDir, glob);
-      }
       logger.verbose(
         `Deleting files from ${sdkDir} which match globs: ${fileCleaningGlobs}`,
       );
-      await deletePaths(fileCleaningGlobs);
+
+      for (const glob of fileCleaningGlobs) {
+        const globString = join(sdkDir, glob);
+        const matchedPaths = await globby(globString);
+        logger.verbose(`matched files: ${matchedPaths}`);
+
+        await deletePaths(matchedPaths);
+      }
 
       logger.verbose(`Moving files from ${sdkDir} to ${repoDir}`);
       await moveFilesIntoLocalRepo(repoDir, sdkDir);
