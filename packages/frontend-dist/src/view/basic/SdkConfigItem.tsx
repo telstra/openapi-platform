@@ -57,14 +57,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
     this.latestSdkUrl = undefined;
     // TODO: Little hacky changing modifying one's own props
     this.props.sdkConfig.buildStatus = BuildStatus.Building;
-    client
+    const sdk: HasId<Sdk> = await client
       .service('sdks')
-      .create({ sdkConfigId: this.props.sdkConfig.id })
-      .then(
-        action((sdk: HasId<Sdk>) => {
-          this.latestSdkUrl = sdk.path;
-        }),
-      );
+      .create({ sdkConfigId: this.props.sdkConfig.id });
+    this.latestSdkUrl = sdk.path;
   };
 
   private onEditSdkConfig = () => {
