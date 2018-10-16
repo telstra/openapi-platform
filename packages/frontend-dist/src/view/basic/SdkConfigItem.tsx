@@ -6,8 +6,13 @@ import { action } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
-import { SdkConfig, BuildStatus, isRunning } from '@openapi-platform/model';
-import { Sdk } from '@openapi-platform/model';
+import {
+  SdkConfig,
+  BuildStatus,
+  isRunning,
+  PathHolder,
+  Sdk,
+} from '@openapi-platform/model';
 import { client } from '../../client';
 import { createStyled } from '../createStyled';
 import { BuildStatusChip } from './BuildStatusChip';
@@ -37,7 +42,7 @@ const Styled: any = createStyled(theme => ({
 
 export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
   sdkConfig: HasId<SdkConfig>;
-  latestSdk?: Sdk;
+  latestSdk?: Sdk & Partial<PathHolder>;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 

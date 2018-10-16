@@ -22,9 +22,11 @@ export enum BuildStatus {
 export const hasValidBuildStatus = buildStatus =>
   Object.values(BuildStatus).includes(buildStatus);
 
-export type HasPath<T> = T & {
+export interface PathHolder {
   path: string;
-};
+}
+
+export type HasPath<T> = T & PathHolder;
 
 /**
  * Represents an SDK that has been built from an SDK configuration for a specification.
@@ -34,11 +36,6 @@ export interface Sdk {
    * The ID of the SDK configuration the SDK was built for.
    */
   sdkConfigId: Id;
-
-  /**
-   * A URL to a download link for the SDK.
-   */
-  path?: string;
 
   /**
    * What stage the Sdk build process is up to
