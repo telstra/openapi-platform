@@ -174,9 +174,12 @@ describe('test server', () => {
           throw new Error(swaggerCodegenMalformedOptionsResponse.message);
         });
 
-        const sdk = await app.service('sdks').create(sdkData);
-        expect(sdk.buildStatus).toEqual(BuildStatus.Fail);
-        // TODO: Need to check if the after hook sets the build status to FAIL
+        // Triggers the before & create hooks.
+        const createdSdk = await app.service('sdks').create(sdkData);
+        // Need to get the sdk again to see the effect of calling generateSdk() as this is done in the after hook.
+        const updatedCreatedSdk = await app.service('sdks').get(createdSdk.id);
+        expect(updatedCreatedSdk.buildStatus).toEqual(BuildStatus.Fail);
+        expect(updatedCreatedSdk.buildError).toEqual('Error: something bad happened');
       });
 
       it('create an sdk error, invalid path', async () => {
@@ -206,9 +209,14 @@ describe('test server', () => {
           };
           throw new Error(swaggerCodegenInvalidSpecificationResponse.message);
         });
-
-        const sdk = await app.service('sdks').create(sdkData);
-        expect(sdk.buildStatus).toEqual(BuildStatus.Fail);
+        // Triggers the before & create hooks.
+        const createdSdk = await app.service('sdks').create(sdkData);
+        // Need to get the sdk again to see the effect of calling generateSdk() as this is done in the after hook.
+        const updatedCreatedSdk = await app.service('sdks').get(createdSdk.id);
+        expect(updatedCreatedSdk.buildStatus).toEqual(BuildStatus.Fail);
+        expect(updatedCreatedSdk.buildError).toEqual(
+          'Error: The swagger specification supplied was not valid',
+        );
       });
     });
   });

@@ -140,6 +140,7 @@ export async function createServer() {
         }
         context.data.sdkConfigId = context.sdkConfig.id;
         context.data.buildStatus = BuildStatus.Building;
+
         await app.service('sdkConfigs').patch(context.sdkConfig.id, {
           buildStatus: BuildStatus.Building,
         });
@@ -153,7 +154,7 @@ export async function createServer() {
             .service('specifications')
             .get(context.sdkConfig.specId, {});
           const sdk = await generateSdk(logger, spec, context.sdkConfig);
-          await app.service('sdks').patch(context.data.id, {
+          await app.service('sdks').patch(context.result.id, {
             path: sdk.path,
           });
           /*
@@ -171,7 +172,7 @@ export async function createServer() {
                         gitHookContext.repoDir
                       }`,
                     );
-                    await app.service('sdks').patch(context.data.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Cloning,
                     });
                   },
@@ -194,7 +195,7 @@ export async function createServer() {
                   },
                   stage: async gitHookContext => {
                     logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
-                    await app.service('sdks').patch(context.data.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Staging,
                     });
                   },
@@ -212,11 +213,11 @@ export async function createServer() {
               },
             });
           }
-          await app.service('sdks').patch(context.data.id, {
+          await app.service('sdks').patch(context.result.id, {
             buildStatus: BuildStatus.Success,
           });
         } catch (err) {
-          await app.service('sdks').patch(context.data.id, {
+          await app.service('sdks').patch(context.result.id, {
             buildStatus: BuildStatus.Fail,
             buildError: err.toString(),
           });
