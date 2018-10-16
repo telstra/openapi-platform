@@ -29,36 +29,10 @@ export interface SdkConfig {
   options: any;
 
   /**
-   * The current build status of the SDK.
-   */
-  buildStatus: BuildStatus;
-  /**
    * Info about where the generated SDK will be pushed to
    */
   gitInfo?: GitInfo;
 }
-
-export function isRunning(buildStatus: BuildStatus) {
-  return ![BuildStatus.Fail, BuildStatus.Success, BuildStatus.NotRun].includes(
-    buildStatus,
-  );
-}
-
-/**
- * Represents the different possible build statuses of an SDK configuration.
- */
-export enum BuildStatus {
-  NotRun = 'NOT_RUN',
-  Building = 'BUILDING', // Building OpenAPI Spec SDK
-  Cloning = 'CLONING', // Cloning Sdk repo
-  Staging = 'STAGING', // Staging new files into Sdk repo
-  Pushing = 'PUSHING', // Pushing Sdk repo changes
-  Success = 'SUCCESS',
-  Fail = 'FAIL',
-}
-
-export const hasValidBuildStatus = buildStatus =>
-  Object.values(BuildStatus).includes(buildStatus);
 
 /**
  * An array of supported SDK configuration target languages.

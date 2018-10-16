@@ -4,16 +4,7 @@ import { client } from '../client';
 import { state as sdkConfigState } from './SdkConfigState';
 import { updateStateInRealtime } from './updateStateInRealtime';
 
-export interface SpecState {
-  specs: Map<number, HasId<Spec>>;
-  specList: Array<HasId<Spec>>;
-  addSpec: (addedSpec: Spec) => Promise<void>;
-  updateSpec: (id: number, updatedSpec: Spec) => Promise<void>;
-  deleteSpec: (id: number) => Promise<void>;
-
-}
-
-export class BasicSpecState implements SpecState {
+export class SpecState {
   @observable
   public readonly specs: Map<number, HasId<Spec>> = new Map();
   private readonly service;
@@ -24,14 +15,13 @@ export class BasicSpecState implements SpecState {
 
   @action
   public async sync() {
-    const specs = await this.service
-      .find({
-        query: {
-          $sort: {
-            createdAt: 1,
-          },
+    const specs = await this.service.find({
+      query: {
+        $sort: {
+          createdAt: 1,
         },
-      });
+      },
+    });
     specs.forEach(spec => {
       state.specs.set(spec.id, spec);
     });
@@ -50,8 +40,7 @@ export class BasicSpecState implements SpecState {
 
   @action
   public async updateSpec(id: number, updatedSpec: Spec): Promise<void> {
-    const spec: HasId<Spec> = await this.service
-      .update(id, updatedSpec);
+    const spec: HasId<Spec> = await this.service.update(id, updatedSpec);
     this.specs.set(id, spec);
   }
 
@@ -89,5 +78,5 @@ export class BasicSpecState implements SpecState {
   }
 }
 
-export const state: SpecState = new BasicSpecState();
+export const state: SpecState = new SpecState();
 state.sync();

@@ -152,6 +152,7 @@ export class SpecItem extends Component<SpecItemProps> {
                         key={sdkConfig.id}
                         sdkConfig={sdkConfig}
                         onEditSdkConfig={onEditSdkConfig}
+                        latestSdk={undefined} // TODO
                       />
                     ))}
                   </TableBody>

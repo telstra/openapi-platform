@@ -54,7 +54,6 @@ describe('test server', () => {
         target: 'java is ew',
         version: 'v1.0.0',
         options: { 'a choice': 'my options here' },
-        buildStatus: BuildStatus.Success,
       };
     });
 
@@ -73,13 +72,6 @@ describe('test server', () => {
         expect(sdkConfigData[key]).toBe(retrievedSdkConfig[key]);
       });
       expect(sdkConfigData.options).toEqual(createdSdkConfig.options);
-    });
-
-    it('SDK configuration created hook sets buildStatus to BuildStatus.NotRun', async () => {
-      const { buildStatus, ...sdkConfigDataWithoutBuildStatus } = sdkConfigData;
-      const createdSdkConfig = await app
-        .service('sdkConfigs')
-        .create(sdkConfigDataWithoutBuildStatus);
     });
   });
 
@@ -106,7 +98,6 @@ describe('test server', () => {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
-          buildStatus: BuildStatus.NotRun,
           options: {
             additionalProp1: 'string',
             additionalProp2: 'string',
@@ -156,7 +147,6 @@ describe('test server', () => {
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           options: 'options should be an object and not a string',
-          buildStatus: BuildStatus.NotRun,
         };
 
         const createdSdkConfig = await app.service('sdkConfigs').create(sdkConfigData);
@@ -190,7 +180,6 @@ describe('test server', () => {
           specId: createdSpec.id,
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
-          buildStatus: BuildStatus.NotRun,
           options: {},
         };
 

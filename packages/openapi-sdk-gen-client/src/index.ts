@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 
 import { HasId } from '@openapi-platform/model';
 import { SdkConfig } from '@openapi-platform/model';
-import { Sdk } from '@openapi-platform/model';
 import { Spec } from '@openapi-platform/model';
 
 const SWAGGER_CODEGEN_ENDPOINT = 'http://generator.swagger.io/api/gen/clients/';
@@ -16,7 +15,7 @@ export async function generateSdk(
   logger,
   spec: HasId<Spec>,
   sdkConfig: HasId<SdkConfig>,
-): Promise<Sdk> {
+): Promise<string> {
   const body = { swaggerUrl: spec.path, options: sdkConfig.options };
   const response = await fetch(SWAGGER_CODEGEN_ENDPOINT + sdkConfig.target, {
     method: 'POST',
@@ -27,8 +26,5 @@ export async function generateSdk(
   if (json.type === 'error') {
     throw new Error(json.message);
   }
-  return {
-    path: json.link,
-    sdkConfigId: sdkConfig.id,
-  };
+  return json.link;
 }

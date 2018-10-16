@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
-import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
+import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 import { logger } from './logger';
 
@@ -44,8 +44,8 @@ export async function createServer() {
       morgan('dev', {
         stream: {
           write(message) {
-            logger.verbose(message)
-          }
+            logger.verbose(message);
+          },
         },
       }),
     )
@@ -149,10 +149,10 @@ export async function createServer() {
           const spec = await app
             .service('specifications')
             .get(context.sdkConfig.specId, {});
-          
-          const sdk = await generateSdk(logger, spec, context.sdkConfig);
+
+          const sdkPath = await generateSdk(logger, spec, context.sdkConfig);
           await app.service('sdks').patch(context.result.id, {
-            path: sdk.path,
+            path: sdkPath,
           });
           /*
             TODO: The linkside of the info object is probably temporary.
@@ -160,7 +160,7 @@ export async function createServer() {
             wherever the Swagger gen API stores it.
           */
           if (context.sdkConfig.gitInfo) {
-            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdk.path, {
+            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdkPath, {
               hooks: {
                 before: {
                   async clone(gitHookContext) {

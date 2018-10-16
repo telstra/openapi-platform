@@ -43,8 +43,7 @@ class SdkConfigState {
 
   @action
   public async addSdkConfig(addedSdkConfig: AddedSdkConfig): Promise<void> {
-    const sdkConfig: HasId<SdkConfig> = await this.service
-      .create(addedSdkConfig);
+    const sdkConfig: HasId<SdkConfig> = await this.service.create(addedSdkConfig);
     this.sdkConfigs.set(sdkConfig.id, sdkConfig);
   }
 
@@ -57,11 +56,12 @@ class SdkConfigState {
     // Copy over elements specified in SdkConfig but not editable from the form.
     const updatedSdkConfigStore: SdkConfig = {
       ...updatedSdkConfig,
-      buildStatus: currentConfig!.buildStatus,
       specId: currentConfig!.specId,
     };
-    const sdkConfig: HasId<SdkConfig> = await this.service
-      .update(id, updatedSdkConfigStore);
+    const sdkConfig: HasId<SdkConfig> = await this.service.update(
+      id,
+      updatedSdkConfigStore,
+    );
     this.sdkConfigs.set(id, sdkConfig);
   }
 }

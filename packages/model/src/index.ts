@@ -1,12 +1,6 @@
 export { Id, HasId } from './Id';
-export {
-  SdkConfig,
-  BuildStatus,
-  isRunning,
-  hasValidBuildStatus,
-  SDK_CONFIG_TARGETS,
-} from './SdkConfig';
+export { SdkConfig, SDK_CONFIG_TARGETS } from './SdkConfig';
 export { Profile } from './Profile';
-export { Sdk } from './Sdk';
+export { HasPath, Sdk, BuildStatus, isRunning, hasValidBuildStatus } from './Sdk';
 export { Spec } from './Spec';
 export { GitInfo } from './GitInfo';

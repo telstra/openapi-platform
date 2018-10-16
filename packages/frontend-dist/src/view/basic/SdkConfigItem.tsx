@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { observable, action } from 'mobx';
+import { action } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
@@ -37,6 +37,7 @@ const Styled: any = createStyled(theme => ({
 
 export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
   sdkConfig: HasId<SdkConfig>;
+  latestSdk?: Sdk;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
@@ -51,11 +52,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
    */
   @action
   public createSdk = async () => {
-     // TODO: Little hacky changing modifying one's own props
-    this.props.sdkConfig.buildStatus = BuildStatus.Building;
-    await client
-      .service('sdks')
-      .create({ sdkConfigId: this.props.sdkConfig.id });
+    await client.service('sdks').create({ sdkConfigId: this.props.sdkConfig.id });
   };
 
   private onEditSdkConfig = () => {
@@ -63,7 +60,8 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   };
 
   public render() {
-    const { sdkConfig } = this.props;
+    const { sdkConfig, latestSdk } = this.props;
+    const buildStatus = latestSdk ? latestSdk.buildStatus : BuildStatus.NotRun;
     return (
       <Styled>
         {({ classes }) => (
@@ -86,13 +84,13 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell classes={{ root: classes.sdkConfigStatus }}>
                   <div className={classes.sdkConfigStatus}>
-                    <BuildStatusChip buildStatus={sdkConfig.buildStatus} />
+                    <BuildStatusChip buildStatus={buildStatus} />
                   </div>
                 </TableCell>
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
-                    {this.latestSdkUrl ? (
-                      <IconButton href={this.latestSdkUrl}>
+                    {latestSdk && latestSdk.path ? (
+                      <IconButton href={latestSdk.path}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
@@ -101,10 +99,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                     </IconButton>
                     <Button
                       size="small"
-                      disabled={isRunning(sdkConfig.buildStatus)}
+                      disabled={isRunning(buildStatus)}
                       onClick={this.createSdk}
                     >
-                      {isRunning(sdkConfig.buildStatus) ? 'Running...' : 'Run'}
+                      {isRunning(buildStatus) ? 'Running...' : 'Run'}
                     </Button>
                   </div>
                 </TableCell>
