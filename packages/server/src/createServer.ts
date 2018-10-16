@@ -43,7 +43,9 @@ export async function createServer() {
     .use(
       morgan('dev', {
         stream: {
-          write: message => logger.verbose(message),
+          write(message) {
+            logger.verbose(message)
+          }
         },
       }),
     )
@@ -151,8 +153,9 @@ export async function createServer() {
           const spec = await app
             .service('specifications')
             .get(context.sdkConfig.specId, {});
+          
           const sdk = await generateSdk(logger, spec, context.sdkConfig);
-          await app.service('sdks').patch(context.data.id, {
+          await app.service('sdks').patch(context.result.id, {
             path: sdk.path,
           });
           /*
@@ -164,7 +167,7 @@ export async function createServer() {
             await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdk.path, {
               hooks: {
                 before: {
-                  clone: async gitHookContext => {
+                  async clone(gitHookContext) {
                     logger.verbose(
                       `Cloning ${gitHookContext.remoteSdkUrl} into ${
                         gitHookContext.repoDir
@@ -174,34 +177,34 @@ export async function createServer() {
                       buildStatus: BuildStatus.Cloning,
                     });
                   },
-                  downloadSdk: async () => {
+                  async downloadSdk() {
                     logger.verbose('Dowloading SDK');
                   },
-                  extractSdk: async gitHookContext => {
+                  async extractSdk(gitHookContext) {
                     logger.verbose(
                       `Extracting ${gitHookContext.sdkArchivePath} to ${
                         gitHookContext.sdkDir
                       }`,
                     );
                   },
-                  moveSdkFilesToRepo: async gitHookContext => {
+                  async moveSdkFilesToRepo(gitHookContext) {
                     logger.verbose(
                       `Moving files from ${gitHookContext.sdkDir} to ${
                         gitHookContext.repoDir
                       }`,
                     );
                   },
-                  stage: async gitHookContext => {
+                  async stage(gitHookContext) {
                     logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
                     await app.service('sdkConfigs').patch(context.sdkConfig.id, {
                       buildStatus: BuildStatus.Staging,
                     });
                   },
-                  commit: async () => {
+                  async commit() {
                     // Maybe state the commit message and hash
                     logger.verbose(`Committing changes`);
                   },
-                  push: async () => {
+                  async push() {
                     logger.verbose(`Pushing commits...`);
                     await app.service('sdkConfigs').patch(context.sdkConfig.id, {
                       buildStatus: BuildStatus.Pushing,
@@ -210,16 +213,16 @@ export async function createServer() {
                 },
               },
             });
-            await app.service('sdkConfigs').patch(context.sdkConfig.id, {
-              buildStatus: BuildStatus.Success,
-            });
           }
+          await app.service('sdkConfigs').patch(context.sdkConfig.id, {
+            buildStatus: BuildStatus.Success,
+          });
         } catch (err) {
           await app.service('sdkConfigs').patch(context.sdkConfig.id, {
             buildStatus: BuildStatus.Fail,
             // TODO: should include a failure error
           });
-          logger.error(`Failed to generate SDK: ${err.message}`);
+          logger.error('Failed to generate SDK', err);
         }
       },
     },

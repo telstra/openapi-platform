@@ -45,22 +45,17 @@ export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> 
  * For use in lists, grids, etc.
  */
 export class SdkConfigItem extends Component<SdkConfigItemProps> {
-  @observable
-  private latestSdkUrl?: string;
-
   /**
    * TODO: Not really sure when this got approved but this method really shouldn't be inside of a
    * basic component.
    */
   @action
   public createSdk = async () => {
-    this.latestSdkUrl = undefined;
-    // TODO: Little hacky changing modifying one's own props
+     // TODO: Little hacky changing modifying one's own props
     this.props.sdkConfig.buildStatus = BuildStatus.Building;
-    const sdk: HasId<Sdk> = await client
+    await client
       .service('sdks')
       .create({ sdkConfigId: this.props.sdkConfig.id });
-    this.latestSdkUrl = sdk.path;
   };
 
   private onEditSdkConfig = () => {
