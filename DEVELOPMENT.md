@@ -9,7 +9,7 @@ your machine:
 ## Quick start guide
 1. `git clone` the repository
 1. `yarn install` at the root of the project
-1. Add a configuration file to the root directory of the project
+1. Add a configuration file to the root directory of the project. Make sure to set `env` to `development`
 1. `yarn watch`
 1. Have at it :)
 
@@ -54,9 +54,9 @@ development:
 ## Building and Deploying
  * `yarn build` \
    Runs transpilation and bundling scripts to rebuild all packages. Runs in
-   `development` mode by default. To build for production, either set the `env`
+   `production` mode by default. To build for development, either set the `env`
    option in your configuration file or the `NODE_ENV` environment variable to
-   `production`.
+   `development`.
 
 ## Testing
  * `yarn test`

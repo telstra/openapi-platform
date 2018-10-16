@@ -6,7 +6,7 @@ import { observable, action } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
-import { SdkConfig, BuildStatus } from '@openapi-platform/model';
+import { SdkConfig, BuildStatus, isRunning } from '@openapi-platform/model';
 import { Sdk } from '@openapi-platform/model';
 import { client } from '../../client';
 import { createStyled } from '../createStyled';
@@ -49,9 +49,14 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   @observable
   private latestSdkUrl?: string;
 
+  /**
+   * TODO: Not really sure when this got approved but this method really shouldn't be inside of a
+   * basic component.
+   */
   @action
   public createSdk = async () => {
-    this.props.sdkConfig.buildStatus = BuildStatus.Running;
+    // TODO: Little hacky changing modifying one's own props
+    this.props.sdkConfig.buildStatus = BuildStatus.Building;
     try {
       const sdk: HasId<Sdk> = await client
         .service('sdks')
@@ -128,12 +133,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                     </IconButton>
                     <Button
                       size="small"
-                      disabled={sdkConfig.buildStatus === BuildStatus.Running}
+                      disabled={isRunning(sdkConfig.buildStatus)}
                       onClick={this.createSdk}
                     >
-                      {sdkConfig.buildStatus === BuildStatus.Running
-                        ? 'Running...'
-                        : 'Run'}
+                      {isRunning(sdkConfig.buildStatus) ? 'Running...' : 'Run'}
                     </Button>
                   </div>
                 </TableCell>

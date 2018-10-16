@@ -7,15 +7,18 @@ import {
   FormHelperText,
   Input,
   InputLabel,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
-import { ModalProps } from '@material-ui/core/Modal';
-import { TypographyProps } from '@material-ui/core/Typography';
+import { DialogProps } from '@material-ui/core/Dialog';
+import { DialogTitleProps } from '@material-ui/core/DialogTitle';
 import { Observer } from 'mobx-react';
+import { isWebUri } from 'valid-url';
 
 import { Spec } from '@openapi-platform/model';
-import { isWebUri } from 'valid-url';
 import { Category } from '../../Storybook';
 import {
   ValidatedFormStore,
@@ -24,22 +27,11 @@ import {
   alwaysValid,
 } from '../../ValidatedFormStore';
 import { createStyled } from '../createStyled';
-import { FloatingModal } from './FloatingModal';
 
 const Styled: any = createStyled(theme => ({
-  modalPaper: {
-    maxWidth: theme.spacing.unit * 64,
-  },
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing.unit * 3,
-  },
-  buttonRow: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: theme.spacing.unit,
   },
   progressIndicator: {
     margin: `0 ${theme.spacing.unit * 4}px`,
@@ -52,11 +44,11 @@ export interface SpecModalProps {
   readonly initialSpec?: Spec;
   readonly onCloseModal: OnCloseModal;
   readonly onSubmitSpec: OnSubmitSpec;
-  readonly titleProps?: TypographyProps;
+  readonly titleProps?: DialogTitleProps;
   readonly cancelButtonProps?: ButtonProps;
   readonly submitButtonProps?: ButtonProps;
   readonly showSubmitProgress?: boolean;
-  readonly modalProps?: ModalProps;
+  readonly dialogProps?: DialogProps;
 }
 
 /**
@@ -113,15 +105,10 @@ export class SpecModal extends Component<SpecModalProps> {
     this.inputStore.setInputValue(event.target.id, event.target.value);
   private onInputBlur = event => this.inputStore.updateInputError(event.target.id);
 
-  private onAddButtonClick = event => {
-    event.preventDefault();
-    this.onSubmitSpec();
-  };
-
   public render() {
     const {
       onCloseModal,
-      modalProps,
+      dialogProps,
       titleProps,
       cancelButtonProps,
       showSubmitProgress,
@@ -133,20 +120,16 @@ export class SpecModal extends Component<SpecModalProps> {
         {({ classes }) => (
           <Observer>
             {() => (
-              <FloatingModal
-                key={0}
-                classes={{ paper: classes.modalPaper }}
+              <Dialog
                 open
                 onClose={onCloseModal}
-                {...modalProps}
+                maxWidth="sm"
+                fullWidth
+                {...dialogProps}
               >
                 <form>
-                  <div className={classes.modalContent}>
-                    <Typography
-                      variant="title"
-                      className={classes.title}
-                      {...titleProps}
-                    />
+                  <DialogTitle {...titleProps} />
+                  <DialogContent classes={{ root: classes.modalContent }}>
                     <FormControl
                       error={this.inputStore.getInputError('title') !== null}
                       margin="normal"
@@ -195,15 +178,9 @@ export class SpecModal extends Component<SpecModalProps> {
                         {this.inputStore.getInputError('description')}
                       </FormHelperText>
                     </FormControl>
-                  </div>
-
-                  <div className={classes.buttonRow}>
-                    <Button
-                      color="primary"
-                      type="button"
-                      onClick={onCloseModal}
-                      {...cancelButtonProps}
-                    >
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" onClick={onCloseModal} {...cancelButtonProps}>
                       Cancel
                     </Button>
                     {showSubmitProgress ? (
@@ -211,14 +188,13 @@ export class SpecModal extends Component<SpecModalProps> {
                     ) : (
                       <Button
                         color="primary"
-                        type="submit"
-                        onClick={this.onAddButtonClick}
+                        onClick={this.onSubmitSpec}
                         {...submitButtonProps}
                       />
                     )}
-                  </div>
+                  </DialogActions>
                 </form>
-              </FloatingModal>
+              </Dialog>
             )}
           </Observer>
         )}

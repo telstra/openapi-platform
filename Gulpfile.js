@@ -133,13 +133,8 @@ function buildBabel(exclude = []) {
 }
 
 function createWebpackStream(packageDir) {
-  const { readConfig, apiBaseUrl } = require('@openapi-platform/config');
-  const openapiPlatformConfig = readConfig();
   const createWebpackConfig = require(join(packageDir, 'webpack.config'));
-  const webpackConfig = createWebpackConfig({
-    env: openapiPlatformConfig.get('env'),
-    apiBaseUrl: apiBaseUrl(openapiPlatformConfig),
-  });
+  const webpackConfig = createWebpackConfig();
   return webpackStream(webpackConfig, webpack);
 }
 
@@ -200,7 +195,6 @@ function restartServer(done) {
     backendNode.kill();
   }
   const backendEnv = Object.create(process.env);
-  backendEnv.NODE_ENV = 'development';
   backendNode = spawn(
     'node',
     [join(__dirname, 'packages/server/bin/start-openapi-platform-server.js')],

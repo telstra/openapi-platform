@@ -2,6 +2,7 @@ export { Id, HasId } from './Id';
 export {
   SdkConfig,
   BuildStatus,
+  isRunning,
   hasValidBuildStatus,
   SDK_CONFIG_TARGETS,
 } from './SdkConfig';

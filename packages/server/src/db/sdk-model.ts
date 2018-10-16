@@ -17,7 +17,7 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
       },
       path: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       buildStatus: {
         type: Sequelize.STRING,

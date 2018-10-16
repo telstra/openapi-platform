@@ -26,7 +26,7 @@ export interface SdkConfig {
    * A full list of options for a given target language can be obtained from:
    * https://generator.swagger.io/api/gen/clients/<TARGET_LANGUAGE>
    */
-  options?: any;
+  options: any;
 
   /**
    * The current build status of the SDK.
@@ -38,12 +38,21 @@ export interface SdkConfig {
   gitInfo?: GitInfo;
 }
 
+export function isRunning(buildStatus: BuildStatus) {
+  return ![BuildStatus.Fail, BuildStatus.Success, BuildStatus.NotRun].includes(
+    buildStatus,
+  );
+}
+
 /**
  * Represents the different possible build statuses of an SDK configuration.
  */
 export enum BuildStatus {
   NotRun = 'NOT_RUN',
-  Running = 'RUNNING',
+  Building = 'BUILDING', // Building OpenAPI Spec SDK
+  Cloning = 'CLONING', // Cloning Sdk repo
+  Staging = 'STAGING', // Staging new files into Sdk repo
+  Pushing = 'PUSHING', // Pushing Sdk repo changes
   Success = 'SUCCESS',
   Fail = 'FAIL',
 }
