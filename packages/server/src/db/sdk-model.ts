@@ -19,6 +19,10 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      buildStatus: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
     },
     {
       freezeTableName: true,

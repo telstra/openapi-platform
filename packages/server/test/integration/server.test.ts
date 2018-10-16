@@ -80,8 +80,6 @@ describe('test server', () => {
       const createdSdkConfig = await app
         .service('sdkConfigs')
         .create(sdkConfigDataWithoutBuildStatus);
-      const bs = (await app.service('sdkConfigs').get(createdSdkConfig.id)).buildStatus;
-      expect(bs).toEqual(BuildStatus.NotRun);
     });
   });
 
