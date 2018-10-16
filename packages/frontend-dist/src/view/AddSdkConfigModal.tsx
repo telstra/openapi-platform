@@ -21,7 +21,7 @@ import { SdkConfigModal } from './basic/SdkConfigModal';
  * Currently only supports specifying a target, version and options as a valid JSON.
  */
 export class AddSdkConfigModal extends Component<
-  RouteComponentProps<{ specId: string; sdkConfigId?: string }>,
+  RouteComponentProps<{ id: string; sdkConfigId?: string }>,
   {}
 > {
   /**
@@ -66,7 +66,7 @@ export class AddSdkConfigModal extends Component<
       } else {
         await sdkConfigState.addSdkConfig({
           ...submittedSdkConfig,
-          specId: parseInt(this.props.match.params.specId, 10),
+          specId: parseInt(this.props.match.params.id, 10),
         });
       }
       this.closeModal();

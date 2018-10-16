@@ -21,7 +21,7 @@ export class Overview extends Component<RouteComponentProps<{}>, {}> {
   private openAddSpecModal = () => this.props.history.push(`${this.props.match.url}/add`);
   private expandSpec = (id: Id | null) =>
     this.props.history.push(`${this.props.match.url}${id === null ? '' : '/' + id}`);
-  private onSpecOpen = (id: Id | null) => this.props.history.push(`/specs/${id}`);
+  private onSpecOpen = (id: Id) => this.props.history.push(`/specs/${id}`);
 
   private renderSpecList: (
     props: RouteComponentProps<{ specId?: string }>,

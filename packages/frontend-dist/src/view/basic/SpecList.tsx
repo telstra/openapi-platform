@@ -10,7 +10,7 @@ export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   specs: Array<HasId<Spec>>;
   expandedSpecId: Id | null;
   onSpecExpanded: (id: Id | null) => void;
-  onSpecOpen: (id: Id | null) => void;
+  onSpecOpen: (id: Id) => void;
 }
 
 const Styled = createStyled(theme => ({

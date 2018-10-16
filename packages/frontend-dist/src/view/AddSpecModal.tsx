@@ -21,10 +21,7 @@ import { SpecModal } from './basic/SpecModal';
  * A modal window that allows the user to add a Spec to the dashboard.
  * Currently only supports specifying a name and URL.
  */
-export class AddSpecModal extends Component<
-  RouteComponentProps<{ specId?: string }>,
-  {}
-> {
+export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>, {}> {
   /**
    * Whether or not a progress indicator should be shown
    */
@@ -53,9 +50,9 @@ export class AddSpecModal extends Component<
   private onSubmitSpec = async (submittedSpec: Spec) => {
     this.showProgressIndicator = true;
     try {
-      if (this.props.match.params.specId) {
+      if (this.props.match.params.id) {
         await specState.updateSpec(
-          parseInt(this.props.match.params.specId, 10),
+          parseInt(this.props.match.params.id, 10),
           submittedSpec,
         );
       } else {
@@ -73,7 +70,7 @@ export class AddSpecModal extends Component<
   public render() {
     const {
       match: {
-        params: { specId },
+        params: { id },
       },
     } = this.props;
     return (
@@ -81,12 +78,12 @@ export class AddSpecModal extends Component<
         {() => (
           <>
             <SpecModal
-              initialSpec={specId ? specState.specs.get(parseInt(specId, 10)) : undefined}
+              initialSpec={id ? specState.specs.get(parseInt(id, 10)) : undefined}
               titleProps={{
-                children: specId ? 'Update Specification' : 'Add Specification',
+                children: id ? 'Update Specification' : 'Add Specification',
               }}
               submitButtonProps={{
-                children: specId ? 'Update' : 'Add',
+                children: id ? 'Update' : 'Add',
               }}
               onSubmitSpec={this.onSubmitSpec}
               onCloseModal={this.closeModal}
@@ -100,7 +97,7 @@ export class AddSpecModal extends Component<
               <DialogTitle>Error</DialogTitle>
               <DialogContent>
                 <DialogContentText>
-                  An error occurred {specId ? 'updating' : 'adding'} the specification.
+                  An error occurred {id ? 'updating' : 'adding'} the specification.
                 </DialogContentText>
               </DialogContent>
               <DialogActions>

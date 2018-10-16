@@ -78,7 +78,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   spec: HasId<Spec>;
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
-  onSpecOpen: (id: Id | null) => void;
+  onSpecOpen: (id: Id) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
 }
 
