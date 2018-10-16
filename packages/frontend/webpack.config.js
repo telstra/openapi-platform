@@ -3,6 +3,8 @@ const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { HotModuleReplacementPlugin, DefinePlugin } = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { config } = require('./lib/config');
+const { apiBaseUrl } = require('@openapi-platform/config');
 
 const stats = {
   colors: true,
@@ -26,7 +28,9 @@ const stats = {
   children: false,
 };
 
-module.exports = ({ apiBaseUrl, env = 'development', output = {} }) => {
+module.exports = (options = {}) => {
+  const { output = {} } = options;
+  const env = config.get('env');
   const { path = __dirname, distDirName = 'dist', statsDirName = 'stats' } = output;
   const isProduction = env === 'production';
   const plugins = [
@@ -36,7 +40,7 @@ module.exports = ({ apiBaseUrl, env = 'development', output = {} }) => {
     }),
     new HotModuleReplacementPlugin(),
     new DefinePlugin({
-      API_BASE_URL: JSON.stringify(apiBaseUrl),
+      API_BASE_URL: JSON.stringify(apiBaseUrl(config)),
     }),
   ];
   if (statsDirName) {

@@ -33,15 +33,33 @@ export class BasicSpecState implements SpecState {
   @action
   public async deleteSpec(id: number): Promise<void> {
     // Delete the spec
-    await client.service('specifications').remove(id);
-    this.specs.delete(id);
-    // Delete all SDK configurations associated with the spec (only locally, the hook for
-    // specification removal will delete any associated SDK configurations from the database)
+    const localSpec = this.specs.get(id);
     const sdkConfigsToDelete = sdkConfigState.specSdkConfigs.get(id);
-    if (sdkConfigsToDelete !== undefined) {
-      sdkConfigsToDelete.forEach(sdkConfig =>
-        sdkConfigState.sdkConfigs.delete(sdkConfig.id),
-      );
+
+    try {
+      this.specs.delete(id);
+
+      // Delete all SDK configurations associated with the spec (only locally, the hook for
+      // specification removal will delete any associated SDK configurations from the database)
+      if (sdkConfigsToDelete) {
+        sdkConfigsToDelete.forEach(sdkConfig => {
+          sdkConfigState.sdkConfigs.delete(sdkConfig.id);
+        });
+      }
+
+      await client.service('specifications').remove(id);
+    } catch (err) {
+      // Add the spec back in because we weren't able to delete it
+      if (localSpec) {
+        this.specs.set(id, localSpec);
+      }
+      // Also sdk configs need to be added back in
+      if (sdkConfigsToDelete) {
+        sdkConfigsToDelete.forEach(sdkConfig => {
+          sdkConfigState.sdkConfigs.set(sdkConfig.id, sdkConfig);
+        });
+      }
+      throw localSpec;
     }
   }
 }

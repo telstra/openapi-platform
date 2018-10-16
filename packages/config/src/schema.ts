@@ -27,7 +27,7 @@ export const schema = convict({
     env: 'NODE_ENV',
     format: ['production', 'development', 'test'],
     arg: 'env',
-    default: 'development',
+    default: 'production',
   },
   ui: {
     protocol: {
@@ -66,7 +66,7 @@ export const schema = convict({
       */
       console: {
         level: logLevel({
-          default: 'info',
+          default: 'verbose',
           env: 'CONSOLE_LOG_LEVEL',
           arg: 'console-log-level',
         }),
@@ -133,7 +133,7 @@ export const schema = convict({
       env: 'DB_HOST',
       arg: 'db-host',
       format: '*',
-      default: undefined,
+      default: 'localhost',
     },
     port: {
       doc: 'The port of the PostgreSQL database to connect to.',
