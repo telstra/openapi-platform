@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { action, computed } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
@@ -54,6 +54,13 @@ export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> 
  * state manager at the moment so that needs to change too.
  */
 export class SdkConfigItem extends Component<SdkConfigItemProps> {
+  /**
+   * Set this to true if you want to make sure that the building status chip shows
+   * a Building status instead of non-running build statuses like Fail, Success and NotRun
+   */
+  @observable
+  private forceBuilding: boolean = false;
+
   constructor(props) {
     super(props);
     state.retrieveLatestSdk(this.props.sdkConfig);
@@ -79,9 +86,26 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
     return this.latestSdk ? this.latestSdk.buildStatus : BuildStatus.NotRun;
   }
 
+  /**
+   * This is the build status that we should show to the user.
+   * The reason this exists if we want to show a build status that we know should be
+   * shown, but haven't received an actual response from the server with the up-to-date
+   * build status.
+   */
+  @computed
+  private get displayedBuildStatus(): BuildStatus {
+    if (this.forceBuilding && !isRunning(this.latestBuildStatus)) {
+      return BuildStatus.Building;
+    } else {
+      return this.latestBuildStatus;
+    }
+  }
+
   @action
   private createSdk = async () => {
+    this.forceBuilding = true;
     await state.createSdk(this.props.sdkConfig);
+    this.forceBuilding = false;
   };
 
   private onEditSdkConfig = () => {
@@ -112,7 +136,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell classes={{ root: classes.sdkConfigStatus }}>
                   <div className={classes.sdkConfigStatus}>
-                    <BuildStatusChip buildStatus={this.latestBuildStatus} />
+                    <BuildStatusChip buildStatus={this.displayedBuildStatus} />
                   </div>
                 </TableCell>
                 <TableCell numeric>
@@ -127,10 +151,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                     </IconButton>
                     <Button
                       size="small"
-                      disabled={isRunning(this.latestBuildStatus)}
+                      disabled={isRunning(this.displayedBuildStatus)}
                       onClick={this.createSdk}
                     >
-                      {isRunning(this.latestBuildStatus) ? 'Running...' : 'Run'}
+                      {isRunning(this.displayedBuildStatus) ? 'Running...' : 'Run'}
                     </Button>
                   </div>
                 </TableCell>
