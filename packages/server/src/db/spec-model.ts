@@ -1,5 +1,6 @@
 import sequelize from 'feathers-sequelize';
 import Sequelize from 'sequelize';
+import { timestamps } from './timestamps';
 
 /**
  * Creates a Sequelize database model for storing a specification.
@@ -11,6 +12,7 @@ export function createSpecModel(dbConnection: Sequelize.Sequelize) {
   return dbConnection.define(
     'specifications',
     {
+      ...timestamps,
       title: {
         type: Sequelize.STRING,
         allowNull: false,

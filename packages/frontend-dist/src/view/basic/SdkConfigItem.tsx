@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { action } from 'mobx';
+import { action, computed } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
@@ -13,7 +13,8 @@ import {
   PathHolder,
   Sdk,
 } from '@openapi-platform/model';
-import { client } from '../../client';
+
+import { state } from '../../state/SdkState';
 import { createStyled } from '../createStyled';
 import { BuildStatusChip } from './BuildStatusChip';
 
@@ -42,22 +43,45 @@ const Styled: any = createStyled(theme => ({
 
 export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> {
   sdkConfig: HasId<SdkConfig>;
-  latestSdk?: Sdk & Partial<PathHolder>;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
 
 /**
  * Very basic information about an SDK configuration.
  * For use in lists, grids, etc.
+ * TODO: Even though this claims to be a 'basic' component it manages and contains state.
+ * Should really be seperated into two different components. There's also no SDK
+ * state manager at the moment so that needs to change too.
  */
 export class SdkConfigItem extends Component<SdkConfigItemProps> {
-  /**
-   * TODO: Not really sure when this got approved but this method really shouldn't be inside of a
-   * basic component.
-   */
+  constructor(props) {
+    super(props);
+    state.retrieveLatestSdk(this.props.sdkConfig);
+  }
+
+  @computed
+  public get latestSdk() {
+    const i = state.entities.values();
+    let currentSdk: (Sdk & Partial<PathHolder>) | null = null;
+    for (const sdk of i) {
+      if (
+        this.props.sdkConfig.id === sdk.sdkConfigId &&
+        (!currentSdk || currentSdk.createdAt < sdk.createdAt)
+      ) {
+        currentSdk = sdk;
+      }
+    }
+    return currentSdk;
+  }
+
+  @computed
+  private get latestBuildStatus(): BuildStatus {
+    return this.latestSdk ? this.latestSdk.buildStatus : BuildStatus.NotRun;
+  }
+
   @action
-  public createSdk = async () => {
-    await client.service('sdks').create({ sdkConfigId: this.props.sdkConfig.id });
+  private createSdk = async () => {
+    await state.createSdk(this.props.sdkConfig);
   };
 
   private onEditSdkConfig = () => {
@@ -65,8 +89,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   };
 
   public render() {
-    const { sdkConfig, latestSdk } = this.props;
-    const buildStatus = latestSdk ? latestSdk.buildStatus : BuildStatus.NotRun;
+    const { sdkConfig } = this.props;
     return (
       <Styled>
         {({ classes }) => (
@@ -89,13 +112,13 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell classes={{ root: classes.sdkConfigStatus }}>
                   <div className={classes.sdkConfigStatus}>
-                    <BuildStatusChip buildStatus={buildStatus} />
+                    <BuildStatusChip buildStatus={this.latestBuildStatus} />
                   </div>
                 </TableCell>
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
-                    {latestSdk && latestSdk.path ? (
-                      <IconButton href={latestSdk.path}>
+                    {this.latestSdk && this.latestSdk.path ? (
+                      <IconButton href={this.latestSdk.path}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
@@ -104,10 +127,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                     </IconButton>
                     <Button
                       size="small"
-                      disabled={isRunning(buildStatus)}
+                      disabled={isRunning(this.latestBuildStatus)}
                       onClick={this.createSdk}
                     >
-                      {isRunning(buildStatus) ? 'Running...' : 'Run'}
+                      {isRunning(this.latestBuildStatus) ? 'Running...' : 'Run'}
                     </Button>
                   </div>
                 </TableCell>

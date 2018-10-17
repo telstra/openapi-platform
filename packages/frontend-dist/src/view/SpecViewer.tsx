@@ -7,6 +7,6 @@ import { NotFound } from './basic/NotFound';
 import { SpecInformation } from './basic/SpecInformation';
 
 export const SpecViewer: SFC<RouteComponentProps<{}>> = observer(({ match }) => {
-  const spec = state.specs.get(Number.parseInt(match.params.id, 10));
+  const spec = state.entities.get(Number.parseInt(match.params.id, 10));
   return spec ? <SpecInformation spec={spec} /> : <NotFound item="specification" />;
 });

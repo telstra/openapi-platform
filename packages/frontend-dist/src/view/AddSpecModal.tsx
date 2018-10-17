@@ -50,7 +50,7 @@ export class AddSpecModal extends Component<
    * Event fired when the user presses the 'Add' or 'Update' button.
    */
   @action
-  private onSubmitSpec = async (submittedSpec: Spec) => {
+  private onSubmitSpec = async (submittedSpec: Partial<Spec>) => {
     this.showProgressIndicator = true;
     try {
       if (this.props.match.params.specId) {
@@ -81,7 +81,9 @@ export class AddSpecModal extends Component<
         {() => (
           <>
             <SpecModal
-              initialSpec={specId ? specState.specs.get(parseInt(specId, 10)) : undefined}
+              initialSpec={
+                specId ? specState.entities.get(parseInt(specId, 10)) : undefined
+              }
               titleProps={{
                 children: specId ? 'Update Specification' : 'Add Specification',
               }}

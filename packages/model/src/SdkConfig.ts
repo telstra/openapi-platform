@@ -1,10 +1,11 @@
 import { GitInfo } from './GitInfo';
 import { Id } from './Id';
+import { Timestamped } from './Timestamped';
 
 /**
  * Represents an SDK configuration, used to define how an SDK should be built from a specification.
  */
-export interface SdkConfig {
+export interface SdkConfig extends Timestamped {
   /**
    * The ID of the Spec this SdkConfig is for.
    */

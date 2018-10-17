@@ -10,4 +10,5 @@ export {
   PathHolder,
 } from './Sdk';
 export { Spec } from './Spec';
+export { Timestamped } from './Timestamped';
 export { GitInfo } from './GitInfo';

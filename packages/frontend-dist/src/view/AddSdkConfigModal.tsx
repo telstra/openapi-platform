@@ -91,7 +91,7 @@ export class AddSdkConfigModal extends Component<
             <SdkConfigModal
               initialSdkConfig={
                 sdkConfigId
-                  ? sdkConfigState.sdkConfigs.get(parseInt(sdkConfigId, 10))
+                  ? sdkConfigState.entities.get(parseInt(sdkConfigId, 10))
                   : undefined
               }
               titleProps={{

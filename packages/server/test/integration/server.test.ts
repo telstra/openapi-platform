@@ -41,6 +41,8 @@ describe('test server', () => {
     let createdSpecId: number;
     let sdkConfigData: SdkConfig;
     const specData: Spec = {
+      createdAt: new Date(),
+      updatedAt: new Date(),
       title: 'title',
       description: 'desc',
       path: 'path',
@@ -51,6 +53,8 @@ describe('test server', () => {
       createdSpecId = createdSpec.id;
       sdkConfigData = {
         specId: createdSpecId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         target: 'java is ew',
         version: 'v1.0.0',
         options: { 'a choice': 'my options here' },
@@ -87,6 +91,8 @@ describe('test server', () => {
 
       it('create an sdk success', async () => {
         const specData: Spec = {
+          createdAt: new Date(),
+          updatedAt: new Date(),
           title: 'Dummy specification title',
           description: 'A description of my specification',
           path:
@@ -96,6 +102,8 @@ describe('test server', () => {
 
         const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           options: {
@@ -135,6 +143,8 @@ describe('test server', () => {
 
       it('create an sdk error, bad options', async () => {
         const specData: Spec = {
+          createdAt: new Date(),
+          updatedAt: new Date(),
           title: 'Dummy specification title',
           description: 'A description of my specification',
           path:
@@ -144,6 +154,8 @@ describe('test server', () => {
 
         const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           options: 'options should be an object and not a string',
@@ -170,6 +182,8 @@ describe('test server', () => {
 
       it('create an sdk error, invalid path', async () => {
         const specData: Spec = {
+          createdAt: new Date(),
+          updatedAt: new Date(),
           title: 'Dummy specification title',
           description: 'A description of my specification',
           path: 'this fake path will lead to an error this time yay',
@@ -178,6 +192,8 @@ describe('test server', () => {
 
         const sdkConfigData: SdkConfig = {
           specId: createdSpec.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           target: 'Kewl kids use Haskell',
           version: 'v1.1.1',
           options: {},

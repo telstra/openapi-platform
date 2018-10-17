@@ -1,4 +1,5 @@
 import { Id } from './Id';
+import { Timestamped } from './Timestamped';
 
 export function isRunning(buildStatus: BuildStatus) {
   return ![BuildStatus.Fail, BuildStatus.Success, BuildStatus.NotRun].includes(
@@ -31,7 +32,7 @@ export type HasPath<T> = T & PathHolder;
 /**
  * Represents an SDK that has been built from an SDK configuration for a specification.
  */
-export interface Sdk {
+export interface Sdk extends Timestamped {
   /**
    * The ID of the SDK configuration the SDK was built for.
    */

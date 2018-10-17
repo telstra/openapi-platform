@@ -15,6 +15,7 @@ import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
+import { setCreatedTimestamp, setUpdatedTimestamp } from './hooks/timestamps';
 
 import { config } from './config';
 
@@ -83,6 +84,10 @@ export async function createServer() {
   app.publish(() => app.channel('everybody'));
 
   app.service('specifications').hooks({
+    before: {
+      create: setCreatedTimestamp,
+      update: setUpdatedTimestamp,
+    },
     after: {
       async remove(context) {
         // Remove any associated SDK configurations when a specification is removed
@@ -104,11 +109,15 @@ export async function createServer() {
   });
   app.service('sdkConfigs').hooks({
     before: {
-      async create(context) {
-        // Throws an error if it can't find the specification
-        await app.service('specifications').get(context.data.specId, {});
-        return context;
-      },
+      create: [
+        setCreatedTimestamp,
+        async context => {
+          // Throws an error if it can't find the specification
+          await app.service('specifications').get(context.data.specId, {});
+          return context;
+        },
+      ],
+      update: setUpdatedTimestamp,
     },
     after: {
       async remove(context) {
@@ -131,17 +140,26 @@ export async function createServer() {
   });
   app.service('sdks').hooks({
     before: {
-      async create(context) {
-        context.sdkConfig = await app
-          .service('sdkConfigs')
-          .get(context.data.sdkConfigId, {});
-        if (!context.sdkConfig) {
-          throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
-        }
-        context.data.sdkConfigId = context.sdkConfig.id;
-        context.data.buildStatus = BuildStatus.NotRun;
-        return context;
-      },
+      create: [
+        setCreatedTimestamp,
+        async context => {
+          if (
+            context.data.sdkConfigId === undefined ||
+            context.data.sdkConfigId === null
+          ) {
+            throw new Error(`The sdkConfigId was ${context.data.sdkConfigId}`);
+          }
+          context.sdkConfig = await app
+            .service('sdkConfigs')
+            .get(context.data.sdkConfigId);
+          if (!context.sdkConfig) {
+            throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
+          }
+          context.data.buildStatus = BuildStatus.Building;
+          return context;
+        },
+      ],
+      update: setUpdatedTimestamp,
     },
     after: {
       async create(context) {
@@ -169,7 +187,7 @@ export async function createServer() {
                         gitHookContext.repoDir
                       }`,
                     );
-                    await app.service('sdks').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Cloning,
                     });
                   },
@@ -192,7 +210,7 @@ export async function createServer() {
                   },
                   async stage(gitHookContext) {
                     logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
-                    await app.service('sdks').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Staging,
                     });
                   },
@@ -202,7 +220,7 @@ export async function createServer() {
                   },
                   async push() {
                     logger.verbose(`Pushing commits...`);
-                    await app.service('sdks').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Pushing,
                     });
                   },
@@ -210,11 +228,11 @@ export async function createServer() {
               },
             });
           }
-          await app.service('sdks').patch(context.sdkConfig.id, {
+          await app.service('sdks').patch(context.result.id, {
             buildStatus: BuildStatus.Success,
           });
         } catch (err) {
-          await app.service('sdks').patch(context.sdkConfig.id, {
+          await app.service('sdks').patch(context.result.id, {
             buildStatus: BuildStatus.Fail,
             // TODO: should include a failure error
           });

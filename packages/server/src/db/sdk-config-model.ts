@@ -1,6 +1,5 @@
 import sequelize from 'feathers-sequelize';
 import Sequelize from 'sequelize';
-
 /**
  * Creates a Sequelize database model for storing an SDK configuration.
  *
