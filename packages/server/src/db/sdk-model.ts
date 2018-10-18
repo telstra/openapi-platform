@@ -1,6 +1,5 @@
 import sequelize from 'feathers-sequelize';
 import Sequelize from 'sequelize';
-import { timestamps } from './timestamps';
 /**
  * Creates a Sequelize database model for storing a built SDK.
  *
@@ -11,7 +10,6 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
   return dbConnection.define(
     'sdks',
     {
-      ...timestamps,
       sdkConfigId: {
         type: Sequelize.INTEGER,
         allowNull: false,

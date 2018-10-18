@@ -19,9 +19,7 @@ export function withRealtimeUpdates<T extends Timestamped, S extends CrudState<T
     }
   });
   ['created', 'patched', 'updated'].forEach(event => {
-    state.service.on(event, e => {
-      addIfNewerEntities(e);
-    });
+    state.service.on(event, addIfNewerEntities);
   });
   state.service.on(
     'removed',

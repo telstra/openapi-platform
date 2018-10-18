@@ -15,7 +15,6 @@ import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
-import { setCreatedTimestamp, setUpdatedTimestamp } from './hooks/timestamps';
 
 import { config } from './config';
 
@@ -84,10 +83,6 @@ export async function createServer() {
   app.publish(() => app.channel('everybody'));
 
   app.service('specifications').hooks({
-    before: {
-      create: setCreatedTimestamp,
-      update: setUpdatedTimestamp,
-    },
     after: {
       async remove(context) {
         // Remove any associated SDK configurations when a specification is removed
@@ -109,15 +104,11 @@ export async function createServer() {
   });
   app.service('sdkConfigs').hooks({
     before: {
-      create: [
-        setCreatedTimestamp,
-        async context => {
-          // Throws an error if it can't find the specification
-          await app.service('specifications').get(context.data.specId, {});
-          return context;
-        },
-      ],
-      update: setUpdatedTimestamp,
+      async create(context) {
+        // Throws an error if it can't find the specification
+        await app.service('specifications').get(context.data.specId, {});
+        return context;
+      },
     },
     after: {
       async remove(context) {
@@ -140,26 +131,17 @@ export async function createServer() {
   });
   app.service('sdks').hooks({
     before: {
-      create: [
-        setCreatedTimestamp,
-        async context => {
-          if (
-            context.data.sdkConfigId === undefined ||
-            context.data.sdkConfigId === null
-          ) {
-            throw new Error(`The sdkConfigId was ${context.data.sdkConfigId}`);
-          }
-          context.sdkConfig = await app
-            .service('sdkConfigs')
-            .get(context.data.sdkConfigId);
-          if (!context.sdkConfig) {
-            throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
-          }
-          context.data.buildStatus = BuildStatus.Building;
-          return context;
-        },
-      ],
-      update: setUpdatedTimestamp,
+      async create(context) {
+        if (context.data.sdkConfigId === undefined || context.data.sdkConfigId === null) {
+          throw new Error(`The sdkConfigId was ${context.data.sdkConfigId}`);
+        }
+        context.sdkConfig = await app.service('sdkConfigs').get(context.data.sdkConfigId);
+        if (!context.sdkConfig) {
+          throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
+        }
+        context.data.buildStatus = BuildStatus.Building;
+        return context;
+      },
     },
     after: {
       async create(context) {
