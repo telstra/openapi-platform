@@ -18,7 +18,7 @@
     "classnames": "^2.2.5",
     "jss": "^9.8.7",
     "jss-global": "^3.0.0",
-    "mobx": "^5.0.3",
+    "mobx": "5.5.0",
     "mobx-react": "^5.2.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

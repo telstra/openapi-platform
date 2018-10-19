@@ -19,6 +19,8 @@ import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
 import { HasId, SdkConfig, Spec } from '@openapi-platform/model';
+import { state as sdkConfigState } from '../../state/SdkConfigState';
+import { state as sdkState } from '../../state/SdkState';
 import { createStyled } from '../createStyled';
 import { SdkConfigItem } from './SdkConfigItem';
 
@@ -95,6 +97,21 @@ export class SpecItem extends Component<SpecItemProps> {
 
   private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
 
+  /**
+   * Runs all SDK config plans
+   * TODO: This shouldn't belong to a basic view
+   */
+  private runAll = async () => {
+    const sdkConfigs = sdkConfigState.specSdkConfigs.get(this.props.spec.id);
+    if (sdkConfigs) {
+      await Promise.all(
+        sdkConfigs.map(config => {
+          return sdkState.createSdk(config);
+        }),
+      );
+    }
+  };
+
   public render() {
     const { spec, expanded, sdkConfigs = [], onEditSdkConfig } = this.props;
     return (
@@ -134,7 +151,12 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
-                    <Button variant="flat" color="primary" size="small">
+                    <Button
+                      variant="flat"
+                      color="primary"
+                      size="small"
+                      onClick={this.runAll}
+                    >
                       Run all
                     </Button>
                     <IconButton

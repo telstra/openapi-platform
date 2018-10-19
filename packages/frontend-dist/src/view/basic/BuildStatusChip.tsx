@@ -1,38 +1,43 @@
 import React, { SFC } from 'react';
 
 import { Chip } from '@material-ui/core';
-import { red, green, amber, grey } from '@material-ui/core/colors';
+import { red, green, amber, grey, blue } from '@material-ui/core/colors';
 
 import { BuildStatus } from '@openapi-platform/model';
 import { createStyled } from '../createStyled';
-
-// TODO: Should probably only have to have 1 switch case
-const buildStatusToLabel = ({ buildStatus }) => {
-  switch (buildStatus) {
-    case BuildStatus.NotRun:
-      return 'Never run';
-    case BuildStatus.Running:
-      return 'Running';
-    case BuildStatus.Success:
-      return 'Success';
-    case BuildStatus.Fail:
-      return 'Failed';
-  }
-};
-
-const buildStatusToColor = ({ buildStatus }) => {
-  switch (buildStatus) {
-    case BuildStatus.NotRun:
-      return grey[300];
-    case BuildStatus.Running:
-      return amber[500];
-    case BuildStatus.Success:
-      return green[600];
-    case BuildStatus.Fail:
-      return red[900];
-    default:
-      return red[900];
-  }
+const statusMap = {
+  [BuildStatus.NotRun]: {
+    label: 'Never run',
+    color: grey[300],
+  },
+  [BuildStatus.Building]: {
+    label: 'Building',
+    color: amber[500],
+  },
+  [BuildStatus.Cloning]: {
+    label: 'Cloning',
+    color: blue[500],
+  },
+  [BuildStatus.Staging]: {
+    label: 'Staging',
+    color: blue[600],
+  },
+  [BuildStatus.Pushing]: {
+    label: 'Pushing',
+    color: blue[600],
+  },
+  [BuildStatus.Success]: {
+    label: 'Success',
+    color: green[600],
+  },
+  [BuildStatus.Fail]: {
+    label: 'Fail',
+    color: red[900],
+  },
+  default: {
+    label: 'Unknown',
+    color: grey[300],
+  },
 };
 
 const Styled: any = createStyled(theme => ({
@@ -51,8 +56,13 @@ export interface BuildStatusChipProps extends React.DOMAttributes<HTMLDivElement
  * For use in lists, grids, etc.
  */
 
-export const BuildStatusChip: SFC<BuildStatusChipProps> = props => (
-  <Styled buildStatusColor={buildStatusToColor(props)}>
-    {({ classes }) => <Chip className={classes.root} label={buildStatusToLabel(props)} />}
-  </Styled>
-);
+export const BuildStatusChip: SFC<BuildStatusChipProps> = props => {
+  const valuesObj = statusMap[props.buildStatus]
+    ? statusMap[props.buildStatus]
+    : statusMap.default;
+  return (
+    <Styled buildStatusColor={valuesObj.color}>
+      {({ classes }) => <Chip className={classes.root} label={valuesObj.label} />}
+    </Styled>
+  );
+};

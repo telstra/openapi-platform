@@ -2,13 +2,19 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { observable, action } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
-import { SdkConfig, BuildStatus } from '@openapi-platform/model';
-import { Sdk } from '@openapi-platform/model';
-import { client } from '../../client';
+import {
+  SdkConfig,
+  BuildStatus,
+  isRunning,
+  PathHolder,
+  Sdk,
+} from '@openapi-platform/model';
+
+import { state } from '../../state/SdkState';
 import { createStyled } from '../createStyled';
 import { BuildStatusChip } from './BuildStatusChip';
 
@@ -43,19 +49,63 @@ export interface SdkConfigItemProps extends React.DOMAttributes<HTMLDivElement> 
 /**
  * Very basic information about an SDK configuration.
  * For use in lists, grids, etc.
+ * TODO: Even though this claims to be a 'basic' component it manages and contains state.
+ * Should really be seperated into two different components. There's also no SDK
+ * state manager at the moment so that needs to change too.
  */
 export class SdkConfigItem extends Component<SdkConfigItemProps> {
+  /**
+   * Set this to true if you want to make sure that the building status chip shows
+   * a Building status instead of non-running build statuses like Fail, Success and NotRun
+   */
   @observable
-  private latestSdkUrl?: string;
+  private forceBuilding: boolean = false;
+
+  constructor(props) {
+    super(props);
+    state.retrieveLatestSdk(this.props.sdkConfig);
+  }
+
+  @computed
+  public get latestSdk() {
+    const i = state.entities.values();
+    let currentSdk: (Sdk & Partial<PathHolder>) | null = null;
+    for (const sdk of i) {
+      if (
+        this.props.sdkConfig.id === sdk.sdkConfigId &&
+        (!currentSdk || currentSdk.createdAt < sdk.createdAt)
+      ) {
+        currentSdk = sdk;
+      }
+    }
+    return currentSdk;
+  }
+
+  @computed
+  private get latestBuildStatus(): BuildStatus {
+    return this.latestSdk ? this.latestSdk.buildStatus : BuildStatus.NotRun;
+  }
+
+  /**
+   * This is the build status that we should show to the user.
+   * The reason this exists if we want to show a build status that we know should be
+   * shown, but haven't received an actual response from the server with the up-to-date
+   * build status.
+   */
+  @computed
+  private get displayedBuildStatus(): BuildStatus {
+    if (this.forceBuilding && !isRunning(this.latestBuildStatus)) {
+      return BuildStatus.Building;
+    } else {
+      return this.latestBuildStatus;
+    }
+  }
 
   @action
-  public createSdk = async () => {
-    const sdk: HasId<Sdk> = await client
-      .service('sdks')
-      .create({ sdkConfigId: this.props.sdkConfig.id });
-    // TODO: Need to get this from the actual backend
-    this.props.sdkConfig.buildStatus = BuildStatus.Success;
-    this.latestSdkUrl = sdk.path;
+  private createSdk = async () => {
+    this.forceBuilding = true;
+    await state.createSdk(this.props.sdkConfig);
+    this.forceBuilding = false;
   };
 
   private onEditSdkConfig = () => {
@@ -86,13 +136,13 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell classes={{ root: classes.sdkConfigStatus }}>
                   <div className={classes.sdkConfigStatus}>
-                    <BuildStatusChip buildStatus={sdkConfig.buildStatus} />
+                    <BuildStatusChip buildStatus={this.displayedBuildStatus} />
                   </div>
                 </TableCell>
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
-                    {this.latestSdkUrl ? (
-                      <IconButton href={this.latestSdkUrl}>
+                    {this.latestSdk && this.latestSdk.path ? (
+                      <IconButton href={this.latestSdk.path}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
@@ -101,12 +151,10 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                     </IconButton>
                     <Button
                       size="small"
-                      disabled={sdkConfig.buildStatus === BuildStatus.Running}
+                      disabled={isRunning(this.displayedBuildStatus)}
                       onClick={this.createSdk}
                     >
-                      {sdkConfig.buildStatus === BuildStatus.Running
-                        ? 'Running...'
-                        : 'Run'}
+                      {isRunning(this.displayedBuildStatus) ? 'Running...' : 'Run'}
                     </Button>
                   </div>
                 </TableCell>

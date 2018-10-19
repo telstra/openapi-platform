@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
-import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
+import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 import { logger } from './logger';
 
@@ -43,7 +43,9 @@ export async function createServer() {
     .use(
       morgan('dev', {
         stream: {
-          write: message => logger.verbose(message),
+          write(message) {
+            logger.verbose(message);
+          },
         },
       }),
     )
@@ -75,6 +77,11 @@ export async function createServer() {
     .use('/sdks', sdkService)
     .use(express.errorHandler());
 
+  // Literally everybody gets data set
+  // TODO: If we ever add user authentication, this would be very very insecure
+  app.on('connection', connection => app.channel('everybody').join(connection));
+  app.publish(() => app.channel('everybody'));
+
   app.service('specifications').hooks({
     after: {
       async remove(context) {
@@ -98,10 +105,8 @@ export async function createServer() {
   app.service('sdkConfigs').hooks({
     before: {
       async create(context) {
+        // Throws an error if it can't find the specification
         await app.service('specifications').get(context.data.specId, {});
-        if (!hasValidBuildStatus(context.data.buildStatus)) {
-          context.data.buildStatus = BuildStatus.NotRun;
-        }
         return context;
       },
     },
@@ -127,61 +132,94 @@ export async function createServer() {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        const sdkConfig = await app
-          .service('sdkConfigs')
-          .get(context.data.sdkConfigId, {});
-        const spec = await app.service('specifications').get(sdkConfig.specId, {});
-        const sdk = await generateSdk(logger, spec, sdkConfig);
-        /*
-          TODO: The linkside of the info object is probably temporary.
-          Might need to consider downloading the object from
-          wherever the Swagger gen API stores it.
-        */
-        if (sdkConfig.gitInfo) {
-          await updateRepoWithNewSdk(sdkConfig.gitInfo, sdk.path, {
-            hooks: {
-              before: {
-                clone: async gitHookContext => {
-                  logger.verbose(
-                    `Cloning ${gitHookContext.remoteSdkUrl} into ${
-                      gitHookContext.repoDir
-                    }`,
-                  );
-                },
-                downloadSdk: async () => {
-                  logger.verbose('Dowloading SDK');
-                },
-                extractSdk: async gitHookContext => {
-                  logger.verbose(
-                    `Extracting ${gitHookContext.sdkArchivePath} to ${
-                      gitHookContext.sdkDir
-                    }`,
-                  );
-                },
-                moveSdkFilesToRepo: async gitHookContext => {
-                  logger.verbose(
-                    `Moving files from ${gitHookContext.sdkDir} to ${
-                      gitHookContext.repoDir
-                    }`,
-                  );
-                },
-                stage: async gitHookContext => {
-                  logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
-                },
-                commit: async () => {
-                  // Maybe state the commit message and hash
-                  logger.verbose(`Committing changes`);
-                },
-                push: async () => {
-                  logger.verbose(`Pushing commits...`);
+        if (context.data.sdkConfigId === undefined || context.data.sdkConfigId === null) {
+          throw new Error(`The sdkConfigId was ${context.data.sdkConfigId}`);
+        }
+        context.sdkConfig = await app.service('sdkConfigs').get(context.data.sdkConfigId);
+        if (!context.sdkConfig) {
+          throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
+        }
+        context.data.buildStatus = BuildStatus.Building;
+        return context;
+      },
+    },
+    after: {
+      async create(context) {
+        try {
+          const spec = await app
+            .service('specifications')
+            .get(context.sdkConfig.specId, {});
+
+          const sdkPath = await generateSdk(logger, spec, context.sdkConfig);
+          await app.service('sdks').patch(context.result.id, {
+            path: sdkPath,
+          });
+          /*
+            TODO: The linkside of the info object is probably temporary.
+            Might need to consider downloading the object from
+            wherever the Swagger gen API stores it.
+          */
+          if (context.sdkConfig.gitInfo) {
+            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdkPath, {
+              hooks: {
+                before: {
+                  async clone(gitHookContext) {
+                    logger.verbose(
+                      `Cloning ${gitHookContext.remoteSdkUrl} into ${
+                        gitHookContext.repoDir
+                      }`,
+                    );
+                    await app.service('sdks').patch(context.result.id, {
+                      buildStatus: BuildStatus.Cloning,
+                    });
+                  },
+                  async downloadSdk() {
+                    logger.verbose('Dowloading SDK');
+                  },
+                  async extractSdk(gitHookContext) {
+                    logger.verbose(
+                      `Extracting ${gitHookContext.sdkArchivePath} to ${
+                        gitHookContext.sdkDir
+                      }`,
+                    );
+                  },
+                  async moveSdkFilesToRepo(gitHookContext) {
+                    logger.verbose(
+                      `Moving files from ${gitHookContext.sdkDir} to ${
+                        gitHookContext.repoDir
+                      }`,
+                    );
+                  },
+                  async stage(gitHookContext) {
+                    logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
+                    await app.service('sdks').patch(context.result.id, {
+                      buildStatus: BuildStatus.Staging,
+                    });
+                  },
+                  async commit() {
+                    // Maybe state the commit message and hash
+                    logger.verbose(`Committing changes`);
+                  },
+                  async push() {
+                    logger.verbose(`Pushing commits...`);
+                    await app.service('sdks').patch(context.result.id, {
+                      buildStatus: BuildStatus.Pushing,
+                    });
+                  },
                 },
               },
-            },
+            });
+          }
+          await app.service('sdks').patch(context.result.id, {
+            buildStatus: BuildStatus.Success,
           });
+        } catch (err) {
+          await app.service('sdks').patch(context.result.id, {
+            buildStatus: BuildStatus.Fail,
+            // TODO: should include a failure error
+          });
+          logger.error('Failed to generate SDK', err);
         }
-        context.data.path = sdk.path;
-        context.data.sdkConfigId = sdkConfig.id;
-        return context;
       },
     },
   });
@@ -190,6 +228,12 @@ export async function createServer() {
   if (config.get('server.useCors')) {
     app.use(cors());
   }
+
+  app.hooks({
+    error(hook) {
+      logger.error(hook.error);
+    },
+  });
 
   // TODO: Use migrations instead of sync to create tables
   await specModel.sync();

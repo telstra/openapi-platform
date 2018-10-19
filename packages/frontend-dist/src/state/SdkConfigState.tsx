@@ -1,15 +1,34 @@
 import { observable, computed, action } from 'mobx';
 
 import { HasId, Id, SdkConfig, GitInfo } from '@openapi-platform/model';
-import { client } from '../client';
 
-class SdkConfigState {
+import { client } from '../client';
+import { CrudState } from './CrudState';
+import { withRealtimeUpdates } from './withRealtimeUpdates';
+
+class SdkConfigState implements CrudState<SdkConfig> {
   @observable
-  public readonly sdkConfigs: Map<Id, HasId<SdkConfig>> = new Map();
+  public readonly entities: Map<Id, HasId<SdkConfig>> = new Map();
+  public readonly service = client.service('sdkConfigs');
+
+  @action
+  public async sync(): Promise<void> {
+    const entities: Array<HasId<SdkConfig>> = await this.service.find({
+      query: {
+        $sort: {
+          createdAt: 1,
+        },
+      },
+    });
+    entities.forEach(sdkConfig => {
+      this.entities.set(sdkConfig.id, sdkConfig);
+    });
+  }
+
   @computed
   public get specSdkConfigs(): Map<Id, Array<HasId<SdkConfig>>> {
     const specSdkConfigs = new Map();
-    for (const sdkConfig of this.sdkConfigs.values()) {
+    for (const sdkConfig of this.entities.values()) {
       if (specSdkConfigs.has(sdkConfig.specId)) {
         specSdkConfigs.get(sdkConfig.specId).push(sdkConfig);
       } else {
@@ -21,10 +40,7 @@ class SdkConfigState {
 
   @action
   public async addSdkConfig(addedSdkConfig: AddedSdkConfig): Promise<void> {
-    const sdkConfig: HasId<SdkConfig> = await client
-      .service('sdkConfigs')
-      .create(addedSdkConfig);
-    this.sdkConfigs.set(sdkConfig.id, sdkConfig);
+    await this.service.create(addedSdkConfig);
   }
 
   @action
@@ -32,17 +48,15 @@ class SdkConfigState {
     id: number,
     updatedSdkConfig: AddedSdkConfig,
   ): Promise<void> {
-    const currentConfig = this.sdkConfigs.get(id);
+    const currentConfig = this.entities.get(id);
     // Copy over elements specified in SdkConfig but not editable from the form.
-    const updatedSdkConfigStore: SdkConfig = {
+    const updatedSdkConfigStore: Partial<SdkConfig> = {
       ...updatedSdkConfig,
-      buildStatus: currentConfig!.buildStatus,
+      /* TODO: Check if this is supposed to be here. 
+         AddedSdkConfig supposedly already have a specId, according to the interface */
       specId: currentConfig!.specId,
     };
-    const sdkConfig: HasId<SdkConfig> = await client
-      .service('sdkConfigs')
-      .update(id, updatedSdkConfigStore);
-    this.sdkConfigs.set(id, sdkConfig);
+    await this.service.update(id, updatedSdkConfigStore);
   }
 }
 
@@ -54,20 +68,5 @@ export interface AddedSdkConfig {
   gitInfo?: GitInfo;
 }
 
-export const state: SdkConfigState = new SdkConfigState();
-client
-  .service('sdkConfigs')
-  .find({
-    query: {
-      $sort: {
-        createdAt: 1,
-      },
-    },
-  })
-  .then(
-    action((sdkConfigs: Array<HasId<SdkConfig>>) => {
-      sdkConfigs.forEach(sdkConfig => {
-        state.sdkConfigs.set(sdkConfig.id, sdkConfig);
-      });
-    }),
-  );
+export const state: SdkConfigState = withRealtimeUpdates(new SdkConfigState());
+state.sync();
