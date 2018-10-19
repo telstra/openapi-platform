@@ -1,5 +1,5 @@
-// TODO: Bit of a weird hack to go out and back into another package
-const createWebpackConfig = require('../packages/frontend/webpack.config');
+// TODO: Bit of a weird hack to into package like this
+const createWebpackConfig = require('@openapi-platform/frontend/webpack.config');
 const { DefinePlugin } = require('webpack');
 module.exports = (storybookConfig, configType) => {
   const frontendConfig = createWebpackConfig();
@@ -12,6 +12,5 @@ module.exports = (storybookConfig, configType) => {
   storybookConfig.plugins.push(
     ...frontendConfig.plugins.filter(plugin => plugin instanceof DefinePlugin),
   );
-  storybookConfig.plugins.forEach(console.log);
   return storybookConfig;
 };

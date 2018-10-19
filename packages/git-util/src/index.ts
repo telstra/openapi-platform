@@ -15,72 +15,8 @@ import {
 } from '@openapi-platform/file-util';
 import { GitInfo } from '@openapi-platform/model';
 
-export async function updateRepoWithNewSdk(
-  gitInfo: GitInfo,
-  remoteSdkUrl: string,
-  options,
-  fileCleaningGlobs = [],
-) {
-  // TODO: Rather than taking a logger, just provide callbacks
-  const { logger } = options;
-  const repoDir = await makeTempDir('repo');
-  try {
-    /*
-      TODO: This isn't great. We clone the repo everytime we generate an SDK.
-      Preferably, we'd only do it once or have some kind of cache for repos we've already cloned.
-      Would have to probably git reset --hard HEAD~ or something before adding the SDK to the cloned repo
-      just to make sure there aren't any stray files lying around in the cached repo.
-    */
-    // TODO: Should also be able to configure which branch to checkout, maybe?
-    logger.verbose(`Cloning ${remoteSdkUrl} into ${repoDir}`);
-    await clone({
-      ref: gitInfo.branch,
-      dir: repoDir,
-      // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
-      fs: oldFs,
-      url: gitInfo.repoUrl,
-      singleBranch: true,
-      depth: 1,
-      ...gitInfo.auth,
-    });
-
-    await migrateSdkIntoLocalRepo(repoDir, remoteSdkUrl, fileCleaningGlobs, options);
-    const addedPaths = await getAllStageableFilepathsInRepo(repoDir);
-    logger.verbose(`Staging ${addedPaths.length} paths`);
-    for (const addedPath of addedPaths) {
-      const relativeFilePath = relative(repoDir, addedPath);
-      // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
-      await add({
-        fs: oldFs,
-        dir: repoDir,
-        filepath: relativeFilePath,
-      });
-    }
-    logger.verbose(`Committing changes...`);
-    await commit({
-      fs: oldFs,
-      dir: repoDir,
-      // TODO: This should be configurable
-      author: {
-        name: 'Swagger Platform',
-        email: 'N/A',
-      },
-      // TODO: Could have a better message
-      message: 'Updated SDK',
-    });
-
-    logger.verbose(`Pushing commits...`);
-    await push({
-      fs: oldFs,
-      dir: repoDir,
-      ...gitInfo.auth,
-    });
-  } catch (err) {
-    throw err;
-  } finally {
-    await deletePaths([repoDir]);
-  }
-}
+import { HookOptions, withDefaultHooksOptions, Hook, HookCallback } from './hooks';
+export { HookOptions, Hook, HookCallback };
 
 // Note: dir = directory
 
@@ -109,6 +45,11 @@ async function deleteAllFilesInLocalRepo(dir) {
   const filePaths = await listFiles({ fs: oldFs, dir });
   const fullFilePaths = filePaths.map(path => join(dir, path));
   await deletePaths(fullFilePaths);
+  return filePaths;
+}
+
+export interface Options {
+  hooks?: HookOptions;
 }
 
 /**
@@ -118,43 +59,123 @@ async function deleteAllFilesInLocalRepo(dir) {
 export async function migrateSdkIntoLocalRepo(
   repoDir: string,
   remoteSdkUrl: string,
-  fileCleaningGlobs: string[],
-  options,
+  options: Options = {},
+  context: any = {},
 ) {
-  const { logger } = options;
-  logger.verbose(`Deleting all files ${repoDir}`);
-  await deleteAllFilesInLocalRepo(repoDir);
+  const hooks = withDefaultHooksOptions(options.hooks);
+  options.hooks = hooks;
+
+  context.remoteSdkUrl = remoteSdkUrl;
+  context.repoDir = repoDir;
+  await hooks.before.cleanRepo(context);
+  const deletedPaths = await deleteAllFilesInLocalRepo(context.repoDir);
+  context.deletedPaths = deletedPaths;
+  await hooks.after.cleanRepo(deletedPaths);
+
   /*
    * We make folders for each step of the process,
    * one for downloading, one for unzipping.
    */
-  const downloadDir = await makeTempDir('download');
+  context.downloadDir = await makeTempDir('download');
+  context.sdkArchivePath = join(context.downloadDir, 'sdk.zip');
   try {
-    const sdkArchiveFilePath = join(downloadDir, 'sdk.zip');
-    await downloadToPath(sdkArchiveFilePath, remoteSdkUrl);
-    const sdkDir = await makeTempDir('sdk');
+    await hooks.before.downloadSdk(context);
+    await downloadToPath(context.sdkArchivePath, remoteSdkUrl);
+    await hooks.after.downloadSdk(context);
+
+    context.sdkDir = await makeTempDir('sdk');
     try {
-      logger.verbose(`Extracting ${sdkArchiveFilePath} to ${sdkDir}`);
-      await extractSdkArchiveFileToDir(sdkDir, sdkArchiveFilePath);
+      await hooks.before.extractSdk(context);
+      await extractSdkArchiveFileToDir(context.sdkDir, context.sdkArchivePath);
+      await hooks.after.extractSdk(context);
 
-      for (let glob of fileCleaningGlobs) {
-        glob = join(sdkDir, glob);
-      }
-      logger.verbose(
-        `Deleting files from ${sdkDir} which match globs: ${fileCleaningGlobs}`,
-      );
-      await deletePaths(fileCleaningGlobs);
-
-      logger.verbose(`Moving files from ${sdkDir} to ${repoDir}`);
-      await moveFilesIntoLocalRepo(repoDir, sdkDir);
+      await hooks.before.moveSdkFilesToRepo(context);
+      await moveFilesIntoLocalRepo(context.repoDir, context.sdkDir);
+      await hooks.after.moveSdkFilesToRepo(context);
     } catch (err) {
       throw err;
     } finally {
-      await deletePaths([sdkDir]);
+      await deletePaths([context.sdkDir]);
     }
   } catch (err) {
     throw err;
   } finally {
-    await deletePaths([downloadDir]);
+    await deletePaths([context.downloadDir]);
+  }
+}
+
+export async function updateRepoWithNewSdk(
+  gitInfo: GitInfo,
+  remoteSdkUrl: string,
+  options: Options = {},
+) {
+  const context: any = {};
+
+  const hooks = withDefaultHooksOptions(options.hooks);
+  options.hooks = hooks;
+
+  context.gitInfo = gitInfo;
+  context.remoteSdkUrl = remoteSdkUrl;
+  context.repoDir = await makeTempDir('repo');
+  try {
+    /*
+      TODO: This isn't great. We clone the repo everytime we generate an SDK.
+      Preferably, we'd only do it once or have some kind of cache for repos we've already cloned.
+      Would have to probably git reset --hard HEAD~ or something before adding the SDK to the cloned repo
+      just to make sure there aren't any stray unstaged files lying around in the cached repo.
+    */
+    await hooks.before.clone(context);
+    await clone({
+      ref: gitInfo.branch,
+      dir: context.repoDir,
+      // Could use mz/fs but I don't trust it guarentees compatibility with isomorphic git
+      fs: oldFs,
+      url: gitInfo.repoUrl,
+      singleBranch: true,
+      depth: 1,
+      ...gitInfo.auth,
+    });
+    await hooks.after.clone(context);
+
+    await migrateSdkIntoLocalRepo(context.repoDir, remoteSdkUrl, options, context);
+
+    context.stagedPaths = await getAllStageableFilepathsInRepo(context.repoDir);
+    await hooks.before.stage(context);
+    for (const addedPath of context.stagedPaths) {
+      const relativeFilePath = relative(context.repoDir, addedPath);
+      // TODO: Got a lot of "oldFs: fs", maybe make some sort of wrapper to avoid this?
+      await add({
+        fs: oldFs,
+        dir: context.repoDir,
+        filepath: relativeFilePath,
+      });
+    }
+    await hooks.after.stage(context);
+
+    await hooks.before.commit(context);
+    await commit({
+      fs: oldFs,
+      dir: context.repoDir,
+      // TODO: This should be configurable
+      author: {
+        name: 'Swagger Platform',
+        email: 'N/A',
+      },
+      // TODO: Could have a better message
+      message: 'Updated SDK',
+    });
+    await hooks.after.commit(context);
+
+    await hooks.before.push(context);
+    await push({
+      fs: oldFs,
+      dir: context.repoDir,
+      ...gitInfo.auth,
+    });
+    await hooks.after.push(context);
+  } catch (err) {
+    throw err;
+  } finally {
+    await deletePaths([context.repoDir]);
   }
 }
