@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import AdmZip from 'adm-zip';
 import del from 'del';
+import { ReadStream } from 'fs';
 import fs from 'mz/fs';
 import fetch from 'node-fetch';
 
@@ -15,6 +16,23 @@ export async function deletePaths(paths) {
   return await del(paths, { force: true });
 }
 
+function streamToPromise(stream: ReadStream): Promise<any> {
+  return new Promise((resolve, reject) => {
+    stream.on('error', err => {
+      stream.destroy();
+      reject(err);
+    });
+    stream.on('finish', resolve);
+    stream.on('error', reject);
+  });
+}
+
+export async function downloadToBuffer(remotePath: string) {
+  const response = await fetch(remotePath);
+  // Pipes the response to a file, wrapped a promise so we can use await
+  return streamToPromise(response.body);
+}
+
 /**
  * Downloads a file and writes it to a particular path
  * @param localPath Where you want to download the file to
@@ -22,20 +40,9 @@ export async function deletePaths(paths) {
  */
 export async function downloadToPath(localPath: string, remotePath: string) {
   const response = await fetch(remotePath);
-
   const stream = fs.createWriteStream(localPath);
-
-  // Pipes the response to a file, wrapped a promise so we can use await
   response.body.pipe(stream);
-  const writeToFilePromise = new Promise((resolve, reject) => {
-    response.body.on('error', err => {
-      stream.destroy();
-      reject(err);
-    });
-    stream.on('finish', resolve);
-    stream.on('error', reject);
-  });
-  await writeToFilePromise;
+  await streamToPromise(stream);
 }
 
 /**
