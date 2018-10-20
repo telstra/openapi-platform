@@ -67,18 +67,14 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   }
 
   @computed
-  public get latestSdk() {
+  public get latestSdk(): (Sdk & Partial<PathHolder>) | undefined {
     const i = state.entities.values();
-    let currentSdk: (Sdk & Partial<PathHolder>) | null = null;
-    for (const sdk of i) {
-      if (
-        this.props.sdkConfig.id === sdk.sdkConfigId &&
-        (!currentSdk || currentSdk.createdAt < sdk.createdAt)
-      ) {
-        currentSdk = sdk;
-      }
-    }
-    return currentSdk;
+    return Array.from(i).reduce((prevSdk, sdk) => {
+      return this.props.sdkConfig.id === sdk.sdkConfigId &&
+        (!prevSdk || prevSdk.createdAt < sdk.createdAt)
+        ? sdk
+        : prevSdk;
+    }, i.next().value);
   }
 
   @computed

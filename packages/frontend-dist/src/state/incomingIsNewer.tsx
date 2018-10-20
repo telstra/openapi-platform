@@ -13,18 +13,12 @@ export function incomingIsNewer<T extends Timestamped>(
   if (!original) {
     return true;
   } else if (original.updatedAt && incoming.updatedAt) {
-    if (original.updatedAt < incoming.updatedAt) {
-      return true;
-    } else {
-      return false;
-    }
+    return original.updatedAt < incoming.updatedAt;
   } else if (original.updatedAt) {
     return false;
   } else if (incoming.updatedAt) {
     return true;
-  } else if (original.createdAt < incoming.createdAt) {
-    return true;
   } else {
-    return false;
+    return original.createdAt < incoming.createdAt;
   }
 }
