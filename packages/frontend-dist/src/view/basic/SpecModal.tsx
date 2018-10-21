@@ -19,6 +19,7 @@ import { Observer } from 'mobx-react';
 import { isWebUri } from 'valid-url';
 
 import { Spec } from '@openapi-platform/model';
+
 import { Category } from '../../Storybook';
 import {
   ValidatedFormStore,
@@ -39,7 +40,7 @@ const Styled: any = createStyled(theme => ({
 }));
 
 export type OnCloseModal = () => void;
-export type OnSubmitSpec = (spec: Spec) => void;
+export type OnSubmitSpec = (spec: Partial<Spec>) => void;
 export interface SpecModalProps {
   readonly initialSpec?: Spec;
   readonly onCloseModal: OnCloseModal;

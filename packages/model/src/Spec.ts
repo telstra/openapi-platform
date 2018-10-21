@@ -1,7 +1,9 @@
+import { Timestamped } from './Timestamped';
+
 /**
  * Represents a Swagger specification.
  */
-export interface Spec {
+export interface Spec extends Timestamped {
   /**
    * The name of the specification.
    */

@@ -1,10 +1,11 @@
 import { GitInfo } from './GitInfo';
 import { Id } from './Id';
+import { Timestamped } from './Timestamped';
 
 /**
  * Represents an SDK configuration, used to define how an SDK should be built from a specification.
  */
-export interface SdkConfig {
+export interface SdkConfig extends Timestamped {
   /**
    * The ID of the Spec this SdkConfig is for.
    */
@@ -29,36 +30,10 @@ export interface SdkConfig {
   options: any;
 
   /**
-   * The current build status of the SDK.
-   */
-  buildStatus: BuildStatus;
-  /**
    * Info about where the generated SDK will be pushed to
    */
   gitInfo?: GitInfo;
 }
-
-export function isRunning(buildStatus: BuildStatus) {
-  return ![BuildStatus.Fail, BuildStatus.Success, BuildStatus.NotRun].includes(
-    buildStatus,
-  );
-}
-
-/**
- * Represents the different possible build statuses of an SDK configuration.
- */
-export enum BuildStatus {
-  NotRun = 'NOT_RUN',
-  Building = 'BUILDING', // Building OpenAPI Spec SDK
-  Cloning = 'CLONING', // Cloning Sdk repo
-  Staging = 'STAGING', // Staging new files into Sdk repo
-  Pushing = 'PUSHING', // Pushing Sdk repo changes
-  Success = 'SUCCESS',
-  Fail = 'FAIL',
-}
-
-export const hasValidBuildStatus = buildStatus =>
-  Object.values(BuildStatus).includes(buildStatus);
 
 /**
  * An array of supported SDK configuration target languages.
