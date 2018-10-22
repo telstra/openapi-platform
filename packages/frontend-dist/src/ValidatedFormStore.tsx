@@ -29,7 +29,10 @@ export type ValidationResult = ValidationResultOk | ValidationResultError;
 /**
  * Represents an input validation function that determines whether or not a given input is valid.
  */
-export type ValidationFunction = (value: string) => ValidationResult;
+export type ValidationFunction<I extends string> = (
+  value: string,
+  inputStore?: ValidatedFormStore<I>,
+) => ValidationResult;
 
 /**
  * Returns a ValidationResultOk, indicating that an input was valid.
@@ -91,13 +94,13 @@ export class ValidatedFormStore<I extends string> {
    * @param inputs.initialValue The initial value of the input.
    */
   public constructor(
-    inputs: { [key in I]: { validation: ValidationFunction; initialValue: string } },
+    inputs: { [key in I]: { validation: ValidationFunction<I>; initialValue: string } },
   ) {
     for (const input of Object.keys(inputs) as I[]) {
       const validate = inputs[input].validation;
       this.inputValidationFunctions.set(
         input,
-        computed(() => validate(this.getInputValue(input)), {
+        computed(() => validate(this.getInputValue(input), this), {
           equals: comparer.structural,
         }),
       );

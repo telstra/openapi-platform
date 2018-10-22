@@ -19,6 +19,8 @@ import * as Icons from '@material-ui/icons';
 import classNames from 'classnames';
 
 import { HasId, SdkConfig, Spec } from '@openapi-platform/model';
+import { state as sdkConfigState } from '../../state/SdkConfigState';
+import { state as sdkState } from '../../state/SdkState';
 import { createStyled } from '../createStyled';
 import { SdkConfigItem } from './SdkConfigItem';
 
@@ -75,6 +77,7 @@ export interface SpecItemProps extends React.DOMAttributes<HTMLDivElement> {
   expanded: boolean;
   onPanelChange: (event: any, expanded: boolean) => void;
   onEditSpec: (spec: HasId<Spec>) => void;
+  onDeleteSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   sdkConfigs?: Array<HasId<SdkConfig>>;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
@@ -90,7 +93,24 @@ export class SpecItem extends Component<SpecItemProps> {
 
   private onEditSpec = () => this.props.onEditSpec(this.props.spec);
 
+  private onDeleteSpec = () => this.props.onDeleteSpec(this.props.spec);
+
   private onAddSdkConfig = () => this.props.onAddSdkConfig(this.props.spec);
+
+  /**
+   * Runs all SDK config plans
+   * TODO: This shouldn't belong to a basic view
+   */
+  private runAll = async () => {
+    const sdkConfigs = sdkConfigState.specSdkConfigs.get(this.props.spec.id);
+    if (sdkConfigs) {
+      await Promise.all(
+        sdkConfigs.map(config => {
+          return sdkState.createSdk(config);
+        }),
+      );
+    }
+  };
 
   public render() {
     const { spec, expanded, sdkConfigs = [], onEditSdkConfig } = this.props;
@@ -131,7 +151,12 @@ export class SpecItem extends Component<SpecItemProps> {
                     </Typography>
                   </div>
                   <div className={classes.sdkHeaderActions}>
-                    <Button variant="flat" color="primary" size="small">
+                    <Button
+                      variant="flat"
+                      color="primary"
+                      size="small"
+                      onClick={this.runAll}
+                    >
                       Run all
                     </Button>
                     <IconButton
@@ -157,6 +182,9 @@ export class SpecItem extends Component<SpecItemProps> {
             </ExpansionPanelDetails>
             <Divider />
             <ExpansionPanelActions>
+              <Button size="small" color="secondary" onClick={this.onDeleteSpec}>
+                Delete
+              </Button>
               <Button size="small" color="primary" onClick={this.onEditSpec}>
                 Edit
               </Button>

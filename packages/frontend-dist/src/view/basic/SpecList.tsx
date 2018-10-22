@@ -11,6 +11,7 @@ export interface SpecListProps extends React.DOMAttributes<HTMLDivElement> {
   expandedSpecId: number | null;
   onSpecExpanded: (id: Id | null) => void;
   onEditSpec: (spec: HasId<Spec>) => void;
+  onDeleteSpec: (spec: HasId<Spec>) => void;
   onAddSdkConfig: (spec: HasId<Spec>) => void;
   onEditSdkConfig: (sdkConfig: HasId<SdkConfig>) => void;
 }
@@ -37,6 +38,7 @@ export class SpecList extends Component<SpecListProps, {}> {
     const {
       expandedSpecId,
       onEditSpec,
+      onDeleteSpec,
       onAddSdkConfig,
       specs,
       onEditSdkConfig,
@@ -56,6 +58,7 @@ export class SpecList extends Component<SpecListProps, {}> {
                       expanded={expandedSpecId === spec.id}
                       onPanelChange={this.panelExpand}
                       onEditSpec={onEditSpec}
+                      onDeleteSpec={onDeleteSpec}
                       onAddSdkConfig={onAddSdkConfig}
                       onEditSdkConfig={onEditSdkConfig}
                     />

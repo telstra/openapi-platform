@@ -6,21 +6,6 @@
   "types": "./src/index.tsx",
   "license": "Apache-2",
   "private": false,
-  "scripts": {
-    "storybook": "start-storybook -p 9001"
-  },
-  "devDependencies": {
-    "@storybook/addon-a11y": "^4.0.0-alpha.16",
-    "@storybook/addon-actions": "^4.0.0-alpha.16",
-    "@storybook/addon-backgrounds": "^4.0.0-alpha.16",
-    "@storybook/addon-knobs": "^4.0.0-alpha.16",
-    "@storybook/addon-options": "^4.0.0-alpha.16",
-    "@storybook/addon-storyshots": "^4.0.0-alpha.16",
-    "@storybook/addon-viewport": "^4.0.0-alpha.16",
-    "@storybook/addons": "^4.0.0-alpha.16",
-    "@storybook/cli": "^4.0.0-alpha.16",
-    "@storybook/react": "^4.0.0-alpha.16"
-  },
   "dependencies": {
     "@material-ui/core": "^1.4.3",
     "@material-ui/icons": "^2.0.1",
@@ -33,7 +18,7 @@
     "classnames": "^2.2.5",
     "jss": "^9.8.7",
     "jss-global": "^3.0.0",
-    "mobx": "^5.0.3",
+    "mobx": "5.5.0",
     "mobx-react": "^5.2.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
