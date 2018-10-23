@@ -165,7 +165,6 @@ export async function createServer() {
             buffer: sdkBuffer,
             contentType: sdkContentType ? sdkContentType : 'application/octet-stream'
           });
-          logger.debug(sdkFile);
           await app.service('sdks').patch(context.result.id, {
             fileId: sdkFile.id,
           });
@@ -237,7 +236,7 @@ export async function createServer() {
         }
       },
     },
-  });
+  }); 
   // Enables CORS requests if configured to do so
   if (config.get('server.useCors')) {
     app.use(cors());
