@@ -54,6 +54,11 @@ export function openapiLogger(options: LoggerOptions = {}) {
   });
   return logger;
 }
+// Since we're using splat we have to create placeholders for the arguments to go into
+// TODO: Note that string interpolation with console.log won't work (E.g. console.log("%s", "test") will print "%stest")
+function createPlaceholders(args) {
+  return new Array(args.length).fill('%s').join(' ');
+}
 
 /**
  * Replaces the console.log type methods with our own logger methods.
@@ -61,9 +66,6 @@ export function openapiLogger(options: LoggerOptions = {}) {
  * However, this method is useful when external packages have console.log(...) calls inside of them.
  */
 export function overrideConsoleLogger(aLogger) {
-  // Since we're using splat we have to create placeholders for the arguments to go into
-  // TODO: Note that string interpolation with console.log won't work (E.g. console.log("%s", "test") will print "%stest")
-  const createPlaceholders = args => new Array(args.length).fill('%s').join(' ');
   Object.keys(aLogger.levels).forEach(level => {
     console[level] = (...args) => aLogger[level](createPlaceholders(args), ...args);
   });

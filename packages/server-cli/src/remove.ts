@@ -72,20 +72,17 @@ async function removeItem(type: string, id: string, force: boolean) {
   return status;
 }
 
-export async function remove(type: string, ids: string[]) {
-  if (['specifications', 'sdkConfigs', 'sdks'].indexOf(type) >= 0) {
-    if (ids.length === 0) {
-      logger.error('No ids specified to remove');
-    } else {
-      // remove each item individually
-      for (const id of ids) {
-        await removeItem(type, id, program.force);
-      }
-    }
-  } else {
-    logger.error(
-      `Invalid type '${type}'. Supported types: 'specifications', 'sdkConfigs', 'sdks'`,
-    );
+export async function remove(type: string, ids: string[], cmd) {
+  if (ids.length <= 0) {
+    logger.error('No ids specified to remove');
+    return;
   }
+  const validServiceNames = ['specifications', 'sdkConfigs', 'sdks'];
+  if (!validServiceNames.find(serviceName => serviceName === type)) {
+    logger.error(`${type} is not a valid service name. Valid service names include ${validServiceNames.join(' ')}`);
+    return;
+  }
+  // Will contain every single removal request promise
+  const removeItemPromises = ids.map(id => removeItem(type, id, cmd.force));
+  await Promise.all(removeItemPromises);
 }
-
