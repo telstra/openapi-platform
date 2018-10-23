@@ -89,9 +89,3 @@ export async function remove(type: string, ids: string[]) {
   }
 }
 
-program.option('-f, --force', 'Forces removal without confirmation').parse(process.argv);
-
-const itemType = program.args[0];
-const itemIds = program.args.slice(1, program.args.length);
-
-remove(itemType, itemIds);
