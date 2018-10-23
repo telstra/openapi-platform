@@ -5,7 +5,7 @@ import { createServerClient } from '@openapi-platform/server-client';
 
 import { logger } from './logger';
 
-async function getItems(type: string) {
+export async function getItems(type: string) {
   const config = readConfig();
   const { client, socket } = createServerClient(
     `http://localhost:${config.get('server.port')}`,

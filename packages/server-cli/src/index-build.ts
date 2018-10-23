@@ -7,7 +7,7 @@ import { createServerClient } from '@openapi-platform/server-client';
 
 import { logger } from './logger';
 
-async function buildSpecs(specId: string, sdkConfigs: string[]) {
+export async function buildSpecs(specId: string, sdkConfigs: string[]) {
   const config = readConfig();
   const { client, socket } = createServerClient(
     `http://localhost:${config.get('server.port')}`,

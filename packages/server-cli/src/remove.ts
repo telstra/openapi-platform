@@ -78,7 +78,7 @@ async function removeItem(type: string, id: string, force: boolean) {
   return status;
 }
 
-async function remove(type: string, ids: string[]) {
+export async function remove(type: string, ids: string[]) {
   if (['specifications', 'sdkConfigs', 'sdks'].indexOf(type) >= 0) {
     if (ids.length === 0) {
       logger.error('No ids specified to remove');
