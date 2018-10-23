@@ -5,16 +5,18 @@ import cors from 'cors';
 import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 import Sequelize from 'sequelize';
+import fetch from 'node-fetch';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
 import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
-import { logger } from './logger';
 
+import { logger } from './logger';
 import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
+import { createFileService } from './createFileService';
 
 import { config } from './config';
 
@@ -32,6 +34,8 @@ export async function createServer() {
   // Define database model for SDKs
   const sdkModel = createSdkModel(dbConnection);
   const sdkService = createSdkService(sdkModel);
+
+  const fileService = createFileService();
 
   // Configure Express
   const app = express(feathers());
@@ -75,6 +79,7 @@ export async function createServer() {
     .use('/specifications', specService)
     .use('/sdkConfigs', sdkConfigService)
     .use('/sdks', sdkService)
+    .use('/files', fileService)
     .use(express.errorHandler());
 
   // Literally everybody gets data set
@@ -149,10 +154,20 @@ export async function createServer() {
           const spec = await app
             .service('specifications')
             .get(context.sdkConfig.specId, {});
-
-          const sdkPath = await generateSdk(logger, spec, context.sdkConfig);
+          logger.verbose(`Generating sdk for sdk ID ${context.result.id}...`);
+          const sdkUrl = await generateSdk(logger, spec, context.sdkConfig);
+          logger.verbose(`Downloading ${sdkUrl}...`);
+          const sdkResponse = await fetch(sdkUrl);
+          const sdkBuffer = await sdkResponse.buffer();
+          const sdkContentType = sdkResponse.headers.get("content-type");
+          logger.verbose('Storing sdk...');
+          const sdkFile = await app.service('files').create({ 
+            buffer: sdkBuffer,
+            contentType: sdkContentType ? sdkContentType : 'application/octet-stream'
+          });
+          logger.debug(sdkFile);
           await app.service('sdks').patch(context.result.id, {
-            path: sdkPath,
+            fileId: sdkFile.id,
           });
           /*
             TODO: The linkside of the info object is probably temporary.
@@ -160,7 +175,7 @@ export async function createServer() {
             wherever the Swagger gen API stores it.
           */
           if (context.sdkConfig.gitInfo) {
-            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdkPath, {
+            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdkUrl, {
               hooks: {
                 before: {
                   async clone(gitHookContext) {
@@ -223,7 +238,6 @@ export async function createServer() {
       },
     },
   });
-
   // Enables CORS requests if configured to do so
   if (config.get('server.useCors')) {
     app.use(cors());

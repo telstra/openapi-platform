@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { action, computed, observable } from 'mobx';
+import { action, computed, observable, toJS } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
@@ -69,7 +69,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   @computed
   public get latestSdk() {
     const i = state.entities.values();
-    let currentSdk: (Sdk & Partial<PathHolder>) | undefined = i.next().value;
+    let currentSdk: (Sdk & Partial<PathHolder>) | undefined = undefined;
     for (const sdk of i) {
       if (
         this.props.sdkConfig.id === sdk.sdkConfigId &&

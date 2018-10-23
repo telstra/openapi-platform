@@ -26,12 +26,6 @@ function streamToPromise(stream: ReadStream): Promise<any> {
   });
 }
 
-export async function downloadToBuffer(remotePath: string) {
-  const response = await fetch(remotePath);
-  // Pipes the response to a file, wrapped a promise so we can use await
-  return streamToPromise(response.body);
-}
-
 /**
  * Downloads a file and writes it to a particular path
  * @param localPath Where you want to download the file to
