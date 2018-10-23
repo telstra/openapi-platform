@@ -17,10 +17,10 @@ jest.mock('isomorphic-git', () => {
   return mockedGitModule;
 });
 
-jest.mock('../../src/file/index', () => {
-  const actualModule = require.requireActual('../../src/file/index');
-  const jestMockFunctions = require('jest-mock-functions');
-  const mockedModule = jestMockFunctions.mockFunctions(actualModule, {
+jest.mock('@openapi-platform/file-util', () => {
+  const actualModule = require.requireActual('@openapi-platform/file-util');
+  const { mockFunctions } = require('jest-mock-functions');
+  const mockedModule = mockFunctions(actualModule, {
     onMockedFunction: (fn, ogFn) => fn.mockImplementation((...other) => ogFn(...other)),
   });
   mockedModule.downloadToPath.mockImplementation(async path => {
@@ -38,7 +38,7 @@ jest.mock('../../src/file/index', () => {
  * This is actually a test to make sure the other tests are going to work.
  */
 it('temp dir actually works', async () => {
-  const { makeTempDir } = require('../../src/file/index');
+  const { makeTempDir } = require('@openapi-platform/file-util');
   await expect(makeTempDir('test')).resolves.not.toBeUndefined();
 });
 

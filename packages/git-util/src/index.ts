@@ -1,13 +1,17 @@
 import oldFs from 'fs';
-import { join, relative } from 'path';
+import { relative, join } from 'path';
 
-import AdmZip from 'adm-zip';
 import { move } from 'fs-extra';
 import globby from 'globby';
 import { clone, push, add, remove, listFiles, commit } from 'isomorphic-git';
 
+import {
+  deletePaths,
+  makeTempDir,
+  downloadToPath,
+  extractSdkArchiveFileToDir,
+} from '@openapi-platform/file-util';
 import { GitInfo } from '@openapi-platform/model';
-import { downloadToPath, deletePaths, makeTempDir } from './file/index';
 
 import { HookOptions, withDefaultHooksOptions, Hook, HookCallback } from './hooks';
 export { HookOptions, Hook, HookCallback };
@@ -25,7 +29,7 @@ export async function getAllFilepathsInDir(dir: string) {
 }
 
 export async function moveFilesIntoLocalRepo(repoDir, sdkDir) {
-  // Unfortunately you have to move each file individual (to knowledge)
+  // Unfortunately you have to move each file individualy (to knowledge)
   const paths = await getAllFilepathsInDir(sdkDir);
   for (const path of paths) {
     const fromPath = path;
@@ -45,20 +49,10 @@ async function deleteAllFilesInLocalRepo(repoDir) {
   return filePaths;
 }
 
-/**
- * SDKs are downloaded as a zip file so they need to be extracted.
- * Use this method to do so.
- * @param archiveFilePath The archive file path
- * @param extractToDir Where you want the archive files to be extracted to
- */
-async function extractSdkArchiveFileToDir(extractToDir: string, archiveFilePath: string) {
-  const zip = new AdmZip(archiveFilePath);
-  await zip.extractAllTo(extractToDir, true);
-}
-
 export interface Options {
   hooks?: HookOptions;
 }
+
 /**
  * Tries to put the files of a remotely stored sdk ZIP file into a locally stored
  * repository.
