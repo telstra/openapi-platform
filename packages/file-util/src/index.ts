@@ -23,7 +23,6 @@ function streamToPromise(stream: ReadStream): Promise<any> {
       reject(err);
     });
     stream.on('finish', resolve);
-    stream.on('error', reject);
   });
 }
 
