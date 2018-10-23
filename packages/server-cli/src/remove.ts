@@ -1,17 +1,11 @@
 import program from 'commander';
 import prompts from 'prompts';
 
-import { readConfig } from '@openapi-platform/config';
-import { createServerClient } from '@openapi-platform/server-client';
-
+import { client, socket } from './client';
+import { config } from './config';
 import { logger } from './logger';
 
 async function removeItem(type: string, id: string, force: boolean) {
-  const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
-
   // if not force prompt the user to confirm removal of item
   if (!force) {
     const item = await client

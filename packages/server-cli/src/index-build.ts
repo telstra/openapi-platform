@@ -1,17 +1,13 @@
 import program from 'commander';
 
-import { readConfig } from '@openapi-platform/config';
 import { Spec, SdkConfig, HasId } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
-import { createServerClient } from '@openapi-platform/server-client';
 
+import { client, socket } from './client';
+import { config } from './config';
 import { logger } from './logger';
 
 export async function buildSpecs(specId: string, sdkConfigs: string[]) {
-  const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
   let specs: Array<HasId<Spec>>;
   if (specId === '*') {
     specs = await client
@@ -62,10 +58,6 @@ export async function buildSpecs(specId: string, sdkConfigs: string[]) {
 }
 
 async function buildSpecConfigs(spec: HasId<Spec>, sdkConfigIds: string[]) {
-  const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
   const sdkConfigs: Array<HasId<SdkConfig>> = await client
     .service('sdkConfigs')
     .find({

@@ -1,15 +1,10 @@
 import program from 'commander';
 
-import { readConfig } from '@openapi-platform/config';
-import { createServerClient } from '@openapi-platform/server-client';
-
+import { client, socket } from './client';
+import { config } from './config';
 import { logger } from './logger';
 
 export async function getItems(type: string) {
-  const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
   const itemIds = await client
     .service(type)
     .find({

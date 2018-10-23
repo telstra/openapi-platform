@@ -1,20 +1,15 @@
 import program from 'commander';
 
-import { readConfig } from '@openapi-platform/config';
-import { createServerClient } from '@openapi-platform/server-client';
-import { logger } from './logger';
-
+import { client, socket } from './client';
+import { config } from './config';
 import { specBuilder, configBuilder } from './itemBuilder';
+import { logger } from './logger';
 
 /**
  * Creates an item in the backend.
  * Manges Server client and closes connection afterwards to avoid the program not finishing
  */
 async function createItem(serviceName, data) {
-  const config = readConfig();
-  const { client, socket } = createServerClient(
-    `http://localhost:${config.get('server.port')}`,
-  );
   const response = await client
     .service(serviceName)
     .create(data)
