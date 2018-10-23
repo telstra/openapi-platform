@@ -20,7 +20,11 @@ async function clearDatabase(client) {
     for (const doc of documents) {
       logger.verbose(`removing id: ${doc.id}`);
       logger.verbose(doc);
-      await service.remove(doc.id);
+      try {
+        await service.remove(doc.id);
+      } catch (err) {
+        logger.error(`Failed to remove ${serviceName} with id:${doc.id}`);
+      }
     }
   }
 }

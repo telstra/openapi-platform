@@ -1,11 +1,10 @@
 import program from 'commander';
 
 import { readConfig } from '@openapi-platform/config';
-import { Spec, SdkConfig, Sdk, HasId } from '@openapi-platform/model';
+import { Spec, SdkConfig, HasId } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 import { createServerClient } from '@openapi-platform/server-client';
 
-import { platform } from 'os';
 import { logger } from './logger';
 
 async function buildSpecs(specId: string, sdkConfigs: string[]) {
@@ -89,6 +88,9 @@ async function buildSpecConfigs(spec: HasId<Spec>, sdkConfigIds: string[]) {
     if (sdkConfigIds.indexOf(sdkConfig.id.toString()) >= 0 || sdkConfigIds[0] === '*') {
       try {
         logger.info(await generateSdk(logger, spec, sdkConfig));
+        logger.info(
+          `Succesfully built SDK from specification: ${spec.id.toString()}, sdkConfig: ${sdkConfig.id.toString()}`,
+        );
       } catch (err) {
         logger.error(
           `Failed to build SDK (specId: ${spec.id.toString()}, sdkConfigId: ${sdkConfig.id.toString()})`,
