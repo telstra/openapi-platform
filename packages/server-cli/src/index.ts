@@ -1,10 +1,4 @@
-import program from 'commander';
+import { Command } from 'commander';
+import { createArgParser } from './createArgParser';
 
-program
-  .version('1.0.0-alpha.0')
-  .command('add <type>', 'Add an item')
-  .command('list <type> [filters...]', 'List items in db')
-  .command('remove <type> <ids...>', 'Remove items from db')
-  .command('build <spec id> <sdkConfigIds...>', 'Runs the build process for an SDK');
-
-program.parse(process.argv);
+createArgParser().parse(process.argv);
