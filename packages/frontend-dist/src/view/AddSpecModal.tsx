@@ -47,7 +47,7 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
    * Event fired when the user presses the 'Add' or 'Update' button.
    */
   @action
-  private onSubmitSpec = async (submittedSpec: Spec) => {
+  private onSubmitSpec = async (submittedSpec: Partial<Spec>) => {
     this.showProgressIndicator = true;
     try {
       if (this.props.match.params.id) {
@@ -78,7 +78,9 @@ export class AddSpecModal extends Component<RouteComponentProps<{ id?: string }>
         {() => (
           <>
             <SpecModal
-              initialSpec={id ? specState.specs.get(parseInt(id, 10)) : undefined}
+              initialSpec={
+                id ? specState.entities.get(parseInt(id, 10)) : undefined
+              }
               titleProps={{
                 children: id ? 'Update Specification' : 'Add Specification',
               }}

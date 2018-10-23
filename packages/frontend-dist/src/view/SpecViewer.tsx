@@ -13,7 +13,7 @@ import { DeleteSpecModal } from './DeleteSpecModal';
 
 export const SpecViewer: SFC<RouteComponentProps<{}>> = observer(({ history, match }) => {
   const specId = Number.parseInt(match.params.id, 10);
-  const specification = specState.specs.get(specId);
+  const specification = specState.entities.get(specId);
   const sdkConfigs = sdkConfigState.specSdkConfigs.get(specId);
 
   const onNavigateBack = () => history.push(match.url.replace('specs', 'overview'));

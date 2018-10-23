@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import Sequelize from 'sequelize';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
-import { BuildStatus, hasValidBuildStatus } from '@openapi-platform/model';
+import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 import { logger } from './logger';
 
@@ -43,7 +43,9 @@ export async function createServer() {
     .use(
       morgan('dev', {
         stream: {
-          write: message => logger.verbose(message),
+          write(message) {
+            logger.verbose(message);
+          },
         },
       }),
     )
@@ -103,10 +105,8 @@ export async function createServer() {
   app.service('sdkConfigs').hooks({
     before: {
       async create(context) {
+        // Throws an error if it can't find the specification
         await app.service('specifications').get(context.data.specId, {});
-        if (!hasValidBuildStatus(context.data.buildStatus)) {
-          context.data.buildStatus = BuildStatus.NotRun;
-        }
         return context;
       },
     },
@@ -132,16 +132,14 @@ export async function createServer() {
   app.service('sdks').hooks({
     before: {
       async create(context) {
-        context.sdkConfig = await app
-          .service('sdkConfigs')
-          .get(context.data.sdkConfigId, {});
+        if (context.data.sdkConfigId === undefined || context.data.sdkConfigId === null) {
+          throw new Error(`The sdkConfigId was ${context.data.sdkConfigId}`);
+        }
+        context.sdkConfig = await app.service('sdkConfigs').get(context.data.sdkConfigId);
         if (!context.sdkConfig) {
           throw new Error(`Sdk ${context.data.sdkConfigId} does not exist`);
         }
-        context.data.sdkConfigId = context.sdkConfig.id;
-        await app.service('sdkConfigs').patch(context.sdkConfig.id, {
-          buildStatus: BuildStatus.Building,
-        });
+        context.data.buildStatus = BuildStatus.Building;
         return context;
       },
     },
@@ -151,9 +149,10 @@ export async function createServer() {
           const spec = await app
             .service('specifications')
             .get(context.sdkConfig.specId, {});
-          const sdk = await generateSdk(logger, spec, context.sdkConfig);
-          await app.service('sdks').patch(context.data.id, {
-            path: sdk.path,
+
+          const sdkPath = await generateSdk(logger, spec, context.sdkConfig);
+          await app.service('sdks').patch(context.result.id, {
+            path: sdkPath,
           });
           /*
             TODO: The linkside of the info object is probably temporary.
@@ -161,65 +160,65 @@ export async function createServer() {
             wherever the Swagger gen API stores it.
           */
           if (context.sdkConfig.gitInfo) {
-            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdk.path, {
+            await updateRepoWithNewSdk(context.sdkConfig.gitInfo, sdkPath, {
               hooks: {
                 before: {
-                  clone: async gitHookContext => {
+                  async clone(gitHookContext) {
                     logger.verbose(
                       `Cloning ${gitHookContext.remoteSdkUrl} into ${
                         gitHookContext.repoDir
                       }`,
                     );
-                    await app.service('sdkConfigs').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Cloning,
                     });
                   },
-                  downloadSdk: async () => {
+                  async downloadSdk() {
                     logger.verbose('Dowloading SDK');
                   },
-                  extractSdk: async gitHookContext => {
+                  async extractSdk(gitHookContext) {
                     logger.verbose(
                       `Extracting ${gitHookContext.sdkArchivePath} to ${
                         gitHookContext.sdkDir
                       }`,
                     );
                   },
-                  moveSdkFilesToRepo: async gitHookContext => {
+                  async moveSdkFilesToRepo(gitHookContext) {
                     logger.verbose(
                       `Moving files from ${gitHookContext.sdkDir} to ${
                         gitHookContext.repoDir
                       }`,
                     );
                   },
-                  stage: async gitHookContext => {
+                  async stage(gitHookContext) {
                     logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
-                    await app.service('sdkConfigs').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Staging,
                     });
                   },
-                  commit: async () => {
+                  async commit() {
                     // Maybe state the commit message and hash
                     logger.verbose(`Committing changes`);
                   },
-                  push: async () => {
+                  async push() {
                     logger.verbose(`Pushing commits...`);
-                    await app.service('sdkConfigs').patch(context.sdkConfig.id, {
+                    await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Pushing,
                     });
                   },
                 },
               },
             });
-            await app.service('sdkConfigs').patch(context.sdkConfig.id, {
-              buildStatus: BuildStatus.Success,
-            });
           }
+          await app.service('sdks').patch(context.result.id, {
+            buildStatus: BuildStatus.Success,
+          });
         } catch (err) {
-          await app.service('sdkConfigs').patch(context.sdkConfig.id, {
+          await app.service('sdks').patch(context.result.id, {
             buildStatus: BuildStatus.Fail,
             // TODO: should include a failure error
           });
-          logger.error(`Failed to generate SDK: ${err.message}`);
+          logger.error('Failed to generate SDK', err);
         }
       },
     },

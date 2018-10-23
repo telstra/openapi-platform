@@ -83,8 +83,8 @@ export class DeleteSpecModal extends Component<RouteComponentProps<{ id: string 
                   <DialogContent>
                     <DialogContentText>
                       Are you sure you want to delete the{' '}
-                      {id && specState.specs.has(parseInt(id, 10))
-                        ? specState.specs.get(parseInt(id, 10))!.title
+                      {id && specState.entities.has(parseInt(id, 10))
+                        ? specState.entities.get(parseInt(id, 10))!.title
                         : ''}{' '}
                       specification?
                     </DialogContentText>

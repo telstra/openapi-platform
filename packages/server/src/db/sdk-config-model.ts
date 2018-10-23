@@ -1,6 +1,5 @@
 import sequelize from 'feathers-sequelize';
 import Sequelize from 'sequelize';
-
 /**
  * Creates a Sequelize database model for storing an SDK configuration.
  *
@@ -30,10 +29,6 @@ export function createSdkConfigModel(dbConnection: Sequelize.Sequelize) {
       gitInfo: {
         type: Sequelize.JSON,
         allowNull: true,
-      },
-      buildStatus: {
-        type: Sequelize.STRING,
-        allowNull: false,
       },
     },
     {
