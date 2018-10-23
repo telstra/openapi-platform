@@ -1,5 +1,7 @@
 import prompts from 'prompts';
 
+// TODO - Add input validation to these
+
 export async function specBuilder() {
   const questions = [
     {
@@ -44,11 +46,6 @@ export async function configBuilder() {
       type: 'text',
       name: 'options',
       message: 'Options',
-    },
-    {
-      type: 'text',
-      name: 'buildStatus',
-      message: 'Build Status',
     },
     {
       type: 'text',
