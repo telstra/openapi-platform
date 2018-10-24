@@ -27,8 +27,8 @@ async function createItem(serviceName, data) {
 /**
  * Switches the type being inserted based on command line inputs
  */
-async function addItem(cliProgram: program.CommanderStatic, data: string) {
-  switch (cliProgram.args[0].toLowerCase()) {
+async function addItem(type: string, data: string) {
+  switch (type.toLowerCase()) {
     case 'specification':
       await addSpec(data);
       break;
@@ -39,7 +39,7 @@ async function addItem(cliProgram: program.CommanderStatic, data: string) {
     default:
       logger.error(
         `Invalid type '${
-          cliProgram.args[0]
+          type
         }'. Supported types: 'specification', 'sdkconfig'`,
       );
       break;
@@ -64,26 +64,26 @@ async function addConfig(data: string) {
   logger.info(response);
 }
 
-program.parse(process.argv);
+export function addItems (type: string) {
+  const stdin = process.stdin;
 
-const stdin = process.stdin;
+  if (!stdin.isTTY) {
+    stdin.resume();
+    stdin.setEncoding('utf8');
 
-if (!stdin.isTTY) {
-  stdin.resume();
-  stdin.setEncoding('utf8');
-
-  stdin.on('data', chunk => {
-    const data = JSON.parse(chunk);
-    if (isArray(data)) {
-      data.forEach(element => {
-        addItem(program, element);
-      });
-    } else {
-      addItem(program, data);
-    }
-  });
-} else {
-  addItem(program, '');
+    stdin.on('data', chunk => {
+      const data = JSON.parse(chunk);
+      if (isArray(data)) {
+        data.forEach(element => {
+          addItem(type, element);
+        });
+      } else {
+        addItem(type, data);
+      }
+    });
+  } else {
+    addItem(type, '');
+  }
 }
 
 function isArray(what) {

@@ -1,14 +1,19 @@
 import { Command } from 'commander';
 
+import { addItems } from './add';
 import { listItems } from './list';
 import { remove } from './remove';
 
 export function createArgParser(): Command {
   const root = new Command();
+  
   root
     .version('1.0.0-alpha.0')
+
+  root
     .command('add <type>')
-    .description('Add an item to the db');
+    .description('Add an item to the db')
+    .action(addItems);
 
   root
     .command('list <type> [filters...]')
@@ -21,7 +26,7 @@ export function createArgParser(): Command {
     .action(remove);
   
     root
-    .command('build <spec id> <sdkConfigIds...>', 'Runs the build process for an SDK');
+    .command('build <specId> <sdkConfigIds...>', 'Runs the build process for an SDK');
 
   return root;
 }
