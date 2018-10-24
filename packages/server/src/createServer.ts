@@ -2,21 +2,22 @@ import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
 import cors from 'cors';
+import { parseDataURI } from 'dauria';
 import swagger from 'feathers-swagger';
 import morgan from 'morgan';
-import Sequelize from 'sequelize';
 import fetch from 'node-fetch';
+import Sequelize from 'sequelize';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
 import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 
-import { logger } from './logger';
+import { createFileService } from './createFileService';
 import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
-import { createFileService } from './createFileService';
+import { logger } from './logger';
 
 import { config } from './config';
 
@@ -159,11 +160,11 @@ export async function createServer() {
           logger.verbose(`Downloading ${sdkUrl}...`);
           const sdkResponse = await fetch(sdkUrl);
           const sdkBuffer = await sdkResponse.buffer();
-          const sdkContentType = sdkResponse.headers.get("content-type");
+          const sdkContentType = sdkResponse.headers.get('content-type');
           logger.verbose('Storing sdk...');
-          const sdkFile = await app.service('files').create({ 
+          const sdkFile = await app.service('files').create({
             buffer: sdkBuffer,
-            contentType: sdkContentType ? sdkContentType : 'application/octet-stream'
+            contentType: sdkContentType ? sdkContentType : 'application/octet-stream',
           });
           await app.service('sdks').patch(context.result.id, {
             fileId: sdkFile.id,
@@ -236,7 +237,17 @@ export async function createServer() {
         }
       },
     },
-  }); 
+  });
+
+  // Download route needs to be provided since the file service responds with JSON payloads
+  app.get('/downloads/:id', async (req, res) => {
+    const fileInfo = await app.service('files').get(req.params.id);
+    const dataUriInfo = parseDataURI(fileInfo.uri);
+    // TODO: Need to add a meaningful filename via res.attachment(...);
+    res.header('Content-Type', dataUriInfo.mediaType);
+    res.send(dataUriInfo.buffer);
+  });
+
   // Enables CORS requests if configured to do so
   if (config.get('server.useCors')) {
     app.use(cors());

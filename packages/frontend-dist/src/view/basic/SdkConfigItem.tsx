@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Button, Typography, IconButton, TableRow, TableCell } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { action, computed, observable, toJS } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { Observer } from 'mobx-react';
 
 import { HasId } from '@openapi-platform/model';
@@ -69,7 +69,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   @computed
   public get latestSdk() {
     const i = state.entities.values();
-    let currentSdk: (Sdk & Partial<PathHolder>) | undefined = undefined;
+    let currentSdk: (Sdk & Partial<PathHolder>) | undefined;
     for (const sdk of i) {
       if (
         this.props.sdkConfig.id === sdk.sdkConfigId &&
@@ -142,7 +142,9 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
                     {this.latestSdk && this.latestSdk.fileId ? (
-                      <IconButton href={this.latestSdk.fileId}>
+                      <IconButton
+                        href={`${API_BASE_URL}/downloads/${this.latestSdk.fileId}`}
+                      >
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}
