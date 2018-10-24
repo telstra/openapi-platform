@@ -1,5 +1,3 @@
-import program from 'commander';
-
 import { Spec, SdkConfig, HasId } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 
@@ -49,10 +47,9 @@ export async function buildSpecs(specId: string, sdkConfigs: string[]) {
       });
     specs = [spec];
   }
-  socket.disconnect();
   if (specs.length > 0) {
     for (const spec of specs) {
-      buildSpecConfigs(spec, sdkConfigs);
+      await buildSpecConfigs(spec, sdkConfigs);
     }
   }
 }
@@ -90,20 +87,17 @@ async function buildSpecConfigs(spec: HasId<Spec>, sdkConfigIds: string[]) {
       }
     }
   }
-  socket.disconnect();
 }
 
-logger.info('builder');
-program.parse(process.argv);
-
-if (program.args.length > 1) {
-  const specificationId = program.args[0];
-  const sdkConfigs = program.args.slice(1, program.args.length);
-  buildSpecs(specificationId, sdkConfigs);
-} else {
-  if (program.args.length === 0) {
-    logger.error('Must specify one specification id and at least one sdk config id');
+export async function buildSdks(specId: string, sdkConfigs: string[]) {
+  if (specId != null && sdkConfigs != null) {
+    await buildSpecs(specId, sdkConfigs);
+    socket.disconnect();
   } else {
-    logger.error('Must specify at least one sdk config id');
+    if (specId === null) {
+      logger.error('Must specify one specification id and at least one sdk config id');
+    } else {
+      logger.error('Must specify at least one sdk config id');
+    }
   }
 }

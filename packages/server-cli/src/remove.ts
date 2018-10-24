@@ -1,4 +1,3 @@
-import program from 'commander';
 import prompts from 'prompts';
 
 import { client, socket } from './client';
@@ -79,7 +78,11 @@ export async function remove(type: string, ids: string[], cmd) {
   }
   const validServiceNames = ['specifications', 'sdkConfigs', 'sdks'];
   if (!validServiceNames.find(serviceName => serviceName === type)) {
-    logger.error(`${type} is not a valid service name. Valid service names include ${validServiceNames.join(' ')}`);
+    logger.error(
+      `${type} is not a valid service name. Valid service names include ${validServiceNames.join(
+        ' ',
+      )}`,
+    );
     return;
   }
   // Will contain every single removal request promise

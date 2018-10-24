@@ -1,5 +1,3 @@
-import program from 'commander';
-
 import { client, socket } from './client';
 import { config } from './config';
 import { specBuilder, configBuilder } from './itemBuilder';
@@ -38,9 +36,7 @@ async function addItem(type: string, data: string) {
       break;
     default:
       logger.error(
-        `Invalid type '${
-          type
-        }'. Supported types: 'specification', 'sdkconfig'`,
+        `Invalid type '${type}'. Supported types: 'specification', 'sdkconfig'`,
       );
       break;
   }
@@ -64,7 +60,7 @@ async function addConfig(data: string) {
   logger.info(response);
 }
 
-export function addItems (type: string) {
+export function addItems(type: string) {
   const stdin = process.stdin;
 
   if (!stdin.isTTY) {
