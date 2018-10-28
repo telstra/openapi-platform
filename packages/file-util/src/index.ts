@@ -16,7 +16,7 @@ export async function deletePaths(paths) {
   return await del(paths, { force: true });
 }
 
-function streamToPromise(stream: ReadStream): Promise<any> {
+export function streamToPromise(stream: ReadStream): Promise<any> {
   return new Promise((resolve, reject) => {
     stream.on('error', err => {
       stream.destroy();

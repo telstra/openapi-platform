@@ -142,9 +142,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
                     {this.latestSdk && this.latestSdk.fileId ? (
-                      <IconButton
-                        href={`${API_BASE_URL}/downloads/${this.latestSdk.fileId}`}
-                      >
+                      <IconButton href={`${API_BASE_URL}/files/${this.latestSdk.fileId}`}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}

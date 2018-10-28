@@ -2,7 +2,6 @@ import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
 import cors from 'cors';
-import { parseDataURI } from 'dauria';
 import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 import fetch from 'node-fetch';
@@ -12,7 +11,12 @@ import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
 import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
 
-import { createFileService } from './createFileService';
+import {
+  createBlobStore,
+  createBlobService,
+  createBlobMetadataModel,
+  createBlobMetadataService,
+} from './db/blob-model';
 import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
@@ -24,22 +28,24 @@ import { config } from './config';
 export async function createServer() {
   const dbConnection: Sequelize.Sequelize = await connectToDb();
 
-  // Define database model for specifications
+  // Setup database models
   const specModel = createSpecModel(dbConnection);
   const specService = createSpecService(specModel);
-
-  // Define database model for SDK configurations
   const sdkConfigModel = createSdkConfigModel(dbConnection);
-  const sdkConfigService = createSdkConfigService(sdkConfigModel);
-
-  // Define database model for SDKs
   const sdkModel = createSdkModel(dbConnection);
-  const sdkService = createSdkService(sdkModel);
+  const blobMetadataModel = createBlobMetadataModel(dbConnection);
 
-  const fileService = createFileService();
+  const blobStore = createBlobStore();
 
-  // Configure Express
+  // Start initialising the app
   const app = express(feathers());
+
+  // Initialise services
+  const sdkConfigService = createSdkConfigService(sdkConfigModel);
+  const sdkService = createSdkService(sdkModel);
+  const blobMetadataService = createBlobMetadataService(blobMetadataModel);
+  const blobService = createBlobService('blobMetadata', blobStore);
+
   const swaggerInfo = {
     title: 'Swagger Platform',
     description: 'Open sourced service overlay for SDK management using swagger-codegen',
@@ -80,7 +86,8 @@ export async function createServer() {
     .use('/specifications', specService)
     .use('/sdkConfigs', sdkConfigService)
     .use('/sdks', sdkService)
-    .use('/files', fileService)
+    .use('/blobMetadata', blobMetadataService)
+    .use('/blobs', blobService)
     .use(express.errorHandler());
 
   // Literally everybody gets data set
@@ -159,15 +166,19 @@ export async function createServer() {
           const sdkUrl = await generateSdk(logger, spec, context.sdkConfig);
           logger.verbose(`Downloading ${sdkUrl}...`);
           const sdkResponse = await fetch(sdkUrl);
-          const sdkBuffer = await sdkResponse.buffer();
-          const sdkContentType = sdkResponse.headers.get('content-type');
           logger.verbose('Storing sdk...');
-          const sdkFile = await app.service('files').create({
-            buffer: sdkBuffer,
-            contentType: sdkContentType ? sdkContentType : 'application/octet-stream',
+          const sdkVersion = context.sdkConfig.version;
+          const sdkTarget = context.sdkConfig.target;
+          const blob = await app.service('blobs').create({
+            metadata: {
+              // TODO: Maybe add the spec title on the start or something
+              name: `${sdkTarget}${sdkVersion ? `-${sdkVersion}` : ''}.zip`,
+              contentType: sdkResponse.headers.get('Content-Type'),
+            },
+            stream: sdkResponse.body,
           });
           await app.service('sdks').patch(context.result.id, {
-            fileId: sdkFile.id,
+            fileId: blob.metadata.id,
           });
           /*
             TODO: The linkside of the info object is probably temporary.
@@ -238,14 +249,29 @@ export async function createServer() {
       },
     },
   });
-
+  async function internalUseOnlyHook(context) {
+    if (context.params.provider !== undefined) {
+      throw new Error(
+        `${context.params.provider} providers are not allowed to access this service`,
+      );
+    }
+  }
+  app.service('blobMetadata').hooks({
+    before: {
+      all: internalUseOnlyHook,
+    },
+  });
+  app.service('blobs').hooks({
+    before: {
+      all: internalUseOnlyHook,
+    },
+  });
   // Download route needs to be provided since the file service responds with JSON payloads
-  app.get('/downloads/:id', async (req, res) => {
-    const fileInfo = await app.service('files').get(req.params.id);
-    const dataUriInfo = parseDataURI(fileInfo.uri);
-    // TODO: Need to add a meaningful filename via res.attachment(...);
-    res.header('Content-Type', dataUriInfo.mediaType);
-    res.send(dataUriInfo.buffer);
+  app.get('/files/:id', async (req, res) => {
+    const data = await app.service('blobs').get(req.params.id);
+    res.attachment(data.metadata.name);
+    res.header('Content-Type', data.metadata.contentType);
+    data.stream.pipe(res);
   });
 
   // Enables CORS requests if configured to do so
@@ -263,6 +289,7 @@ export async function createServer() {
   await specModel.sync();
   await sdkConfigModel.sync();
   await sdkModel.sync();
+  await blobMetadataModel.sync();
 
   return app;
 }
