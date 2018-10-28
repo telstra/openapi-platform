@@ -9,6 +9,7 @@ jest.mock('feathers-sequelize');
 jest.mock('../../src/db/connection');
 
 jest.mock('@openapi-platform/openapi-sdk-gen-client');
+jest.mock('fs-blob-store');
 /*
   Have to use require syntax as es6 imports currently makes TypeScript
   complain about missing mockImplementation, etc.
