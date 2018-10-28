@@ -7,7 +7,7 @@ export interface Hooks {
   git: HookOptions;
 }
 
-type Addon = Readonly<{
+export type Addon = Readonly<{
   title: string;
   onRegisterStore;
   gitHooks: HookOptions;
