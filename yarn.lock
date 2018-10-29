@@ -1606,10 +1606,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^10.9.2":
+"@types/node@*":
   version "10.10.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.10.1.tgz#d5c96ca246a418404914d180b7fdd625ad18eca6"
   integrity sha512-nzsx28VwfaIykfzMAG9TB3jxF5Nn+1/WMKnmVZc8TsB+LMIVvwUscVn7PAq+LFaY5ng5u4jp5mRROSswo76PPA==
+
+"@types/node@^10.9.4":
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.0.tgz#ea6dcbddbc5b584c83f06c60e82736d8fbb0c235"
+  integrity sha512-3TUHC3jsBAB7qVRGxT6lWyYo2v96BMmD2PTcl47H25Lu7UXtFH/2qqmKiVrnel6Ne//0TFYf6uvNX+HW2FRkLQ==
 
 "@types/prop-types@*":
   version "15.5.5"
@@ -8188,12 +8193,12 @@ jest-message-util@^23.4.0:
     slash "^1.0.0"
     stack-utils "^1.0.1"
 
-jest-mock-functions@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-3.0.1.tgz#3e0afede533d3a32257a83f804aabb88bf389bba"
-  integrity sha512-y6GdkUN6kV7pNs4y4vN7uqIwz+JF9n/7EvwkqOjHw4Uy1SMpgg++yqtia36mho2gYGJN2fq6Et2Je6fuPAMbBg==
+jest-mock-functions@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jest-mock-functions/-/jest-mock-functions-3.3.1.tgz#4b745690306d459ba7a496ae1b16530f3a417ee1"
+  integrity sha512-g7G+grwZFMG+zuYXymxAMjSLIGivq0YVtUDXZ19MbJhwszascSntsie3mAwnysN2k+Re0i2LpjP0NCJ6t0w4Ww==
   dependencies:
-    "@types/node" "^10.9.2"
+    "@types/node" "^10.9.4"
 
 jest-mock@^23.2.0:
   version "23.2.0"

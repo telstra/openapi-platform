@@ -59,10 +59,10 @@ export enum HookKeys {
   extractSdk,
 }
 
-export type Hooks = AbstractHooks<typeof HookKeys>;
+export type GitHookOptions = HookOptions<typeof HookKeys>;
 
 export interface Options {
-  hooks?: HookOptions<typeof HookKeys>;
+  hooks?: GitHookOptions;
 }
 
 /**
