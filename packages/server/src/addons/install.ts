@@ -3,7 +3,7 @@ import { readdir } from 'mz/fs';
 import { store } from '@openapi-platform/server-addons';
 import { addonDir } from './addonDir';
 import { logger } from '../logger';
-export async function installAddons() {
+export async function installAddons(context) {
   const dir = addonDir();
   const filePaths = await readdir(dir);
   filePaths
@@ -16,5 +16,5 @@ export async function installAddons() {
       },
     },
   });
-  await store().setup();
+  await store().setup(context);
 }

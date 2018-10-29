@@ -290,6 +290,8 @@ export async function createServer() {
   await sdkConfigModel.sync();
   await sdkModel.sync();
   await blobMetadataModel.sync();
-
+  app.listen = async (...params) => {
+    await store().addon.hooks.app;
+  };
   return app;
 }

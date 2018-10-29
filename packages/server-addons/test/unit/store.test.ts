@@ -1,53 +1,83 @@
 import { store } from '@openapi-platform/server-addons';
 import { withDefaultHooksOptions, CompleteHooksOptions } from '@openapi-platform/hooks';
-import { AppAddonHookKeys, StoreHookKeys, AppAddonHookOptions, Context } from '../../src';
-import { mockFunctions, MockedFunctions } from 'jest-mock-functions';
+import { GitHookKeys } from '@openapi-platform/git-util';
+import {
+  AppAddonHookKeys,
+  StoreHookKeys,
+  AddonHookOptions,
+  Context,
+  Addon,
+} from '../../src';
+import { mockFunctions } from 'jest-mock-functions';
 import createStore from 'fs-blob-store';
 jest.mock('fs-blob-store');
 
-function createTestAddon() {
+interface TestAddon extends Addon {
+  hooks: AddonHookOptions;
+}
+
+function createTestAddon(overrides = {}): TestAddon {
   return {
     title: 'Test addon',
-    setup: jest.fn().mockReturnValue(Promise.resolve())
-  }
+    hooks: mockFunctions(
+      {
+        app: withDefaultHooksOptions(undefined, AppAddonHookKeys),
+        git: withDefaultHooksOptions(undefined, GitHookKeys),
+      },
+      { recursive: true, onMockedFunction: fn => fn.mockReturnValue(Promise.resolve()) },
+    ),
+    setup: jest.fn().mockReturnValue(Promise.resolve()),
+    ...overrides,
+  };
 }
 
 function createTestContext(): Context {
   return {
-    blobStore: createStore()
-  }
+    blobStore: createStore(),
+  };
 }
 
 describe('store', () => {
   it('store(...) returns the same store', () => {
     expect(store()).toBe(store());
   });
-  
+
   describe('hooks', () => {
     beforeEach(() => {
-      const options = mockFunctions(withDefaultHooksOptions(undefined, StoreHookKeys), { recursive: true });
+      const options = mockFunctions(withDefaultHooksOptions(undefined, StoreHookKeys), {
+        recursive: true,
+      });
       store().hooks(options);
-    })
-    it('setup with no addons', async () => {
-      await store().setup(createTestContext());
-      expect(store().computedHooks.before.setup).toBeCalledTimes(1);
-      expect(store().computedHooks.after.setup).toBeCalledTimes(1);
-      expect(store().computedHooks.before.setupAddon).not.toBeCalled();
-      expect(store().computedHooks.after.setupAddon).not.toBeCalled();
     });
-    it('setup with addons', async () => {
+    it('with no addons', async () => {
+      await store().setup(createTestContext());
+      expect(store().storeHooks.before.setup).toBeCalledTimes(1);
+      expect(store().storeHooks.after.setup).toBeCalledTimes(1);
+      expect(store().storeHooks.before.setupAddon).not.toBeCalled();
+      expect(store().storeHooks.after.setupAddon).not.toBeCalled();
+    });
+    it('with addons', async () => {
       const addon1 = createTestAddon();
       const addon2 = createTestAddon();
+      const context = createTestContext();
       await store()
         .register(addon1)
         .register(addon2)
-        .setup(createTestContext());
-      expect(store().computedHooks.before.setup).toBeCalledTimes(1);
-      expect(store().computedHooks.after.setup).toBeCalledTimes(1);
-      expect(store().computedHooks.before.setupAddon).toBeCalledTimes(2);
-      expect(store().computedHooks.after.setupAddon).toBeCalledTimes(2);
+        .setup(context);
+      expect(store().storeHooks.before.setup).toBeCalledTimes(1);
+      expect(store().storeHooks.after.setup).toBeCalledTimes(1);
+      expect(store().storeHooks.before.setupAddon).toBeCalledTimes(2);
+      expect(store().storeHooks.after.setupAddon).toBeCalledTimes(2);
       expect(addon1.setup).toHaveBeenCalledTimes(1);
       expect(addon2.setup).toHaveBeenCalledTimes(1);
+
+      await store().addonHooks.app.before.generateSdk(context);
+      expect(addon1.hooks.app.before!.generateSdk).toBeCalledTimes(1);
+      expect(addon1.hooks.app.after!.generateSdk).toBeCalledTimes(0);
+
+      await store().addonHooks.app.after.generateSdk(context);
+      expect(addon1.hooks.app.before!.generateSdk).toBeCalledTimes(1);
+      expect(addon1.hooks.app.after!.generateSdk).toBeCalledTimes(1);
     });
-  })
-})
+  });
+});
