@@ -13,8 +13,7 @@ import {
 } from '@openapi-platform/file-util';
 import { GitInfo } from '@openapi-platform/model';
 
-import { HookOptions, withDefaultHooksOptions, Hook, HookCallback } from './hooks';
-export { HookOptions, Hook, HookCallback };
+import { HookOptions, withDefaultHooksOptions, Hooks as AbstractHooks } from '@openapi-platform/hooks';
 
 // Note: dir = directory
 
@@ -49,8 +48,21 @@ async function deleteAllFilesInLocalRepo(repoDir) {
   return filePaths;
 }
 
+export enum HookKeys {
+  stage,
+  push,
+  commit,
+  clone,
+  downloadSdk,
+  moveSdkFilesToRepo,
+  cleanRepo,
+  extractSdk,
+}
+
+export type Hooks = AbstractHooks<typeof HookKeys>;
+
 export interface Options {
-  hooks?: HookOptions;
+  hooks?: HookOptions<typeof HookKeys>;
 }
 
 /**
@@ -63,7 +75,7 @@ export async function migrateSdkIntoLocalRepo(
   options: Options = {},
   context: any = {},
 ) {
-  const hooks = withDefaultHooksOptions(options.hooks);
+  const hooks = withDefaultHooksOptions(options.hooks, HookKeys);
   options.hooks = hooks;
 
   context.remoteSdkUrl = remoteSdkUrl;
@@ -112,7 +124,7 @@ export async function updateRepoWithNewSdk(
 ) {
   const context: any = {};
 
-  const hooks = withDefaultHooksOptions(options.hooks);
+  const hooks = withDefaultHooksOptions(options.hooks, HookKeys);
   options.hooks = hooks;
 
   context.gitInfo = gitInfo;

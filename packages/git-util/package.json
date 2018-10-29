@@ -12,6 +12,7 @@
     "node-fetch": "^2.1.2",
     "fs-extra": "^7.0.0",
     "globby": "^8.0.1",
-    "@openapi-platform/file-util": "1.0.0-alpha.0"
+    "@openapi-platform/file-util": "1.0.0-alpha.0",
+    "@openapi-platform/hooks": "1.0.0-alpha.0"
   }
 }

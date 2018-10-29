@@ -1,10 +1,9 @@
 {
-  "name": "@openapi-platform/server-addons",
+  "name": "@openapi-platform/hooks",
   "version": "1.0.0-alpha.0",
   "main": "./lib/index.js",
   "types": "./src/index.ts",
   "license": "Apache-2",
   "private": false,
-  "sideEffects": false,
-  "@openapi-platform/hooks": "1.0.0-alpha.0"
+  "sideEffects": false
 }

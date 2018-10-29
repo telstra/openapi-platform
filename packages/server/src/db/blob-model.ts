@@ -1,10 +1,10 @@
 import { streamToPromise } from '@openapi-platform/file-util';
 import sequelize from 'feathers-sequelize';
 import fsBlobStore from 'fs-blob-store';
-import { resolve } from 'path';
+import { join } from 'path';
 import Sequelize from 'sequelize';
 export function createBlobStore() {
-  const store = fsBlobStore(resolve(__dirname, '../../files'));
+  const store = fsBlobStore(join(process.cwd(), 'files'));
   return store;
 }
 
