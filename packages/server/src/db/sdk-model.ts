@@ -14,7 +14,7 @@ export function createSdkModel(dbConnection: Sequelize.Sequelize) {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      path: {
+      fileId: {
         type: Sequelize.STRING,
         allowNull: true,
       },

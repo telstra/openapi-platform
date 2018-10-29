@@ -257,7 +257,7 @@ checkTypes.description =
   'serious errors in the code, such as invalid syntax or the use of incorrect types.';
 
 function watchChecker() {
-  return watchPackages(gulp.task('checker'), { ignoreInitial: false });
+  return watchPackages(checker, { ignoreInitial: false });
 }
 watchChecker.description =
   'Runs the linter and TypeScript type checker on the entire codebase, watching for any changes ' +

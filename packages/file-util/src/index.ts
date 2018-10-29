@@ -16,7 +16,7 @@ export async function deletePaths(paths) {
   return await del(paths, { force: true });
 }
 
-function streamToPromise(stream: ReadStream): Promise<any> {
+export function streamToPromise(stream: ReadStream): Promise<any> {
   return new Promise((resolve, reject) => {
     stream.on('error', err => {
       stream.destroy();
@@ -24,12 +24,6 @@ function streamToPromise(stream: ReadStream): Promise<any> {
     });
     stream.on('finish', resolve);
   });
-}
-
-export async function downloadToBuffer(remotePath: string) {
-  const response = await fetch(remotePath);
-  // Pipes the response to a file, wrapped a promise so we can use await
-  return streamToPromise(response.body);
 }
 
 /**

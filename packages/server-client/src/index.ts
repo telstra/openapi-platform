@@ -16,12 +16,7 @@ export function createServerClient(url): ServerClient {
     transports: ['websocket'],
   });
   const app = feathers();
-  app.configure(
-    feathers.socketio(socket, {
-      // TODO: Definately shouldn't be this long
-      timeout: 60000,
-    }),
-  );
+  app.configure(feathers.socketio(socket));
   // TODO: Actually wrap client rather than just returning client
   return { client: app, socket };
 }

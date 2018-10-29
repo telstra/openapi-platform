@@ -69,7 +69,7 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
   @computed
   public get latestSdk() {
     const i = state.entities.values();
-    let currentSdk: (Sdk & Partial<PathHolder>) | undefined = undefined;
+    let currentSdk: (Sdk & Partial<PathHolder>) | undefined;
     for (const sdk of i) {
       if (
         this.props.sdkConfig.id === sdk.sdkConfigId &&
@@ -141,8 +141,8 @@ export class SdkConfigItem extends Component<SdkConfigItemProps> {
                 </TableCell>
                 <TableCell numeric>
                   <div className={classes.sdkConfigActions}>
-                    {this.latestSdk && this.latestSdk.path ? (
-                      <IconButton href={this.latestSdk.path}>
+                    {this.latestSdk && this.latestSdk.fileId ? (
+                      <IconButton href={`${API_BASE_URL}/files/${this.latestSdk.fileId}`}>
                         <Icons.CloudDownload />
                       </IconButton>
                     ) : null}

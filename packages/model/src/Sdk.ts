@@ -24,7 +24,7 @@ export const hasValidBuildStatus = buildStatus =>
   Object.values(BuildStatus).includes(buildStatus);
 
 export interface PathHolder {
-  path: string;
+  fileId: string;
 }
 
 export type HasPath<T> = T & PathHolder;

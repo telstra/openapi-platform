@@ -1,5 +1,7 @@
-const { schema } = require.requireActual('@openapi-platform/config');
-export { schema };
+const { schema, apiBaseUrl, uiUrl, serverUrl } = require.requireActual(
+  '@openapi-platform/config',
+);
+export { schema, apiBaseUrl, uiUrl, serverUrl };
 /**
  * Just provides a consistent config for tests to use
  */
