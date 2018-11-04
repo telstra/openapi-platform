@@ -7,7 +7,7 @@ import fs from 'mz/fs';
 import fetch from 'node-fetch';
 
 export async function makeTempDir(prefix: string) {
-  const dir = await fs.mkdtemp(`openapi-platform-${prefix}`, os.tmpdir());
+  const dir = await fs.mkdtemp(join(os.tmpdir(), `openapi-platform-${prefix}-`), 'utf8');
   return dir;
 }
 

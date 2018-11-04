@@ -1,12 +1,10 @@
 import { store } from '@openapi-platform/server-addons';
-import { withDefaultHooksOptions, CompleteHooksOptions } from '@openapi-platform/hooks';
-import { GitHookKeys } from '@openapi-platform/git-util';
 import {
-  AppAddonHookKeys,
-  StoreHookKeys,
-  AddonHookOptions,
+  withAddonHookOptionsDefaults,
+  withStoreHookOptionsDefaults,
   Context,
   Addon,
+  AddonHookOptions,
 } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
 import createStore from 'fs-blob-store';
@@ -15,19 +13,14 @@ jest.mock('fs-blob-store');
 interface TestAddon extends Addon {
   hooks: AddonHookOptions;
 }
-
-function createTestAddon(overrides = {}): TestAddon {
+function createTestAddon(overrides: any = {}): TestAddon {
   return {
     title: 'Test addon',
-    hooks: mockFunctions(
-      {
-        app: withDefaultHooksOptions(undefined, AppAddonHookKeys),
-        git: withDefaultHooksOptions(undefined, GitHookKeys),
-      },
-      { recursive: true, onMockedFunction: fn => fn.mockReturnValue(Promise.resolve()) },
-    ),
-    setup: jest.fn().mockReturnValue(Promise.resolve()),
-    ...overrides,
+    hooks: mockFunctions(withAddonHookOptionsDefaults(), {
+      recursive: true,
+      onMockedFunction: fn => fn.mockImplementation(async () => {}),
+    }),
+    setup: jest.fn().mockImplementation(async () => {}),
   };
 }
 
@@ -44,7 +37,7 @@ describe('store', () => {
 
   describe('hooks', () => {
     beforeEach(() => {
-      const options = mockFunctions(withDefaultHooksOptions(undefined, StoreHookKeys), {
+      const options = mockFunctions(withStoreHookOptionsDefaults(), {
         recursive: true,
       });
       store().hooks(options);
@@ -68,16 +61,16 @@ describe('store', () => {
       expect(store().storeHooks.after.setup).toBeCalledTimes(1);
       expect(store().storeHooks.before.setupAddon).toBeCalledTimes(2);
       expect(store().storeHooks.after.setupAddon).toBeCalledTimes(2);
-      expect(addon1.setup).toHaveBeenCalledTimes(1);
-      expect(addon2.setup).toHaveBeenCalledTimes(1);
+      expect(addon1!.setup).toHaveBeenCalledTimes(1);
+      expect(addon2!.setup).toHaveBeenCalledTimes(1);
 
-      await store().addonHooks.app.before.generateSdk(context);
-      expect(addon1.hooks.app.before!.generateSdk).toBeCalledTimes(1);
-      expect(addon1.hooks.app.after!.generateSdk).toBeCalledTimes(0);
+      await store().addonHooks.before.sdks.generateSdk(context);
+      expect(addon1.hooks!.before!.sdks!.generateSdk).toBeCalledTimes(1);
+      expect(addon1.hooks!.after!.sdks!.generateSdk).toBeCalledTimes(0);
 
-      await store().addonHooks.app.after.generateSdk(context);
-      expect(addon1.hooks.app.before!.generateSdk).toBeCalledTimes(1);
-      expect(addon1.hooks.app.after!.generateSdk).toBeCalledTimes(1);
+      await store().addonHooks.after.sdks.generateSdk(context);
+      expect(addon1.hooks!.before!.sdks!.generateSdk).toBeCalledTimes(1);
+      expect(addon1.hooks!.after!.sdks!.generateSdk).toBeCalledTimes(1);
     });
   });
 });

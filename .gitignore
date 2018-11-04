@@ -78,4 +78,4 @@ openapi-platform.config*
 /packages/*/stats
 /stats
 /files
-/addons
+/openapi-platform-server.addons.js

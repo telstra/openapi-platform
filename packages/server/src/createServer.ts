@@ -6,11 +6,16 @@ import swagger from 'feathers-swagger';
 import morgan from 'morgan';
 import fetch from 'node-fetch';
 import Sequelize from 'sequelize';
+import { promisify } from 'util';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
 import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
+import { store } from '@openapi-platform/server-addons';
 
+import { registerAddons } from './addons/registerAddons';
+import { withAddonStoreHooks } from './addons/withAddonStoreHooks';
+import { config } from './config';
 import {
   createBlobStore,
   createBlobService,
@@ -23,9 +28,13 @@ import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 import { logger } from './logger';
 
-import { config } from './config';
-
 export async function createServer() {
+  const oapipContext: any = {};
+  oapipContext.blobStore = createBlobStore();
+  await registerAddons();
+  withAddonStoreHooks();
+  logger.info('Setting up addons...');
+  await store().setup(oapipContext);
   const dbConnection: Sequelize.Sequelize = await connectToDb();
 
   // Setup database models
@@ -35,8 +44,6 @@ export async function createServer() {
   const sdkModel = createSdkModel(dbConnection);
   const blobMetadataModel = createBlobMetadataModel(dbConnection);
 
-  const blobStore = createBlobStore();
-
   // Start initialising the app
   const app = express(feathers());
 
@@ -44,7 +51,7 @@ export async function createServer() {
   const sdkConfigService = createSdkConfigService(sdkConfigModel);
   const sdkService = createSdkService(sdkModel);
   const blobMetadataService = createBlobMetadataService(blobMetadataModel);
-  const blobService = createBlobService('blobMetadata', blobStore);
+  const blobService = createBlobService('blobMetadata', oapipContext.blobStore);
 
   const swaggerInfo = {
     title: 'Swagger Platform',
@@ -290,8 +297,11 @@ export async function createServer() {
   await sdkConfigModel.sync();
   await sdkModel.sync();
   await blobMetadataModel.sync();
+  const originalAppListenFn = app.listen.bind(app);
   app.listen = async (...params) => {
-    await store().addon.hooks.app;
+    await store().addonHooks.before.listen({});
+    await promisify(originalAppListenFn)(...params);
+    await store().addonHooks.after.listen({});
   };
   return app;
 }

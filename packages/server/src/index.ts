@@ -18,9 +18,8 @@ export async function run() {
 
   const app = await createServer();
 
-  app.listen(port, host, (er, err) => {
-    logger.info(`OpenAPI Platform Server now listening on port ${port}`);
-  });
+  await app.listen(port, host);
+  logger.info(`OpenAPI Platform Server now listening on port ${port}`);
 
   return app;
 }

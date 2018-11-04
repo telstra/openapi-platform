@@ -1,4 +1,5 @@
-import { withDefaultHooksOptions } from '../../src/hooks';
+import { schema } from '@openapi-platform/hooks';
+import { gitHookSchema } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
 // TODO: Would be really nice to have a in-memory-fs
 
@@ -47,7 +48,7 @@ describe('git', () => {
     it('valid inputs', async () => {
       // TODO: ES6 didn't work
       const { updateRepoWithNewSdk } = require('../../src');
-      const hooks = mockFunctions(withDefaultHooksOptions(), { recursive: true });
+      const hooks = mockFunctions(schema(gitHookSchema)(), { recursive: true });
       // TODO: Need to test the outputs of this method
       await updateRepoWithNewSdk(
         {

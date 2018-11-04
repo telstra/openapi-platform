@@ -1,10 +1,10 @@
+import { gitHookSchema } from '@openapi-platform/git-util';
 import {
   HookOptions,
-  withDefaultHooksOptions,
   CompleteHooksOptions,
   mergeHookOptions,
+  schema,
 } from '@openapi-platform/hooks';
-import { GitHookKeys, GitHookOptions } from '@openapi-platform/git-util';
 import { computed, action, observable } from 'mobx';
 
 export interface Context {
@@ -12,22 +12,32 @@ export interface Context {
   [s: string]: any;
 }
 
-export enum AppAddonHookKeys {
-  generateSdk,
-  listen,
-}
-
-export type AppAddonHookOptions = HookOptions<typeof AppAddonHookKeys>;
-
-export type AddonHookOptions = {
-  app: AppAddonHookOptions;
-  git: GitHookOptions;
+export const crudHookSchema = {
+  create: null,
+  remove: null,
+  update: null,
+  patch: null,
 };
+
+export const addonHookSchema = {
+  setup: null,
+  listen: null,
+  specs: crudHookSchema,
+  sdks: {
+    ...crudHookSchema,
+    generateSdk: null,
+    git: gitHookSchema,
+  },
+  sdkConfigs: crudHookSchema,
+};
+export const withAddonHookOptionsDefaults = schema(addonHookSchema);
+
+export type AddonHookOptions = Partial<HookOptions<typeof addonHookSchema>>;
 
 export interface Addon {
   title: string;
-  hooks?: Partial<AddonHookOptions>;
-  setup(context: Context): Promise<void>;
+  hooks?: AddonHookOptions;
+  setup?(context: Context): Promise<void>;
 }
 
 export enum StoreHookKeys {
@@ -35,7 +45,13 @@ export enum StoreHookKeys {
   setupAddon,
 }
 
-export type StoreHookOptions = HookOptions<typeof StoreHookKeys>;
+const storeHookSchema = {
+  setup: null,
+  setupAddon: null,
+};
+export const withStoreHookOptionsDefaults = schema(storeHookSchema);
+
+export type StoreHookOptions = HookOptions<typeof storeHookSchema>;
 
 export class Store {
   @observable
@@ -52,7 +68,9 @@ export class Store {
     for (const addon of this.addons) {
       context.installingAddon = addon;
       await this.storeHooks.before.setupAddon(context);
-      await addon.setup(context);
+      if (addon.setup) {
+        await addon.setup(context);
+      }
       await this.storeHooks.after.setupAddon(context);
     }
     context.installingAddon = undefined;
@@ -64,27 +82,12 @@ export class Store {
    */
   @computed
   public get addonHooks() {
-    const that = this;
-    function merge<K extends keyof AddonHookOptions, H>(key: K, HookKeys: H) {
-      return mergeHookOptions(
-        that.addons
-          .filter(addon => !!addon.hooks)
-          .map(addon => addon.hooks![key] as Partial<HookOptions<H>>),
-        HookKeys,
-      );
-    }
-    return {
-      git: merge('git', GitHookKeys),
-      app: merge('app', AppAddonHookKeys),
-    };
+    return mergeHookOptions(this.addons.map(addon => addon.hooks), addonHookSchema);
   }
 
   @computed
-  public get storeHooks(): CompleteHooksOptions<typeof StoreHookKeys> {
-    return withDefaultHooksOptions(
-      this.assignedHooks ? this.assignedHooks : {},
-      StoreHookKeys,
-    );
+  public get storeHooks(): CompleteHooksOptions<typeof storeHookSchema> {
+    return withStoreHookOptionsDefaults(this.assignedHooks);
   }
 
   /**
@@ -97,7 +100,7 @@ export class Store {
   }
 }
 
-let globalStore: Store | undefined = undefined;
+let globalStore: Store | undefined;
 export function store(): Store {
   if (globalStore === undefined) {
     globalStore = new Store();
