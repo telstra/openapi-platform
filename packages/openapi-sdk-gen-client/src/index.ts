@@ -12,7 +12,6 @@ const SWAGGER_CODEGEN_ENDPOINT = 'http://generator.swagger.io/api/gen/clients/';
  * @return {Promise<Sdk>} - The generated SDK
  */
 export async function generateSdk(
-  logger,
   spec: HasId<Spec>,
   sdkConfig: HasId<SdkConfig>,
 ): Promise<string> {

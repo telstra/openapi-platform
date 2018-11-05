@@ -8,6 +8,8 @@ import {
 } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
 import createStore from 'fs-blob-store';
+import { openapiLogger } from '@openapi-platform/logger';
+jest.mock('@openapi-platform/logger');
 jest.mock('fs-blob-store');
 
 interface TestAddon extends Addon {
@@ -27,6 +29,7 @@ function createTestAddon(overrides: any = {}): TestAddon {
 function createTestContext(): Context {
   return {
     blobStore: createStore(),
+    logger: openapiLogger(),
   };
 }
 

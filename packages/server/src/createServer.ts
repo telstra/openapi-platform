@@ -1,6 +1,7 @@
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
+import { openapiLogger, consoleTransport, fileTransport } from '@openapi-platform/logger';
 import cors from 'cors';
 import swagger from 'feathers-swagger';
 import morgan from 'morgan';
@@ -9,33 +10,52 @@ import Sequelize from 'sequelize';
 import { promisify } from 'util';
 
 import { updateRepoWithNewSdk } from '@openapi-platform/git-util';
+import {
+  overrideConsoleLogger,
+  overrideUtilInspectStyle,
+} from '@openapi-platform/logger';
 import { BuildStatus } from '@openapi-platform/model';
 import { generateSdk } from '@openapi-platform/openapi-sdk-gen-client';
-import { store } from '@openapi-platform/server-addons';
+import { store, Context } from '@openapi-platform/server-addons';
 
 import { registerAddons } from './addons/registerAddons';
 import { withAddonStoreHooks } from './addons/withAddonStoreHooks';
 import { config } from './config';
+
 import {
-  createBlobStore,
   createBlobService,
   createBlobMetadataModel,
   createBlobMetadataService,
+  createBlobStore,
 } from './db/blob-model';
 import { connectToDb } from './db/connection';
 import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-model';
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
-import { logger } from './logger';
+import { C } from './symbols';
+const logger = openapiLogger()
+  .add(consoleTransport(config.get('server.log.console')))
+  .add(fileTransport(config.get('server.log.file')));
+logger.exceptions.handle(fileTransport(config.get('server.log.error')));
 
 export async function createServer() {
-  const oapipContext: any = {};
-  oapipContext.blobStore = createBlobStore();
-  await registerAddons();
-  withAddonStoreHooks();
-  logger.info('Setting up addons...');
-  await store().setup(oapipContext);
-  const dbConnection: Sequelize.Sequelize = await connectToDb();
+  /* 
+    c represents the openapi context. 
+    It's used so often that it's been abbreviated to a single letter
+  */
+  const c: Context = {
+    blobStore: createBlobStore(),
+    logger,
+  };
+  await registerAddons(c);
+  withAddonStoreHooks(c);
+  // NOTE: Before this line, do use anything in c as the addons might want to modify/replace whatever's in the context
+  await store().setup(c);
+  c.logger.info('Creating OpenAPI Platform server...');
+  // Overriding logger used in non testing environments, logging in tests just go to stdout.
+  overrideConsoleLogger(c.logger);
+  overrideUtilInspectStyle();
+  const dbConnection: Sequelize.Sequelize = await connectToDb(c);
 
   // Setup database models
   const specModel = createSpecModel(dbConnection);
@@ -46,12 +66,14 @@ export async function createServer() {
 
   // Start initialising the app
   const app = express(feathers());
+  // Attach the context so whatever called this function can make use of it
+  app[C] = c;
 
   // Initialise services
   const sdkConfigService = createSdkConfigService(sdkConfigModel);
   const sdkService = createSdkService(sdkModel);
   const blobMetadataService = createBlobMetadataService(blobMetadataModel);
-  const blobService = createBlobService('blobMetadata', oapipContext.blobStore);
+  const blobService = createBlobService('blobMetadata', c.blobStore);
 
   const swaggerInfo = {
     title: 'Swagger Platform',
@@ -62,7 +84,7 @@ export async function createServer() {
       morgan('dev', {
         stream: {
           write(message) {
-            logger.verbose(message);
+            c.logger.verbose(message);
           },
         },
       }),
@@ -169,11 +191,11 @@ export async function createServer() {
           const spec = await app
             .service('specifications')
             .get(context.sdkConfig.specId, {});
-          logger.verbose(`Generating sdk for sdk ID ${context.result.id}...`);
-          const sdkUrl = await generateSdk(logger, spec, context.sdkConfig);
-          logger.verbose(`Downloading ${sdkUrl}...`);
+          c.logger.verbose(`Generating sdk for sdk ID ${context.result.id}...`);
+          const sdkUrl = await generateSdk(spec, context.sdkConfig);
+          c.logger.verbose(`Downloading ${sdkUrl}...`);
           const sdkResponse = await fetch(sdkUrl);
-          logger.verbose('Storing sdk...');
+          c.logger.verbose('Storing sdk...');
           const sdkVersion = context.sdkConfig.version;
           const sdkTarget = context.sdkConfig.target;
           const blob = await app.service('blobs').create({
@@ -197,7 +219,7 @@ export async function createServer() {
               hooks: {
                 before: {
                   async clone(gitHookContext) {
-                    logger.verbose(
+                    c.logger.verbose(
                       `Cloning ${gitHookContext.remoteSdkUrl} into ${
                         gitHookContext.repoDir
                       }`,
@@ -207,34 +229,36 @@ export async function createServer() {
                     });
                   },
                   async downloadSdk() {
-                    logger.verbose('Dowloading SDK');
+                    c.logger.verbose('Dowloading SDK');
                   },
                   async extractSdk(gitHookContext) {
-                    logger.verbose(
+                    c.logger.verbose(
                       `Extracting ${gitHookContext.sdkArchivePath} to ${
                         gitHookContext.sdkDir
                       }`,
                     );
                   },
                   async moveSdkFilesToRepo(gitHookContext) {
-                    logger.verbose(
+                    c.logger.verbose(
                       `Moving files from ${gitHookContext.sdkDir} to ${
                         gitHookContext.repoDir
                       }`,
                     );
                   },
                   async stage(gitHookContext) {
-                    logger.verbose(`Staging ${gitHookContext.stagedPaths.length} paths`);
+                    c.logger.verbose(
+                      `Staging ${gitHookContext.stagedPaths.length} paths`,
+                    );
                     await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Staging,
                     });
                   },
                   async commit() {
                     // Maybe state the commit message and hash
-                    logger.verbose(`Committing changes`);
+                    c.logger.verbose(`Committing changes`);
                   },
                   async push() {
-                    logger.verbose(`Pushing commits...`);
+                    c.logger.verbose(`Pushing commits...`);
                     await app.service('sdks').patch(context.result.id, {
                       buildStatus: BuildStatus.Pushing,
                     });
@@ -251,7 +275,7 @@ export async function createServer() {
             buildStatus: BuildStatus.Fail,
             // TODO: should include a failure error
           });
-          logger.error('Failed to generate SDK', err);
+          c.logger.error('Failed to generate SDK', err);
         }
       },
     },
@@ -288,7 +312,7 @@ export async function createServer() {
 
   app.hooks({
     error(hook) {
-      logger.error(hook.error);
+      c.logger.error(hook.error);
     },
   });
 

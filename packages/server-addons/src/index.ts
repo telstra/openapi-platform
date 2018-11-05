@@ -9,6 +9,7 @@ import { computed, action, observable } from 'mobx';
 
 export interface Context {
   blobStore;
+  logger;
   [s: string]: any;
 }
 

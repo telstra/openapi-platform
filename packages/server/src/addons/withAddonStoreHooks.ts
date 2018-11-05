@@ -1,10 +1,10 @@
 import { store } from '@openapi-platform/server-addons';
-import { logger } from '../logger';
-export function withAddonStoreHooks() {
+import { Context } from '@openapi-platform/server-addons';
+export function withAddonStoreHooks(c: Context) {
   store().hooks({
-    before: {
+    after: {
       async setupAddon(context) {
-        logger.info(`Registering ${context.installingAddon.title}`);
+        c.logger.info(`Registered ${context.installingAddon.title} addon`);
       },
     },
   });

@@ -1,5 +1,4 @@
-import { SdkConfig, BuildStatus } from '@openapi-platform/model';
-import { Spec } from '@openapi-platform/model';
+import { SdkConfig, BuildStatus, Spec } from '@openapi-platform/model';
 import { createServer } from '../../src/createServer';
 jest.mock('@openapi-platform/config');
 jest.mock('@openapi-platform/logger');
@@ -9,6 +8,8 @@ jest.mock('feathers-sequelize');
 jest.mock('../../src/db/connection');
 
 jest.mock('@openapi-platform/openapi-sdk-gen-client');
+
+jest.mock('../../src/addons/registerAddons');
 jest.mock('fs-blob-store');
 /*
   Have to use require syntax as es6 imports currently makes TypeScript

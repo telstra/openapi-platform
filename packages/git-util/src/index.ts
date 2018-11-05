@@ -15,8 +15,6 @@ import { GitInfo } from '@openapi-platform/model';
 
 import { HookOptions, schema } from '@openapi-platform/hooks';
 
-// Note: dir = directory
-
 export async function getAllStageableFilepathsInRepo(repoDir: string) {
   return await globby([join(repoDir, '**'), join(repoDir, '**', '.*')], {
     gitignore: true,
