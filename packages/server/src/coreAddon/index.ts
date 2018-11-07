@@ -7,9 +7,6 @@ export const coreAddon: Addon = {
   hooks: {
     before: {
       sdks: sdks.before,
-      listen: async c => {
-        c.logger.info('test');
-      },
     },
     after: {
       sdkConfigs: sdkConfigs.after,

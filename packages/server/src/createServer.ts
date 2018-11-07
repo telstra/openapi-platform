@@ -1,7 +1,6 @@
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
-import { openapiLogger, consoleTransport, fileTransport } from '@openapi-platform/logger';
 import cors from 'cors';
 import swagger from 'feathers-swagger';
 import morgan from 'morgan';
@@ -19,6 +18,7 @@ import { config } from './config';
 
 import { storeHooks } from './addons/storeHooks';
 import { coreAddon } from './coreAddon';
+import { createLogger } from './createLogger';
 import {
   createBlobService,
   createBlobMetadataModel,
@@ -30,15 +30,6 @@ import { createSdkConfigModel, createSdkConfigService } from './db/sdk-config-mo
 import { createSdkModel, createSdkService } from './db/sdk-model';
 import { createSpecModel, createSpecService } from './db/spec-model';
 import { serviceAddonHookOptions } from './serviceAddonHookOptions';
-
-// TODO: For some reason, calling this within createServer (even at the top of the function) breaks tests. Find out why
-function createLogger() {
-  const logger = openapiLogger()
-    .add(consoleTransport(config.get('server.log.console')))
-    .add(fileTransport(config.get('server.log.file')));
-  logger.exceptions.handle(fileTransport(config.get('server.log.error')));
-  return logger;
-}
 
 export async function createServer() {
   /* 
