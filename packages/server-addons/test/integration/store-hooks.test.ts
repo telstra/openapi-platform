@@ -20,9 +20,9 @@ function createTestAddon(overrides: any = {}): TestAddon {
     title: 'Test addon',
     hooks: mockFunctions(withAddonHookOptionsDefaults(), {
       recursive: true,
-      onMockedFunction: fn => fn.mockImplementation(async () => {}),
+      onMockedFunction: fn => fn.mockResolvedValue(null),
     }),
-    setup: jest.fn().mockImplementation(async () => {}),
+    setup: jest.fn().mockResolvedValue(null),
   };
 }
 
@@ -30,6 +30,7 @@ function createTestContext(): Context {
   return {
     blobStore: createStore(),
     logger: openapiLogger(),
+    app: {},
   };
 }
 

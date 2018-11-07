@@ -10,10 +10,12 @@ import { computed, action, observable } from 'mobx';
 export interface Context {
   blobStore;
   logger;
+  app;
   [s: string]: any;
 }
 
 export const crudHookSchema = {
+  all: null,
   create: null,
   remove: null,
   update: null,
@@ -21,9 +23,8 @@ export const crudHookSchema = {
 };
 
 export const addonHookSchema = {
-  setup: null,
   listen: null,
-  specs: crudHookSchema,
+  specifications: crudHookSchema,
   sdks: {
     ...crudHookSchema,
     generateSdk: null,
@@ -37,13 +38,15 @@ export type AddonHookOptions = Partial<HookOptions<typeof addonHookSchema>>;
 
 export interface Addon {
   title: string;
+  /**
+   * Description of the addon's purpose/what it does
+   */
+  description?: string;
   hooks?: AddonHookOptions;
-  setup?(context: Context): Promise<void>;
-}
-
-export enum StoreHookKeys {
-  setup,
-  setupAddon,
+  /**
+   * Called during the server's initialisation
+   */
+  setup?: (context: Context) => Promise<void>;
 }
 
 const storeHookSchema = {
@@ -59,6 +62,7 @@ export class Store {
   private readonly addons: Addon[] = [];
   private assignedHooks: Partial<StoreHookOptions> | undefined = undefined;
 
+  @action
   public register(addon: Addon): this {
     this.addons.push(addon);
     return this;
@@ -67,14 +71,12 @@ export class Store {
   public async setup(context: Context) {
     await this.storeHooks.before.setup(context);
     for (const addon of this.addons) {
-      context.installingAddon = addon;
-      await this.storeHooks.before.setupAddon(context);
+      await this.storeHooks.before.setupAddon(context, addonHookSchema);
       if (addon.setup) {
         await addon.setup(context);
       }
-      await this.storeHooks.after.setupAddon(context);
+      await this.storeHooks.after.setupAddon(context, addon);
     }
-    context.installingAddon = undefined;
     await this.storeHooks.after.setup(context);
   }
 
@@ -83,7 +85,11 @@ export class Store {
    */
   @computed
   public get addonHooks() {
-    return mergeHookOptions(this.addons.map(addon => addon.hooks), addonHookSchema);
+    const hooks = mergeHookOptions(
+      this.addons.map(addon => addon.hooks as Partial<AddonHookOptions>),
+      addonHookSchema,
+    );
+    return hooks;
   }
 
   @computed

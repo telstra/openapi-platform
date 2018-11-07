@@ -1,5 +1,5 @@
 import { schema, HookSchema } from '../../src';
-describe('adds default hooks', () => {
+describe('schema', () => {
   const testSchema = {
     a: null,
     b: null,

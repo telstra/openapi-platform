@@ -74,7 +74,7 @@ export function createBlobService(blobMetadataServiceName, blobStore) {
       if (contentType === undefined || contentType === null) {
         throw new Error(`contentType cannot be ${contentType}`);
       }
-      const metadata = await app.service('blobMetadataServiceName').create(data.metadata);
+      const metadata = await app.service(blobMetadataServiceName).create(data.metadata);
       const writeStream = blobStore.createWriteStream({
         key: metadata.id.toString(),
       });

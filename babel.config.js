@@ -32,7 +32,7 @@ module.exports = api => {
   }
 
   const nodeTargets = {
-    node: '6',
+    node: env === 'test' || env === 'development' ? 'current' : '6',
   };
 
   const browserTargets = {
