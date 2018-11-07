@@ -28,6 +28,7 @@ export const addonHookSchema = {
   sdks: {
     ...crudHookSchema,
     generateSdk: null,
+    fetchSdk: null,
     git: gitHookSchema,
   },
   sdkConfigs: crudHookSchema,

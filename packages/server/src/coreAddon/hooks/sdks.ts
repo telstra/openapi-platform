@@ -71,7 +71,11 @@ const hooks = {
         await store().addonHooks.after.sdks.generateSdk(c, context);
 
         c.logger.verbose(`Downloading ${sdkUrl}`);
+        await store().addonHooks.before.sdks.fetchSdk(c, context);
         const sdkResponse = await fetch(sdkUrl);
+        context.sdkResponse = sdkResponse;
+        await store().addonHooks.after.sdks.fetchSdk(c, context);
+
         c.logger.verbose('Storing sdk');
         const sdkVersion = context.sdkConfig.version;
         const sdkTarget = context.sdkConfig.target;
@@ -79,9 +83,9 @@ const hooks = {
           metadata: {
             // TODO: Maybe add the spec title on the start or something
             name: `${sdkTarget}${sdkVersion ? `-${sdkVersion}` : ''}.zip`,
-            contentType: sdkResponse.headers.get('Content-Type'),
+            contentType: context.sdkResponse.headers.get('Content-Type'),
           },
-          stream: sdkResponse.body,
+          stream: context.sdkResponse.body,
         });
         await c.app.service('sdks').patch(context.result.id, {
           fileId: blob.metadata.id,
