@@ -13,10 +13,7 @@ import {
 } from '@openapi-platform/file-util';
 import { GitInfo } from '@openapi-platform/model';
 
-import { HookOptions, withDefaultHooksOptions, Hook, HookCallback } from './hooks';
-export { HookOptions, Hook, HookCallback };
-
-// Note: dir = directory
+import { HookOptions, schema } from '@openapi-platform/hooks';
 
 export async function getAllStageableFilepathsInRepo(repoDir: string) {
   return await globby([join(repoDir, '**'), join(repoDir, '**', '.*')], {
@@ -49,10 +46,22 @@ async function deleteAllFilesInLocalRepo(repoDir) {
   return filePaths;
 }
 
+export const gitHookSchema = {
+  stage: null,
+  push: null,
+  commit: null,
+  clone: null,
+  downloadSdk: null,
+  moveSdkFilesToRepo: null,
+  cleanRepo: null,
+  extractSdk: null,
+};
+
 export interface Options {
-  hooks?: HookOptions;
+  hooks?: HookOptions<typeof gitHookSchema>;
 }
 
+const withDefaults = schema(gitHookSchema);
 /**
  * Tries to put the files of a remotely stored sdk ZIP file into a locally stored
  * repository.
@@ -63,7 +72,7 @@ export async function migrateSdkIntoLocalRepo(
   options: Options = {},
   context: any = {},
 ) {
-  const hooks = withDefaultHooksOptions(options.hooks);
+  const hooks = withDefaults(options.hooks);
   options.hooks = hooks;
 
   context.remoteSdkUrl = remoteSdkUrl;
@@ -112,7 +121,7 @@ export async function updateRepoWithNewSdk(
 ) {
   const context: any = {};
 
-  const hooks = withDefaultHooksOptions(options.hooks);
+  const hooks = withDefaults(options.hooks);
   options.hooks = hooks;
 
   context.gitInfo = gitInfo;

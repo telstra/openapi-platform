@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize';
 
+import { Context } from '@openapi-platform/server-addons';
 import { config } from '../config';
-import { logger } from '../logger';
 
-export async function connectToDb() {
+export async function connectToDb(c: Context) {
   const databaseConfig = config.get('database');
   const dbConnection = new Sequelize(
     databaseConfig.name,
@@ -13,14 +13,14 @@ export async function connectToDb() {
       dialect: 'postgres',
       host: databaseConfig.host,
       port: databaseConfig.port,
-      logging: logger.verbose,
+      logging: c.logger.verbose,
     },
   );
   try {
     await dbConnection.authenticate();
-    logger.info('Successfully connected to database');
+    c.logger.info('Successfully connected to database');
   } catch (err) {
-    logger.error('Unable to connect to database: %s', err);
+    c.logger.error('Unable to connect to database: %s', err);
     throw err;
   }
   return dbConnection;

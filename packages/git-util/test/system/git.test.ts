@@ -1,6 +1,10 @@
-import { withDefaultHooksOptions } from '../../src/hooks';
+import { schema } from '@openapi-platform/hooks';
+import { gitHookSchema } from '../../src';
 import { mockFunctions } from 'jest-mock-functions';
 // TODO: Would be really nice to have a in-memory-fs
+
+// No telling how long a file read/write will take
+jest.setTimeout(10000);
 
 // Could put the following mocks in a __mocks__ folder but these mocks are somewhat specific to these tests
 jest.mock('isomorphic-git', () => {
@@ -47,7 +51,7 @@ describe('git', () => {
     it('valid inputs', async () => {
       // TODO: ES6 didn't work
       const { updateRepoWithNewSdk } = require('../../src');
-      const hooks = mockFunctions(withDefaultHooksOptions(), { recursive: true });
+      const hooks = mockFunctions(schema(gitHookSchema)(), { recursive: true });
       // TODO: Need to test the outputs of this method
       await updateRepoWithNewSdk(
         {

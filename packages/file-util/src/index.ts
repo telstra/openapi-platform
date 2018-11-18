@@ -3,12 +3,11 @@ import { join } from 'path';
 
 import AdmZip from 'adm-zip';
 import del from 'del';
-import { ReadStream } from 'fs';
 import fs from 'mz/fs';
 import fetch from 'node-fetch';
 
 export async function makeTempDir(prefix: string) {
-  const dir = await fs.mkdtemp(join(os.tmpdir(), 'openapi-platform-' + prefix));
+  const dir = await fs.mkdtemp(join(os.tmpdir(), `openapi-platform-${prefix}-`), 'utf8');
   return dir;
 }
 
@@ -16,7 +15,7 @@ export async function deletePaths(paths) {
   return await del(paths, { force: true });
 }
 
-export function streamToPromise(stream: ReadStream): Promise<any> {
+export function streamToPromise(stream): Promise<any> {
   return new Promise((resolve, reject) => {
     stream.on('error', err => {
       stream.destroy();

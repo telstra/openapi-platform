@@ -1,10 +1,10 @@
 import { streamToPromise } from '@openapi-platform/file-util';
 import sequelize from 'feathers-sequelize';
 import fsBlobStore from 'fs-blob-store';
-import { resolve } from 'path';
+import { join } from 'path';
 import Sequelize from 'sequelize';
 export function createBlobStore() {
-  const store = fsBlobStore(resolve(__dirname, '../../files'));
+  const store = fsBlobStore(join(process.cwd(), 'files'));
   return store;
 }
 
@@ -74,7 +74,7 @@ export function createBlobService(blobMetadataServiceName, blobStore) {
       if (contentType === undefined || contentType === null) {
         throw new Error(`contentType cannot be ${contentType}`);
       }
-      const metadata = await app.service('blobMetadataServiceName').create(data.metadata);
+      const metadata = await app.service(blobMetadataServiceName).create(data.metadata);
       const writeStream = blobStore.createWriteStream({
         key: metadata.id.toString(),
       });

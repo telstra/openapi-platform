@@ -77,4 +77,5 @@ openapi-platform.config*
 # Bundle stats file
 /packages/*/stats
 /stats
-/packages/server/files
+/files
+/openapi-platform-server.addons.js
